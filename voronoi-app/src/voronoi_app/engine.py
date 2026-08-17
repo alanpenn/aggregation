@@ -17,7 +17,7 @@ class SimulationResult:
     voronoi: Voronoi
     buildings: Set[int]
     open_spaces: Set[int]
-    doors: List[Tuple[float, float]]
+    doors: List[Tuple[int, int]]
     building_labels: Dict[int, int]
     visibility_graph: nx.Graph
     mean_depth: Dict[int, float]
@@ -45,7 +45,7 @@ class VoronoiEngine:
         self.buildings: Set[int] = set()
         self.open_spaces: Set[int] = set()
         self.vacant: Set[int] = set()
-        self.doors: List[Tuple[float, float]] = []
+        self.doors: List[Tuple[int, int]] = []
         self.los_lines: List[LineString] = []
         self.building_labels: Dict[int, int] = {}
 
@@ -90,9 +90,7 @@ class VoronoiEngine:
         initial_building = random.choice(neighbors)
         self.buildings.add(initial_building)
         self.building_labels[initial_building] = 1
-        self.doors.append(
-            tuple((self.points[initial_open] + self.points[initial_building]) / 2)
-        )
+        self.doors.append((initial_open, initial_building))
 
         label_counter = 2
         stagnation = 0
@@ -147,9 +145,7 @@ class VoronoiEngine:
                 self.buildings.add(new_building)
                 self.building_labels[new_building] = label_counter
                 label_counter += 1
-                self.doors.append(
-                    tuple((self.points[new_open] + self.points[new_building]) / 2)
-                )
+                self.doors.append((new_open, new_building))
                 placed = True
                 break
 
@@ -163,7 +159,7 @@ class VoronoiEngine:
 
         for idx in self.buildings:
             region = self.voronoi.regions[self.voronoi.point_region[idx]]
-            if not region or -1 in region:
+            if region is None or len(region) == 0 or -1 in region:
                 continue
             coords = [self.voronoi.vertices[i] for i in region if i >= 0]
             if len(coords) >= 3:
@@ -174,7 +170,7 @@ class VoronoiEngine:
         all_open = self.open_spaces | self.vacant
         for idx in all_open:
             region = self.voronoi.regions[self.voronoi.point_region[idx]]
-            if not region or -1 in region:
+            if region is None or len(region) == 0 or -1 in region:
                 continue
             coords = [self.voronoi.vertices[i] for i in region if i >= 0]
             if len(coords) >= 3:
