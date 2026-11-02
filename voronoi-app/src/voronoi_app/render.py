@@ -80,12 +80,24 @@ def fig_aggregation(result: SimulationResult):
     grid = getattr(result, 'grid', None)
     grid_type = grid.metadata.get("grid_type", "voronoi") if grid else "voronoi"
 
-    mean_depth = result.mean_depth
-    if mean_depth:
-        norm = plt.Normalize(min(mean_depth.values()), max(mean_depth.values()))
+    measure_name = getattr(result, "measure_name", "mean_depth")
+    mean_depth = getattr(result, "measure_values", None)
+    if mean_depth is None:
+        mean_depth = result.mean_depth
+    # Unreachable nodes (inf) would break the colour scale; draw them at the max.
+    finite = [v for v in mean_depth.values() if np.isfinite(v)]
+    if finite:
+        top = max(finite)
+        mean_depth = {k: (v if np.isfinite(v) else top) for k, v in mean_depth.items()}
+        low, high = min(finite), top
+        if low == high:
+            high = low + 1
+        norm = plt.Normalize(low, high)
     else:
         norm = plt.Normalize(0, 1)
-    cmap = cm.jet.reversed()
+    # Depth: low = central (red). Other measures (connectivity, integration,
+    # choice): high = central (red).
+    cmap = cm.jet.reversed() if measure_name == "mean_depth" else cm.jet
 
     fig, ax = plt.subplots(figsize=(10, 10))
 

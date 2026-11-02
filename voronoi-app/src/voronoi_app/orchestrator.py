@@ -58,6 +58,15 @@ class ExperimentOutput:
         return self.analysis_results.get("mean_depth", {})
     
     @property
+    def measure_name(self):
+        return self.pipeline.space_syntax_measure
+
+    @property
+    def measure_values(self):
+        """Values of the measure selected in the pipeline."""
+        return self.analysis_results.get(self.measure_name, {})
+
+    @property
     def config(self):
         """For backwards compatibility with old render.py code."""
         return self.pipeline
