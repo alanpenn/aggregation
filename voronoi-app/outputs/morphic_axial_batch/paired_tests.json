@@ -1,0 +1,54 @@
+[
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "axial_line_count",
+  "n_pairs": 30,
+  "mean_a": 26.433333333333334,
+  "mean_b": 21.3,
+  "mean_paired_difference_b_minus_a": -5.133333333333334,
+  "median_paired_difference_b_minus_a": -5.0,
+  "p_value": 1.6054583080241856e-06,
+  "p_value_holm": 3.2109166160483713e-06
+ },
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "mean_line_length",
+  "n_pairs": 30,
+  "mean_a": 51.0273653819213,
+  "mean_b": 65.78569357735172,
+  "mean_paired_difference_b_minus_a": 14.758328195430428,
+  "median_paired_difference_b_minus_a": 14.895028037198237,
+  "p_value": 5.587935447692871e-09,
+  "p_value_holm": 2.2351741790771484e-08
+ },
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "mean_global_integration",
+  "n_pairs": 30,
+  "mean_a": 1.5270150331788823,
+  "mean_b": 3.5408784485192903,
+  "mean_paired_difference_b_minus_a": 2.013863415340408,
+  "median_paired_difference_b_minus_a": 1.8561755159737516,
+  "p_value": 4.7124922275543213e-07,
+  "p_value_holm": 1.4137476682662964e-06
+ },
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "intelligibility_r_squared",
+  "n_pairs": 30,
+  "mean_a": 0.678905589531989,
+  "mean_b": 0.7483133833052743,
+  "mean_paired_difference_b_minus_a": 0.06940779377328538,
+  "median_paired_difference_b_minus_a": 0.050976243441009705,
+  "p_value": 0.22064675763249397,
+  "p_value_holm": 0.22064675763249397
+ }
+]

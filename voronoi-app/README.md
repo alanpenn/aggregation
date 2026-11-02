@@ -22,6 +22,8 @@ See [ARCHITECTURE_PROGRESS.md](ARCHITECTURE_PROGRESS.md) for detailed refactorin
 - Dyad-based urban aggregation with slope preference
 - Visibility graph computation
 - Space-syntax analysis (connectivity, integration, choice measures)
+- Morphic grammar experiments with random, adjacent and enclosing occupation
+- Sampled maximal-line axial approximation and axial graph diagnostics
 - Experiment serialization to JSON
 - Reproducible research with seed control
 
@@ -39,6 +41,13 @@ From the project root:
 ```
 
 The script activates the venv, sets PYTHONPATH, and starts Streamlit on port 8501.
+The sidebar includes both **Morphic Grammar Experiments** and
+**Morphic Grammar - Emergent Axial Structure**.
+
+The axial page derives a sampled maximal-line approximation from continuous
+open-space geometry. It is explicitly not presented as a complete or unique
+conventional axial map. See [MORPHIC_GRAMMAR_AXIAL_REPORT.md](MORPHIC_GRAMMAR_AXIAL_REPORT.md)
+for definitions, validation, limitations and the 30-seed results.
 
 ## Running Tests
 
@@ -47,7 +56,15 @@ source .venv/bin/activate
 python -m pytest tests/ -v
 ```
 
-Current test status: **18 passing, 1 skipped** (see `tests/test_architecture.py`)
+Run the staged axial comparison (five-seed pilot first, then 30 seeds):
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/run_morphic_axial_batch.py --pilot
+PYTHONPATH=src .venv/bin/python scripts/run_morphic_axial_batch.py
+```
+
+Outputs are written under `outputs/morphic_axial_batch_pilot/` and
+`outputs/morphic_axial_batch/`.
 
 ## Project Structure
 

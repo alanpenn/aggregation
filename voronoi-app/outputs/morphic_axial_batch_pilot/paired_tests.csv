@@ -1,0 +1,5 @@
+mode_a,mode_b,stage,measure,n_pairs,mean_a,mean_b,mean_paired_difference_b_minus_a,median_paired_difference_b_minus_a,p_value,p_value_holm
+random,adjacent,60,axial_line_count,5,26.6,20.4,-6.2,-5.0,0.0625,0.25
+random,adjacent,60,mean_line_length,5,51.36017748679585,67.29126159364638,15.931084106850527,14.83290270512446,0.0625,0.25
+random,adjacent,60,mean_global_integration,5,1.618388818588056,3.3199989566185804,1.7016101380305246,1.44802771897788,0.125,0.25
+random,adjacent,60,intelligibility_r_squared,5,0.7120023214910124,0.6383858904001375,-0.07361643109087487,-0.04087954901962498,0.625,0.625

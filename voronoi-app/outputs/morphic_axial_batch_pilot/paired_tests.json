@@ -1,0 +1,54 @@
+[
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "axial_line_count",
+  "n_pairs": 5,
+  "mean_a": 26.6,
+  "mean_b": 20.4,
+  "mean_paired_difference_b_minus_a": -6.2,
+  "median_paired_difference_b_minus_a": -5.0,
+  "p_value": 0.0625,
+  "p_value_holm": 0.25
+ },
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "mean_line_length",
+  "n_pairs": 5,
+  "mean_a": 51.36017748679585,
+  "mean_b": 67.29126159364638,
+  "mean_paired_difference_b_minus_a": 15.931084106850527,
+  "median_paired_difference_b_minus_a": 14.83290270512446,
+  "p_value": 0.0625,
+  "p_value_holm": 0.25
+ },
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "mean_global_integration",
+  "n_pairs": 5,
+  "mean_a": 1.618388818588056,
+  "mean_b": 3.3199989566185804,
+  "mean_paired_difference_b_minus_a": 1.7016101380305246,
+  "median_paired_difference_b_minus_a": 1.44802771897788,
+  "p_value": 0.125,
+  "p_value_holm": 0.25
+ },
+ {
+  "mode_a": "random",
+  "mode_b": "adjacent",
+  "stage": 60,
+  "measure": "intelligibility_r_squared",
+  "n_pairs": 5,
+  "mean_a": 0.7120023214910124,
+  "mean_b": 0.6383858904001375,
+  "mean_paired_difference_b_minus_a": -0.07361643109087487,
+  "median_paired_difference_b_minus_a": -0.04087954901962498,
+  "p_value": 0.625,
+  "p_value_holm": 0.625
+ }
+]
