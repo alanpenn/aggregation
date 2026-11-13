@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
 import matplotlib.pyplot as plt
-import numpy as np
+from scipy.spatial import Voronoi
 
 from voronoi_app.render import fig_aggregation
 
@@ -46,17 +46,15 @@ def test_fig_aggregation_draws_black_door_lines(monkeypatch):
     monkeypatch.setattr(plt, "subplots", lambda *args, **kwargs: (fig, axes))
 
     result = SimpleNamespace(
-        voronoi=SimpleNamespace(
-            regions=[np.array([0, 1, 2]), np.array([0, 1, 2])],
-            point_region=np.array([0, 0]),
-            vertices=np.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]]),
+        voronoi=Voronoi(
+            [[0, 0], [10, 0], [10, 10], [0, 10], [4, 5], [6, 5]]
         ),
         config=SimpleNamespace(canvas_size=10),
-        buildings={1},
-        open_spaces={0},
-        doors=[(0, 1)],
-        building_labels={1: 1},
-        mean_depth={0: 0.5, 1: 0.5},
+        buildings={5},
+        open_spaces={4},
+        doors=[(4, 5)],
+        building_labels={5: 1},
+        mean_depth={4: 0.5, 5: 0.5},
         los_lines=[],
     )
 
