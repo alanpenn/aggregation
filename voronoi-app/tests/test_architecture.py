@@ -423,6 +423,7 @@ class TestExperimentOrchestrator:
         assert len(result.buildings) > 0
         assert len(result.open_spaces) > 0
         assert result.visibility_graph is not None
+        assert result.axial_map.lines
         assert len(result.mean_depth) > 0
     
     def test_full_pipeline_hill_terrain(self):

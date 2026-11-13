@@ -270,3 +270,19 @@ def fig_elevation(result: SimulationResult):
     ax.set_aspect("equal")
     fig.tight_layout()
     return fig
+
+
+def fig_axial_map(result):
+    """Render approximate axial sightlines over the experiment aggregation."""
+    fig = fig_aggregation(result)
+    ax = fig.axes[0]
+    for line in result.axial_map.lines:
+        ax.plot(
+            [line.start[0], line.end[0]],
+            [line.start[1], line.end[1]],
+            color="#00d4ff",
+            linewidth=2,
+            alpha=0.9,
+        )
+    ax.set_title("Axial sightline approximation")
+    return fig

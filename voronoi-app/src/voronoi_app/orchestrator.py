@@ -13,6 +13,7 @@ from .core import (
     ExperimentPipeline, Representation, Grid, TerrainMetadata,
     AggregationResult
 )
+from .axial import AxialLine, AxialMap
 from .registry import get_registry
 
 
@@ -25,6 +26,7 @@ class ExperimentOutput:
     aggregation: AggregationResult
     visibility_graph: nx.Graph
     representation: Representation
+    axial_map: AxialMap
     analysis_results: Dict[str, Dict[int, float]]
     
     # For backwards compatibility with old rendering
@@ -115,16 +117,40 @@ class ExperimentOrchestrator:
             seed=self.pipeline.seed
         )
         
+        # Build visibility links once; they also supply the axial-line overlay.
+        visibility_representation = self._build_visibility_graph_representation(
+            grid, aggregation
+        )
+
         # 4. Build the selected open-space representation
         if self.pipeline.representation == "cell_graph":
             representation = self._build_cell_graph_representation(grid, aggregation)
         elif self.pipeline.representation == "visibility_graph":
-            representation = self._build_visibility_graph_representation(grid, aggregation)
+            representation = visibility_representation
         else:
             raise ValueError(
                 f"Unknown representation '{self.pipeline.representation}'. "
                 "Expected 'cell_graph' or 'visibility_graph'."
             )
+
+        axial_map = AxialMap(
+            lines=[
+                AxialLine(
+                    line_id=index,
+                    start=tuple(sightline["start"]),
+                    end=tuple(sightline["end"]),
+                    attributes={
+                        "symbol": "axial_line",
+                        "from_space": sightline["from_space"],
+                        "to_space": sightline["to_space"],
+                    },
+                )
+                for index, sightline in enumerate(
+                    visibility_representation.metadata["sightlines"]
+                )
+            ],
+            metadata={"source": "open_space_visibility_approximation"},
+        )
         
         # 5. Compute space-syntax measures
         measure_name = self.pipeline.space_syntax_measure
@@ -134,7 +160,7 @@ class ExperimentOrchestrator:
         }
         
         # 6. Compute visibility graph
-        visibility_graph = self._representation_to_graph(representation)
+        visibility_graph = self._representation_to_graph(visibility_representation)
         
         # 7. Sample terrain field
         terrain_sample = terrain.sample_field(resolution=256)
@@ -146,6 +172,7 @@ class ExperimentOrchestrator:
             aggregation=aggregation,
             visibility_graph=visibility_graph,
             representation=representation,
+            axial_map=axial_map,
             analysis_results=analysis_results,
         )
     
@@ -190,21 +217,36 @@ class ExperimentOrchestrator:
             for left, right in grid.edges
             if left in aggregation.open_spaces and right in aggregation.open_spaces
         }
+        sightlines = []
         for position, left in enumerate(open_spaces):
             for right in open_spaces[position + 1:]:
                 left_polygon = polygons.get(left)
                 right_polygon = polygons.get(right)
                 if left_polygon is None or right_polygon is None:
                     continue
-                if self._spaces_are_visible(left_polygon, right_polygon, blocking_geometry):
+                sightline = self._find_space_sightline(
+                    left_polygon, right_polygon, blocking_geometry
+                )
+                if sightline is not None:
                     edges.add((left, right))
+                    coordinates = list(sightline.coords)
+                    sightlines.append({
+                        "from_space": left,
+                        "to_space": right,
+                        "start": coordinates[0],
+                        "end": coordinates[-1],
+                    })
 
         return Representation(
             name="visibility_graph",
             nodes=open_spaces,
             edges=sorted(edges),
             node_attributes={node: grid.node_attributes[node] for node in open_spaces},
-            metadata={"type": "visibility_graph", "source": "open_space_sightlines"}
+            metadata={
+                "type": "visibility_graph",
+                "source": "open_space_sightlines",
+                "sightlines": sightlines,
+            }
         )
 
     def _representation_to_graph(self, representation: Representation) -> nx.Graph:
@@ -268,16 +310,17 @@ class ExperimentOrchestrator:
                 polygons[point_index] = polygon
         return polygons
 
-    def _spaces_are_visible(self, left, right, blocking_geometry) -> bool:
-        """Test representative and boundary points for one unobstructed sightline."""
+    @staticmethod
+    def _find_space_sightline(left, right, blocking_geometry):
+        """Return one unobstructed segment between two open-space polygons."""
         left_points = [left.representative_point()] + list(left.exterior.coords[:-1])
         right_points = [right.representative_point()] + list(right.exterior.coords[:-1])
         for left_point in left_points:
             for right_point in right_points:
                 sightline = LineString([left_point, right_point])
                 if blocking_geometry is None or not blocking_geometry.intersects(sightline):
-                    return True
-        return False
+                    return sightline
+        return None
 
 
 # Helper function for convenience

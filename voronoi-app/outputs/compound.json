@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "formula": "Y o (X o ((x1 x2) o (y1 y2))) o (X o y3)",
+    "mode": "non_distributed",
+    "grid_size": [
+      48,
+      64
+    ],
+    "seed": 17,
+    "iterations": 7,
+    "accepted_moves": 7,
+    "rejections": 0,
+    "rejection_rate": 0.0,
+    "boundary_count": 4,
+    "space_count": 3
+  },
+  "nodes": [
+    {
+      "id": "boundary-35-36",
+      "row": 35,
+      "column": 36,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-40-36",
+      "row": 40,
+      "column": 36,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-40-37",
+      "row": 40,
+      "column": 37,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-17-41",
+      "row": 17,
+      "column": 41,
+      "element_type": "boundary"
+    },
+    {
+      "id": "space-28-37",
+      "row": 28,
+      "column": 37,
+      "element_type": "space"
+    },
+    {
+      "id": "space-26-38",
+      "row": 26,
+      "column": 38,
+      "element_type": "space"
+    },
+    {
+      "id": "space-38-37",
+      "row": 38,
+      "column": 37,
+      "element_type": "space"
+    }
+  ],
+  "edges": [
+    {
+      "source": "boundary-40-36",
+      "target": "boundary-40-37",
+      "relation": "adjacent"
+    }
+  ]
+}

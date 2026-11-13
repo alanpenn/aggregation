@@ -1,0 +1,171 @@
+{
+  "metadata": {
+    "formula": "Y o X1 X2 X3 ... Xk o Xk+1",
+    "mode": "distributed",
+    "grid_size": [
+      48,
+      64
+    ],
+    "seed": 17,
+    "iterations": 20,
+    "accepted_moves": 20,
+    "rejections": 0,
+    "rejection_rate": 0.0,
+    "boundary_count": 8,
+    "space_count": 12
+  },
+  "nodes": [
+    {
+      "id": "boundary-35-36",
+      "row": 35,
+      "column": 36,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-40-36",
+      "row": 40,
+      "column": 36,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-40-37",
+      "row": 40,
+      "column": 37,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-17-41",
+      "row": 17,
+      "column": 41,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-41-37",
+      "row": 41,
+      "column": 37,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-35-35",
+      "row": 35,
+      "column": 35,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-16-41",
+      "row": 16,
+      "column": 41,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-0-46",
+      "row": 0,
+      "column": 46,
+      "element_type": "boundary"
+    },
+    {
+      "id": "space-15-40",
+      "row": 15,
+      "column": 40,
+      "element_type": "space"
+    },
+    {
+      "id": "space-25-37",
+      "row": 25,
+      "column": 37,
+      "element_type": "space"
+    },
+    {
+      "id": "space-7-37",
+      "row": 7,
+      "column": 37,
+      "element_type": "space"
+    },
+    {
+      "id": "space-4-38",
+      "row": 4,
+      "column": 38,
+      "element_type": "space"
+    },
+    {
+      "id": "space-28-45",
+      "row": 28,
+      "column": 45,
+      "element_type": "space"
+    },
+    {
+      "id": "space-40-45",
+      "row": 40,
+      "column": 45,
+      "element_type": "space"
+    },
+    {
+      "id": "space-28-37",
+      "row": 28,
+      "column": 37,
+      "element_type": "space"
+    },
+    {
+      "id": "space-34-36",
+      "row": 34,
+      "column": 36,
+      "element_type": "space"
+    },
+    {
+      "id": "space-17-40",
+      "row": 17,
+      "column": 40,
+      "element_type": "space"
+    },
+    {
+      "id": "space-2-40",
+      "row": 2,
+      "column": 40,
+      "element_type": "space"
+    },
+    {
+      "id": "space-26-44",
+      "row": 26,
+      "column": 44,
+      "element_type": "space"
+    },
+    {
+      "id": "space-23-40",
+      "row": 23,
+      "column": 40,
+      "element_type": "space"
+    }
+  ],
+  "edges": [
+    {
+      "source": "boundary-35-36",
+      "target": "boundary-35-35",
+      "relation": "adjacent"
+    },
+    {
+      "source": "boundary-35-36",
+      "target": "space-34-36",
+      "relation": "adjacent"
+    },
+    {
+      "source": "boundary-40-36",
+      "target": "boundary-40-37",
+      "relation": "adjacent"
+    },
+    {
+      "source": "boundary-40-37",
+      "target": "boundary-41-37",
+      "relation": "adjacent"
+    },
+    {
+      "source": "boundary-17-41",
+      "target": "boundary-16-41",
+      "relation": "adjacent"
+    },
+    {
+      "source": "boundary-17-41",
+      "target": "space-17-40",
+      "relation": "adjacent"
+    }
+  ]
+}

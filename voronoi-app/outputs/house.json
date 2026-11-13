@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "formula": "X o ((x2 x3) o y1) o x4",
+    "mode": "non_distributed",
+    "grid_size": [
+      48,
+      64
+    ],
+    "seed": 17,
+    "iterations": 5,
+    "accepted_moves": 5,
+    "rejections": 0,
+    "rejection_rate": 0.0,
+    "boundary_count": 4,
+    "space_count": 1
+  },
+  "nodes": [
+    {
+      "id": "boundary-35-36",
+      "row": 35,
+      "column": 36,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-40-36",
+      "row": 40,
+      "column": 36,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-40-37",
+      "row": 40,
+      "column": 37,
+      "element_type": "boundary"
+    },
+    {
+      "id": "boundary-17-41",
+      "row": 17,
+      "column": 41,
+      "element_type": "boundary"
+    },
+    {
+      "id": "space-28-37",
+      "row": 28,
+      "column": 37,
+      "element_type": "space"
+    }
+  ],
+  "edges": [
+    {
+      "source": "boundary-40-36",
+      "target": "boundary-40-37",
+      "relation": "adjacent"
+    }
+  ]
+}

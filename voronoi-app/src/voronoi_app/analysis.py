@@ -30,7 +30,7 @@ class MeanDepthMeasure(SpaceSyntaxMeasure):
     
     @property
     def supported_representations(self) -> List[str]:
-        return ["cell_graph", "dual_graph"]
+        return ["cell_graph", "dual_graph", "axial_map"]
     
     @property
     def parameters(self) -> Dict[str, ParameterSchema]:
@@ -89,7 +89,7 @@ class ConnectivityMeasure(SpaceSyntaxMeasure):
     
     @property
     def supported_representations(self) -> List[str]:
-        return ["cell_graph", "dual_graph"]
+        return ["cell_graph", "dual_graph", "axial_map"]
     
     @property
     def parameters(self) -> Dict[str, ParameterSchema]:
@@ -134,7 +134,7 @@ class IntegrationMeasure(SpaceSyntaxMeasure):
     
     @property
     def supported_representations(self) -> List[str]:
-        return ["cell_graph", "dual_graph"]
+        return ["cell_graph", "dual_graph", "axial_map"]
     
     @property
     def parameters(self) -> Dict[str, ParameterSchema]:
@@ -192,7 +192,7 @@ class ChoiceMeasure(SpaceSyntaxMeasure):
     
     @property
     def supported_representations(self) -> List[str]:
-        return ["cell_graph", "dual_graph"]
+        return ["cell_graph", "dual_graph", "axial_map"]
     
     @property
     def parameters(self) -> Dict[str, ParameterSchema]:

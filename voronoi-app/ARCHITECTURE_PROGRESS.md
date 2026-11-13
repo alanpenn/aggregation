@@ -274,7 +274,10 @@ registry.register_measure("my_measure", MyMeasure)
 - [ ] Streamlit UI updates (terrain selector, parameter controls)
 
 ### Deferred (Out of Scope for Phase 1)
-- [ ] Axial map representation (full implementation)
+- [x] Axial-line representation and intersection-graph conversion (initial implementation)
+- [x] Bounded, deterministic morphic graph-rewriting engine with generation traces
+- [ ] Axial-map extraction from arbitrary open-space geometry
+- [ ] Grammar-driven Streamlit page and configurational-analysis workflow
 - [ ] GeoTIFF/real DEM import
 - [ ] Distance-based and visibility-based aggregation strategies (stubs only)
 - [ ] Advanced measures (angular analysis, segment analysis)

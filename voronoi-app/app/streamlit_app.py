@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from voronoi_app.registry import get_registry
 from voronoi_app.orchestrator import run_experiment_pipeline
 from voronoi_app.core import ExperimentPipeline, UrbanFormComposition
-from voronoi_app.render import fig_aggregation, fig_elevation
+from voronoi_app.render import fig_aggregation, fig_elevation, fig_axial_map
 
 
 def display_figure(figure):
@@ -266,6 +266,13 @@ if run_clicked:
         with col2:
             st.subheader("Digital Elevation Model")
             display_figure(fig_elevation(result))
+
+        st.subheader("Axial sightlines")
+        st.caption(
+            "Approximate clear lines between open-space cells; these are not "
+            "a canonical maximal axial map."
+        )
+        display_figure(fig_axial_map(result))
         
         # Results summary
         st.subheader("📊 Analysis Results")

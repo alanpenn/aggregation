@@ -10,7 +10,8 @@ This application has been refactored into a **modular, extensible research platf
 - **Grid Generators** (Voronoi, Cartesian)
 - **Aggregation Strategies** (Slope preference, future: distance, visibility)
 - **Space-Syntax Measures** (Mean Depth, Connectivity, Integration, Choice)
-- **Representations** (Cell graph, Dual graph, future: Axial maps)
+- **Representations** (Cell graph, Dual graph, geometric Axial maps)
+- **Morphic grammar** (deterministic graph rewriting with bounded evaluation and traces)
 
 See [ARCHITECTURE_PROGRESS.md](ARCHITECTURE_PROGRESS.md) for detailed refactoring status and extension guide.
 
@@ -22,6 +23,8 @@ See [ARCHITECTURE_PROGRESS.md](ARCHITECTURE_PROGRESS.md) for detailed refactorin
 - Dyad-based urban aggregation with slope preference
 - Visibility graph computation
 - Space-syntax analysis (connectivity, integration, choice measures)
+- Axial-line intersection graphs usable by the configurational measures
+- Reproducible graph grammar rules for generating spatial structures
 - Experiment serialization to JSON
 - Reproducible research with seed control
 
@@ -47,7 +50,7 @@ source .venv/bin/activate
 python -m pytest tests/ -v
 ```
 
-Current test status: **18 passing, 1 skipped** (see `tests/test_architecture.py`)
+Run the test suite with the command above to see the current result.
 
 ## Project Structure
 
@@ -62,6 +65,8 @@ voronoi-app/
 │   ├── grid_generators.py        # Grid strategies
 │   ├── aggregation.py            # Aggregation strategies
 │   ├── analysis.py               # Space-syntax measures
+│   ├── axial.py                  # Axial-line map and graph conversion
+│   ├── grammar.py                # Morphic graph grammar evaluation
 │   ├── orchestrator.py           # Experiment orchestration
 │   ├── config.py                 # Legacy config (preserved)
 │   ├── engine.py                 # Legacy engine (preserved)
