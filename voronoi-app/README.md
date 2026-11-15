@@ -231,6 +231,22 @@ The app's live path is `orchestrator.generate_experiment_axial_map` ->
 `angular_optimisation.optimise_angular_map`. It operates on floating-point
 `AxialLine` objects. It does **not** load the certified research pool or maps.
 
+To inspect an exact pool for a new settlement, choose **Exact axial candidates**,
+run an experiment, and then click **Run exact candidate enumeration**. The app
+uses the original occupied and open cell polygons from that experiment; it does
+not require the Y fixtures or run a selector. The pool remains in session state
+until a new experiment is run. Changing sidebar parameters alone does not change
+the current experiment. Filter by support type, length or building and inspect
+the rational interval and all its supporting vertices. Only plotting converts
+line coordinates to floats. Candidate IDs are local to the generated pool.
+
+Enumeration checks all convex vertex pairs and can take minutes on large
+settlements. Domain/union exclusions are conservative and available for review;
+they are not classified as numerical failures. Accepted-support completeness is
+checked within the implemented support rules only, not for all possible lines.
+The underlying settlement coordinates are binary64 values represented as exact
+rationals, while the domain overlay and convex decomposition use GEOS.
+
 The separate research path uses `exact_enumeration.generate_fresh_exact_candidate_pool`
 and `exact_pool_from_dict`, with exact predicates, coverage, connectivity,
 rings and selection in `exact_axial`. `angular` supplies the common sample
@@ -251,6 +267,14 @@ Run the six saved-map certifications and the routing comparisons with:
 
 ```bash
 .venv/bin/python -m pytest -q tests/test_exact_replay.py tests/test_angular.py
+```
+
+Full re-enumeration of the saved Y pool is deliberately opt-in because it is
+slow. It compares all canonical exact intervals and their complete provenance,
+checks every candidate's clearance, and verifies the recorded rejection counts:
+
+```bash
+EXACT_Y_REGENERATE=1 .venv/bin/python -m pytest -q -s tests/test_exact_replay.py -k fresh_y_pool
 ```
 
 The replay checks original-polygon and domain clearance, all 267 convex regions,

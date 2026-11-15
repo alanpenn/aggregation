@@ -4,6 +4,8 @@ import gzip
 import hashlib
 import json
 import math
+import os
+from time import monotonic
 from pathlib import Path
 
 import networkx as nx
@@ -20,7 +22,7 @@ from voronoi_app.convex_coverage import convex_regions
 from voronoi_app.exact_axial import (
     _attach_selected_samples, candidate_graph, closed_routes, region_coverage,
 )
-from voronoi_app.exact_enumeration import exact_pool_from_dict
+from voronoi_app.exact_enumeration import exact_pool_from_dict, generate_fresh_exact_candidate_pool
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "exact_y"
@@ -140,3 +142,27 @@ def test_certified_exact_map_replay(replay, name):
     }
     for metric, value in calculated.items():
         assert value == pytest.approx(saved["metrics"][metric], abs=1e-10, rel=0)
+
+
+@pytest.mark.skipif(os.environ.get("EXACT_Y_REGENERATE") != "1",
+                    reason="Slow exact Y regeneration; set EXACT_Y_REGENERATE=1")
+def test_fresh_y_pool_reproduces_exact_intervals_and_provenance(replay):
+    manifest, reference, _, saved_pool, _, _, _, _ = replay
+    entry = manifest["files"][reference["settlement_source"]]
+    snapshot = json.loads(gzip.decompress((FIXTURES / entry["fixture"]).read_bytes()))
+    opened, occupied, _, _, _ = load_axial_snapshot(snapshot)
+    start = monotonic()
+    problem, audit = generate_fresh_exact_candidate_pool(opened, occupied)
+    print(f"\nY generation seconds={monotonic() - start:.2f} counts={audit.counts}")
+    assert len(problem.pool.candidates) == len(saved_pool.candidates) == 1651
+    assert _identity_hash(problem.pool.candidates) == _identity_hash(saved_pool.candidates)
+    assert all(problem.clearance.permits_exact(line.start, line.end)
+               for line in problem.pool.candidates)
+    assert audit.counts["missing-certified-supports"] == 0
+    assert audit.counts["mutual-tangent:valid"] == 1260
+    assert audit.counts["mutual-tangent:occupied-interior"] == 18310
+    assert audit.counts["mutual-tangent:not-supporting"] == 67006
+    assert audit.counts["occupied-face:domain-or-union"] == 215
+    assert audit.counts["mutual-tangent:domain-or-union"] == 180
+    assert audit.counts["same-building-tangent:domain-or-union"] == 6
+    assert len(audit.domain_rejections) == 401

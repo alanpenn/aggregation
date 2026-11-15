@@ -1,6 +1,8 @@
 import json
 import random
 import sys
+import time
+import warnings
 from dataclasses import replace
 from io import BytesIO
 from pathlib import Path
@@ -16,7 +18,9 @@ sys.path.insert(0, str(ROOT / "src"))
 
 # Import new architecture
 from voronoi_app.registry import get_registry
-from voronoi_app.orchestrator import generate_experiment_axial_map, run_experiment_pipeline
+from voronoi_app.orchestrator import (
+    ExperimentOrchestrator, generate_experiment_axial_map, run_experiment_pipeline,
+)
 from voronoi_app.core import ExperimentPipeline, UrbanFormComposition
 from voronoi_app.render import (
     fig_aggregation, fig_elevation, fig_axial_map, fig_generated_axial_map,
@@ -33,6 +37,7 @@ from voronoi_app.axial_diagnostics import cached_axial_audit
 from voronoi_app.axial_generator import ConvexCoverageError
 from voronoi_app.axial_snapshot import load_axial_snapshot, make_axial_snapshot, save_axial_snapshot
 from voronoi_app.certified_maps import decode_certified_research, read_certified_fixture_bytes
+from voronoi_app.exact_enumeration import generate_fresh_exact_candidate_pool
 
 
 @st.cache_data(max_entries=2)
@@ -48,6 +53,133 @@ def display_figure(figure, alt=None):
     image = Image.open(image_buffer).convert("RGB")
     image.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
     st.image(image, alt=alt)
+
+
+def display_exact_candidates(result):
+    """Enumerate only on request and retain the exact result for this experiment."""
+    st.subheader("Exact axial candidates")
+    st.caption(
+        "Exhaustive only for the implemented vertex, face, ring and fallback support rules; "
+        "not a claim of completeness for all sightlines. Input binary64 coordinates are "
+        "represented exactly as rationals; domain overlay and convex regions use GEOS. "
+        "Large settlements can take minutes to enumerate."
+    )
+    if st.button("Run exact candidate enumeration", key="run_exact_candidates"):
+        st.session_state.pop("exact_candidate_result", None)
+        try:
+            polygons = ExperimentOrchestrator(result.pipeline)._space_polygons(result.grid)
+            required = set(range(len(result.grid.nodes)))
+            missing = (required | set(result.open_spaces) | set(result.buildings)) - set(polygons)
+            if missing:
+                raise ValueError(f"Missing polygon geometry for cells: {sorted(missing)}")
+            opened = {cell: polygons[cell] for cell in required - set(result.buildings)}
+            occupied = {cell: polygons[cell] for cell in result.buildings}
+            progress = st.progress(0, text="Preparing exact candidate enumeration")
+
+            def update(examined, total, counts):
+                progress.progress(examined / total if total else 1.0,
+                                  text=f"Examined {examined:,}/{total:,} vertex pairs")
+
+            start = time.monotonic()
+            with warnings.catch_warnings(record=True) as captured:
+                warnings.simplefilter("always")
+                problem, audit = generate_fresh_exact_candidate_pool(
+                    opened, occupied, progress=update,
+                )
+            elapsed = time.monotonic() - start
+            progress.empty()
+            st.session_state["exact_candidate_result"] = (
+                opened, occupied, set(result.open_spaces), problem, audit, elapsed,
+                sorted({f"{item.category.__name__}: {item.message}" for item in captured}),
+            )
+        except ValueError as error:
+            st.error(f"Exact candidate enumeration failed: {error}")
+    saved = st.session_state.get("exact_candidate_result")
+    if saved is None:
+        st.info("Run exact enumeration for the current experiment to inspect its candidates.")
+        return
+    opened, occupied, paired, problem, audit, elapsed, captured = saved
+    lines = problem.pool.candidates
+    counts = audit.counts
+    st.write(f"Enumeration time: {elapsed:.1f} seconds. Distinct maximal candidates: {len(lines):,}.")
+    accepted = {key: value for key, value in counts.items() if key.endswith(":valid")}
+    rejected = {key: value for key, value in counts.items()
+                if key.endswith((":not-supporting", ":occupied-interior"))}
+    unresolved = {key: value for key, value in counts.items()
+                  if key.endswith(":domain-or-union")}
+    st.write(
+        f"Accepted supports: {sum(accepted.values()):,}; definitely rejected constructions: "
+        f"{sum(rejected.values()):,}; conservative exclusions requiring review: "
+        f"{len(audit.domain_rejections):,}."
+    )
+    st.write("Construction counts (supports, not distinct lines):")
+    st.json({"accepted": accepted, "definitely rejected": rejected,
+             "conservative domain/union exclusions": unresolved,
+             "missing certified supports": counts["missing-certified-supports"]})
+    st.caption(
+        "Domain/union exclusions are conservatively rejected by the existing predicate; "
+        "they are not individually diagnosed as numerical or geometric. An enumeration "
+        "failure prevents a completeness claim."
+    )
+    if audit.domain_rejections:
+        st.warning(f"{len(audit.domain_rejections):,} domain/union exclusions need further review.")
+        with st.expander("Inspect conservatively excluded supports"):
+            st.dataframe([
+                {"Type": support.source, "Start (exact)": str(support.start),
+                 "End (exact)": str(support.end),
+                 "Start vertices": str(support.start_vertices),
+                 "End vertices": str(support.end_vertices)}
+                for support in audit.domain_rejections
+            ], hide_index=True, alt="Conservatively excluded exact supports")
+    for warning in captured:
+        st.warning(warning)
+
+    sources = sorted({support.source for line in lines for support in line.provenance})
+    chosen_sources = st.multiselect("Candidate types", sources, default=sources, key="exact_types")
+    buildings = sorted({ref.building_id for line in lines for support in line.provenance
+                        for ref in (*support.start_vertices, *support.end_vertices)})
+    chosen_buildings = st.multiselect("Supporting buildings (empty means all)", buildings,
+                                      key="exact_buildings")
+    minimum = st.number_input("Minimum candidate length", min_value=0.0, value=0.0,
+                              key="exact_min_length")
+    maximum = st.number_input("Maximum candidate length (0 means unlimited)",
+                              min_value=0.0, value=0.0, key="exact_max_length")
+    filtered = [
+        line for line in lines
+        if any(support.source in chosen_sources for support in line.provenance)
+        and line.length >= minimum and (maximum == 0 or line.length <= maximum)
+        and (not chosen_buildings or any(
+            ref.building_id in chosen_buildings for support in line.provenance
+            for ref in (*support.start_vertices, *support.end_vertices)
+        ))
+    ]
+    st.write(f"Showing {len(filtered):,} of {len(lines):,} candidates.")
+    if not filtered:
+        st.info("No candidates match these filters.")
+        return
+    selected_id = st.selectbox("Inspect candidate", [line.line_id for line in filtered],
+                               key="exact_inspect")
+    selected = next(line for line in filtered if line.line_id == selected_id)
+    figure = fig_certified_axial_map(opened, occupied, paired, filtered)
+    ax = figure.axes[0]
+    ax.plot([float(selected.start[0]), float(selected.end[0])],
+            [float(selected.start[1]), float(selected.end[1])],
+            color="#d62828", linewidth=2)
+    ax.set_title("Exact candidates (display approximation); inspected line in red")
+    display_figure(figure, alt="Filtered exact candidates with inspected line highlighted")
+    st.write(f"Candidate {selected.line_id}; length {selected.length:.6f}")
+    st.json({
+        "maximal interval (exact)": [list(map(str, selected.start)), list(map(str, selected.end))],
+        "supports": [
+            {"type": support.source, "start": list(map(str, support.start)),
+             "end": list(map(str, support.end)),
+             "start vertices": [{"building": ref.building_id, "vertex": ref.vertex_index}
+                                for ref in support.start_vertices],
+             "end vertices": [{"building": ref.building_id, "vertex": ref.vertex_index}
+                              for ref in support.end_vertices]}
+            for support in selected.provenance
+        ],
+    })
 
 
 def store_snapshot(snapshot):
@@ -401,8 +533,10 @@ with st.sidebar:
     # Control settings
     st.subheader("Experiment Control")
     axial_display = st.selectbox(
-        "Axial display", ["Existing sightlines", "Axial Map", "All axial candidates",
-                          "Axial candidate audit"]
+        "Axial display (floating-point unless marked exact)",
+        ["Existing sightlines", "Axial Map", "All axial candidates",
+         "Axial candidate audit", "Exact axial candidates"],
+        key="axial_display",
     )
     axial_coverage = st.segmented_control(
         "Axial coverage",
@@ -422,7 +556,7 @@ with st.sidebar:
     angular_iterations = 0
     angular_seed = 42
     angular_penalty = 0.1
-    if selection_method != "Greedy (baseline)":
+    if selection_method != "Greedy (baseline)" and axial_display != "Exact axial candidates":
         angular_iterations = st.number_input(
             "Angular search iterations", min_value=1, max_value=10000, value=20, step=1,
         )
@@ -439,11 +573,13 @@ with st.sidebar:
             st.warning("Choose an axial map or candidate display for angular selection.")
     canvas_size = st.slider("Canvas size", 50, 200, 100, 10)
     use_random_seed = st.checkbox("Random seed each run", value=False)
-    seed = None if use_random_seed else st.number_input("Seed", 0, 999999, 42, 1)
+    seed = None if use_random_seed else st.number_input("Seed", 0, 999999, 42, 1, key="seed")
     
     run_clicked = st.button("▶ Run Experiment", type="primary", width="stretch",
+                            key="run_experiment",
                             disabled=(axial_coverage is None or (
                                 selection_method != "Greedy (baseline)" and
+                                axial_display != "Exact axial candidates" and
                                 (coverage_model != "convex" or axial_display == "Existing sightlines")
                             )))
 
@@ -495,6 +631,8 @@ if st.checkbox("Show certified research maps", key="show_certified_research"):
         display_figure(figure, alt=f"Certified research axial map: {labels[selected]}")
 
 if run_clicked:
+    st.session_state.pop("current_exact_experiment", None)
+    st.session_state.pop("exact_candidate_result", None)
     if use_random_seed:
         seed = random.randint(0, 999999)
     
@@ -527,6 +665,7 @@ if run_clicked:
         
         with st.spinner("🔄 Running experiment..."):
             result = run_experiment_pipeline(pipeline)
+        st.session_state["current_exact_experiment"] = result
         st.session_state["experiment_configuration"] = json.dumps(pipeline.to_dict(), indent=2)
         st.session_state.pop("axial_snapshot", None)
         
@@ -761,7 +900,7 @@ if run_clicked:
                 )
             except ValueError as error:
                 st.error(f"Axial map generation failed: {error}")
-        else:
+        elif axial_display == "Existing sightlines":
             st.subheader("Axial sightlines")
             st.caption(
                 "Approximate clear lines between open-space cells; these are not "
@@ -829,7 +968,7 @@ if run_clicked:
         import traceback
         st.text(traceback.format_exc())
 
-else:
+elif axial_display != "Exact axial candidates" or "current_exact_experiment" not in st.session_state:
     st.info(
         "👈 Configure your experiment in the sidebar and click **▶ Run Experiment** to begin. "
         "\n\n**Terrain Types:** Procedurally generated elevation fields"
@@ -837,6 +976,15 @@ else:
         "\n\n**Urban Forms:** Simple dyads, front/back yards, or courtyard clusters"
         "\n\n**Analysis Measures:** Connectivity, integration, depth, and choice centrality"
     )
+
+if axial_display == "Exact axial candidates":
+    experiment = st.session_state.get("current_exact_experiment")
+    if experiment is None:
+        st.info("Run an experiment before generating exact candidates.")
+    else:
+        st.caption(f"Current experiment seed: {experiment.pipeline.seed}. "
+                   "Sidebar changes take effect after running a new experiment.")
+        display_exact_candidates(experiment)
 
 st.subheader("Experiment diagnostics")
 uploaded_snapshot = st.file_uploader("Load axial diagnostic snapshot", type="json")
