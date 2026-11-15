@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "description": "Original unmodified research artifacts; SHA-256 values refer to uncompressed bytes.",
+  "files": {
+    "axial-648f8da1364449a6aa70fd24038eea21.json": {
+      "fixture": "axial-648f8da1364449a6aa70fd24038eea21.json.gz",
+      "sha256": "14ed31c12c61166390b2812c40810cc8d23edb6417f34bfbec74962a0929e27e",
+      "bytes": 4479418
+    },
+    "exact-y-fresh-candidates.json": {
+      "fixture": "exact-y-fresh-candidates.json.gz",
+      "sha256": "ce80fb861d6be7396bead81b3192974cc7781a9861c809324f214e3072eec4d0",
+      "bytes": 2937919
+    },
+    "exact-y-24-forced-reference.json": {
+      "fixture": "exact-y-24-forced-reference.json",
+      "sha256": "14b57691bbcd9241a86441eabf3a89ddf9f0fe42755d44dbfc778e8d4eecd857",
+      "bytes": 3497
+    },
+    "exact-y-23-pareto-reference.json": {
+      "fixture": "exact-y-23-pareto-reference.json",
+      "sha256": "0533583d141ccac09aa2503b587767dace2d6a31d5135a0aabe1c20c889f421c",
+      "bytes": 3710
+    },
+    "exact-y-pareto-results.json": {
+      "fixture": "exact-y-pareto-results.json",
+      "sha256": "bee5debb80951bf4d01354a3c2e41e28c6f0e623d59a72b522613dde880e56c1",
+      "bytes": 19500
+    }
+  },
+  "canonical_identity": {
+    "format": "unordered exact interval and source+vertex-referenced exact support set; IDs excluded",
+    "pool_sha256": "dcf5014b9bb8e395d20620673af54fa2343702f29e9cfc8a33c1e2f6e2f2646a",
+    "maps_sha256": {
+      "reference24": "3b3f95d9357db4bc9caa560648cba10f82cb2392a0914efbc8ca69f64f184116",
+      "reference23": "4f73871a54339f7677fc723d117c44d16e4306d17c6f8edc763474d07377d63a",
+      "best23": "329ee0ab8586366b125804f0d2c55628f0d835eb41fcad24ac02ac2895d7bebb",
+      "best24": "7daa4bcd2a74613e7c34b578787286879bfcb4973eb5cc109ee99344c1ecc1b4",
+      "best25": "f5773e394bd434a044a642ec9f87e745258239410e3babd7e66563e33dd05e37",
+      "best_all_excluded": "be7a5fdcbdebea16b444c2b9617d19a9067bee09905d05b908c5a58cca35f986"
+    }
+  }
+}

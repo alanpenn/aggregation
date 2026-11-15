@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from math import hypot, isfinite
 from typing import Any, Dict, List, Tuple
 
-from shapely.geometry import LineString, Point
+from shapely.geometry import LineString
 
 from .core import Representation
 
@@ -57,7 +57,7 @@ class AxialMap:
             raise ValueError("axial line identifiers must be unique")
 
     def to_representation(self) -> Representation:
-        """Create a graph whose nodes are lines and edges are point intersections."""
+        """Create a graph whose nodes are lines and edges are intersections."""
         line_geometries = {
             line.line_id: LineString((line.start, line.end))
             for line in self.lines
@@ -68,14 +68,8 @@ class AxialMap:
                 intersection = line_geometries[left.line_id].intersection(
                     line_geometries[right.line_id]
                 )
-                if isinstance(intersection, Point) and not intersection.is_empty:
+                if not intersection.is_empty:
                     edges.append((left.line_id, right.line_id))
-                elif hasattr(intersection, "geoms"):
-                    if any(
-                        isinstance(geometry, Point) and not geometry.is_empty
-                        for geometry in intersection.geoms
-                    ):
-                        edges.append((left.line_id, right.line_id))
 
         node_attributes = {}
         for line in self.lines:

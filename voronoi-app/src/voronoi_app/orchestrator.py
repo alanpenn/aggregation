@@ -328,3 +328,21 @@ def run_experiment_pipeline(pipeline: ExperimentPipeline) -> ExperimentOutput:
     """Run an experiment defined by a pipeline."""
     orchestrator = ExperimentOrchestrator(pipeline)
     return orchestrator.run()
+
+
+def generate_experiment_axial_map(result: ExperimentOutput, *, coverage_model: str = "cells"):
+    """Generate an axial map over every cell without a building."""
+    from .axial_generator import generate_axial_map
+
+    polygons = ExperimentOrchestrator(result.pipeline)._space_polygons(result.grid)
+    required = set(range(len(result.grid.nodes)))
+    missing = (required | set(result.open_spaces) | set(result.buildings)) - set(polygons)
+    if missing:
+        raise ValueError(f"Missing polygon geometry for cells: {sorted(missing)}")
+    open_cells = required - set(result.buildings)
+    generated = generate_axial_map(
+        {cell: polygons[cell] for cell in open_cells},
+        {cell: polygons[cell] for cell in result.buildings},
+        coverage_model=coverage_model,
+    )
+    return generated, polygons

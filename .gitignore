@@ -28,3 +28,4 @@ voronoi-app/.venv/
 voronoi-app/**/__pycache__/
 voronoi-app/**/*.pyc
 voronoi-app/**/*.egg-info/
+voronoi-app/diagnostics/

@@ -5,6 +5,8 @@ from shapely.geometry import Polygon, box
 
 from .engine import SimulationResult
 
+UNASSIGNED_OPEN_COLOR = "#f2e4bc"
+
 
 def _hill_elevation(x, y, canvas_size):
     cy = canvas_size / 2
@@ -104,6 +106,10 @@ def fig_aggregation(result: SimulationResult):
     ax.set_ylim(0, canvas_size)
     ax.set_aspect("equal")
     ax.set_title("Aggregation with Visibility Graph")
+    from matplotlib.patches import Patch
+    ax.legend(handles=[Patch(facecolor=UNASSIGNED_OPEN_COLOR, edgecolor="gray",
+                             label="Unassigned open (traversable)")],
+              loc="upper right", fontsize="small")
     ax.axis("off")
     fig.tight_layout()
     return fig
@@ -112,6 +118,9 @@ def fig_aggregation(result: SimulationResult):
 def _render_voronoi_aggregation(ax, result, voronoi, cmap, norm, mean_depth, canvas_size):
     """Render aggregation using Voronoi diagram."""
     regions = _finite_voronoi_regions(voronoi, canvas_size)
+    for region_index in set(regions) - set(result.buildings) - set(result.open_spaces):
+        x, y = zip(*regions[region_index])
+        ax.fill(x, y, color=UNASSIGNED_OPEN_COLOR)
     for region_index in result.buildings:
         polygon = regions.get(region_index)
         if polygon is None:
@@ -191,6 +200,10 @@ def _render_cartesian_aggregation(ax, result, grid, cmap, norm, mean_depth, canv
             rect = plt.Rectangle((cell_x, cell_y), cell_size, cell_size, 
                                   facecolor=color, edgecolor="gray", linewidth=0.5)
             ax.add_patch(rect)
+        else:
+            rect = plt.Rectangle((cell_x, cell_y), cell_size, cell_size,
+                                 facecolor=UNASSIGNED_OPEN_COLOR, edgecolor="gray", linewidth=0.5)
+            ax.add_patch(rect)
     
     # Draw doors as lines between cell centers
     for door in result.doors:
@@ -229,6 +242,8 @@ def _render_graph_aggregation(ax, result, grid, cmap, norm, mean_depth, canvas_s
         elif idx in result.open_spaces:
             color = cmap(norm(mean_depth.get(idx, 0)))
             ax.plot(x, y, 'o', color=color, markersize=8)
+        else:
+            ax.plot(x, y, 'o', color=UNASSIGNED_OPEN_COLOR, markersize=8)
     
     # Draw doors
     for door in result.doors:
@@ -285,4 +300,232 @@ def fig_axial_map(result):
             alpha=0.9,
         )
     ax.set_title("Axial sightline approximation")
+    return fig
+
+
+def fig_certified_axial_map(open_polygons, occupied_polygons, paired_open_cells, lines):
+    """Render saved research geometry; float conversion is for this figure only."""
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.collections import LineCollection
+    from matplotlib.figure import Figure
+
+    fig = Figure(figsize=(10, 10))
+    FigureCanvasAgg(fig)
+    ax = fig.subplots()
+    for cell, polygon in open_polygons.items():
+        x, y = polygon.exterior.xy
+        color = "white" if cell in paired_open_cells else UNASSIGNED_OPEN_COLOR
+        ax.fill(x, y, facecolor=color, edgecolor="lightgrey", linewidth=0.4)
+    for polygon in occupied_polygons.values():
+        x, y = polygon.exterior.xy
+        ax.fill(x, y, facecolor="grey", edgecolor="dimgray", linewidth=0.4)
+    segments = [
+        (tuple(float(value) for value in line.start),
+         tuple(float(value) for value in line.end))
+        for line in lines
+    ]
+    ax.add_collection(LineCollection(segments, colors="#2659a0", linewidths=1.5))
+    ax.autoscale_view()
+    ax.set_aspect("equal")
+    ax.set_title("Certified exact research map (display approximation)")
+    ax.axis("off")
+    fig.tight_layout()
+    return fig
+
+
+def fig_generated_axial_map(result, generated, polygons, show_candidates=False):
+    """Render the generated lines on the same cell polygons used for analysis."""
+    fig, ax = plt.subplots(figsize=(10, 10))
+    for cell in set(polygons) - set(result.buildings):
+        x, y = polygons[cell].exterior.xy
+        color = "white" if cell in result.open_spaces else UNASSIGNED_OPEN_COLOR
+        ax.fill(x, y, facecolor=color, edgecolor="lightgrey", linewidth=0.5)
+    for cell in result.buildings:
+        x, y = polygons[cell].exterior.xy
+        ax.fill(x, y, facecolor="grey", edgecolor="dimgray", linewidth=0.5)
+    if show_candidates:
+        from matplotlib.collections import LineCollection
+        segments = [(line.start, line.end) for line in generated.candidate_lines]
+        ax.add_collection(LineCollection(segments, colors="#2659a0", linewidths=0.6, alpha=0.3))
+    else:
+        colors = plt.get_cmap("tab10")
+        for index, line in enumerate(generated.axial_map.lines):
+            ax.plot([line.start[0], line.end[0]], [line.start[1], line.end[1]],
+                    color=colors(index % 10), linewidth=1.5)
+    ax.set_xlim(0, result.config.canvas_size)
+    ax.set_ylim(0, result.config.canvas_size)
+    ax.set_aspect("equal")
+    ax.set_title("All axial candidates" if show_candidates else "Greedy axial map approximation")
+    from matplotlib.patches import Patch
+    ax.legend(handles=[Patch(facecolor=UNASSIGNED_OPEN_COLOR, edgecolor="lightgrey",
+                             label="Unassigned open (traversable)")],
+              loc="upper right", fontsize="small")
+    ax.axis("off")
+    fig.tight_layout()
+    return fig
+
+
+def fig_convex_coverage(result, generated, polygons):
+    """Show experimental convex regions and which ones selected lines enter."""
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    for cell in set(polygons) - set(result.buildings):
+        x, y = polygons[cell].exterior.xy
+        ax.fill(x, y, facecolor="white", edgecolor="none")
+    for cell in result.buildings:
+        x, y = polygons[cell].exterior.xy
+        ax.fill(x, y, facecolor="grey", edgecolor="dimgray", linewidth=0.4)
+    for index, region in sorted(
+        generated.coverage_regions.items(),
+        key=lambda item: item[0] not in generated.covered_regions,
+    ):
+        x, y = region.exterior.xy
+        covered = index in generated.covered_regions
+        ax.fill(x, y, facecolor="#66aadd" if covered else "#e54848",
+                edgecolor="#3572a0" if covered else "#b00020",
+                linewidth=0.4 if covered else 1.0, alpha=0.12 if covered else 0.55)
+    for line in generated.axial_map.lines:
+        ax.plot([line.start[0], line.end[0]], [line.start[1], line.end[1]],
+                color="#006b3c", linewidth=1.2)
+    ax.set_xlim(0, result.config.canvas_size)
+    ax.set_ylim(0, result.config.canvas_size)
+    ax.set_aspect("equal")
+    ax.set_title("Experimental convex-region coverage")
+    ax.axis("off")
+    ax.legend(handles=[
+        Patch(facecolor="#66aadd", edgecolor="#3572a0", label="Covered convex region"),
+        Patch(facecolor="#e54848", edgecolor="#b00020", label="Uncovered convex region"),
+        Line2D([0], [0], color="#006b3c", label="Selected axial line"),
+    ], loc="upper right", fontsize="small")
+    fig.tight_layout()
+    return fig
+
+
+def fig_angular_comparison(result, polygons, candidates, greedy_ids, angular, samples, depths):
+    """Compare selected lines and show mean angular depth from the fixed samples."""
+    from matplotlib.lines import Line2D
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    for cell, polygon in polygons.items():
+        color = "grey" if cell in result.buildings else "white"
+        ax.fill(*polygon.exterior.xy, facecolor=color, edgecolor="lightgrey", linewidth=0.4)
+    angular_ids = {line.line_id for line in angular}
+    for line in candidates:
+        greedy, optimised = line.line_id in greedy_ids, line.line_id in angular_ids
+        if not (greedy or optimised):
+            continue
+        color = "#7450a0" if greedy and optimised else "#ca5343" if greedy else "#007d58"
+        ax.plot([line.start[0], line.end[0]], [line.start[1], line.end[1]],
+                color=color, linewidth=1.6, alpha=0.9)
+    sample_depths = [[depths[i, j] for j in range(len(samples)) if (i, j) in depths]
+                     for i in range(len(samples))]
+    means = [sum(values) / len(values) if values else np.nan for values in sample_depths]
+    vmax = max((value for value in means if np.isfinite(value)), default=0) or 1
+    points = ax.scatter([point[0] for point in samples], [point[1] for point in samples],
+                        c=means, cmap="inferno", vmin=0, vmax=vmax,
+                        s=45, edgecolor="white", zorder=5)
+    fig.colorbar(points, ax=ax, label="Mean angular depth from sample")
+    ax.legend(handles=[
+        Line2D([0], [0], color="#ca5343", label="Greedy only"),
+        Line2D([0], [0], color="#007d58", label="Angular only"),
+        Line2D([0], [0], color="#7450a0", label="Both"),
+    ], loc="upper right", fontsize="small")
+    ax.set_xlim(0, result.config.canvas_size)
+    ax.set_ylim(0, result.config.canvas_size)
+    ax.set_aspect("equal")
+    ax.set_title("Angular and greedy selection comparison")
+    ax.axis("off")
+    fig.tight_layout()
+    return fig
+
+
+def fig_axial_diagnostics(result, generated, polygons, audit):
+    """Show candidate provenance and independently identified missing tangents."""
+    from matplotlib.collections import LineCollection
+    from matplotlib.lines import Line2D
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    for cell in set(polygons) - set(result.buildings):
+        x, y = polygons[cell].exterior.xy
+        color = "white" if cell in result.open_spaces else UNASSIGNED_OPEN_COLOR
+        ax.fill(x, y, facecolor=color, edgecolor="lightgrey", linewidth=0.5)
+    for cell in result.buildings:
+        x, y = polygons[cell].exterior.xy
+        ax.fill(x, y, facecolor="grey", edgecolor="dimgray", linewidth=0.5)
+    styles = [
+        ("occluding", "Mutual tangent present", "#1a9850"),
+        ("vertex", "Other vertex candidates", "#8073ac"),
+        ("centroid", "Centroid candidates", "#377eb8"),
+        ("fallback", "Fallback candidates", "#ff9f1c"),
+        ("boundary", "Other boundary candidates", "#999999"),
+    ]
+    assigned = set()
+    from matplotlib.patches import Patch
+    legend = [Patch(facecolor=UNASSIGNED_OPEN_COLOR, edgecolor="lightgrey",
+                    label="Unassigned open (traversable)")]
+    for source, label, color in styles:
+        indices = audit.source_indices[source] - assigned
+        assigned.update(indices)
+        segments = [(generated.candidate_lines[i].start, generated.candidate_lines[i].end)
+                    for i in sorted(indices)]
+        if segments:
+            ax.add_collection(LineCollection(segments, colors=color, linewidths=0.8, alpha=0.65))
+            legend.append(Line2D([0], [0], color=color, label=label))
+    missing = [list(pair.maximal.coords) for pair in audit.pairs
+               if pair.status == "missing"]
+    if missing:
+        ax.add_collection(LineCollection(missing, colors="#e31a1c", linewidths=1.6,
+                                         linestyles="dashed"))
+        legend.append(Line2D([0], [0], color="#e31a1c", linestyle="--",
+                             label="Missing mutual tangent"))
+    indeterminate = [(pair.start, pair.end) for pair in audit.pairs
+                     if pair.status == "indeterminate clipping"]
+    if indeterminate:
+        ax.add_collection(LineCollection(indeterminate, colors="#e6ab02", linewidths=1.5,
+                                         linestyles="dotted"))
+        legend.append(Line2D([0], [0], color="#e6ab02", linestyle=":",
+                             label="Clipping indeterminate (seed)"))
+    ax.set_xlim(0, result.config.canvas_size)
+    ax.set_ylim(0, result.config.canvas_size)
+    ax.set_aspect("equal")
+    ax.set_title("Axial candidate audit")
+    ax.axis("off")
+    if legend:
+        ax.legend(handles=legend, loc="upper right", fontsize="small")
+    fig.tight_layout()
+    return fig
+
+
+def fig_unresolved_tangents(open_polygons, occupied_polygons, audit):
+    """Highlight unresolved seed segments and their independently clipped intervals."""
+    from matplotlib.collections import LineCollection
+    from matplotlib.lines import Line2D
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    for polygon in open_polygons.values():
+        x, y = polygon.exterior.xy
+        ax.fill(x, y, facecolor="white", edgecolor="lightgrey", linewidth=0.4)
+    for polygon in occupied_polygons.values():
+        x, y = polygon.exterior.xy
+        ax.fill(x, y, facecolor="grey", edgecolor="dimgray", linewidth=0.4)
+    unresolved = [pair for pair in audit.pairs if pair.status != "present"]
+    intervals = [list(pair.maximal.coords) for pair in unresolved if pair.maximal is not None]
+    if intervals:
+        ax.add_collection(LineCollection(intervals, colors="#377eb8", linewidths=1, alpha=0.65))
+    if unresolved:
+        ax.add_collection(LineCollection(
+            [(pair.start, pair.end) for pair in unresolved],
+            colors="#e31a1c", linewidths=2, linestyles="dashed",
+        ))
+    ax.autoscale_view()
+    ax.set_aspect("equal")
+    ax.set_title(f"Unresolved mutual tangents ({len(unresolved)})")
+    ax.legend(handles=[
+        Line2D([0], [0], color="#e31a1c", linestyle="--", label="Unresolved seed"),
+        Line2D([0], [0], color="#377eb8", label="Independent clipped interval (if available)"),
+    ], loc="upper right", fontsize="small")
+    ax.axis("off")
+    fig.tight_layout()
     return fig

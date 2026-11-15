@@ -3,15 +3,16 @@ from types import SimpleNamespace
 import matplotlib.pyplot as plt
 from scipy.spatial import Voronoi
 
-from voronoi_app.render import fig_aggregation
+from voronoi_app.render import UNASSIGNED_OPEN_COLOR, fig_aggregation
 
 
 class DummyAxes:
     def __init__(self):
         self.calls = []
+        self.fills = []
 
     def fill(self, *args, **kwargs):
-        pass
+        self.fills.append(kwargs)
 
     def text(self, *args, **kwargs):
         pass
@@ -29,6 +30,9 @@ class DummyAxes:
         pass
 
     def set_title(self, *args, **kwargs):
+        pass
+
+    def legend(self, *args, **kwargs):
         pass
 
     def axis(self, *args, **kwargs):
@@ -64,3 +68,4 @@ def test_fig_aggregation_draws_black_door_lines(monkeypatch):
         len(args) == 2 and kwargs.get("color") == "black" and kwargs.get("linewidth") == 1.5
         for args, kwargs in axes.calls
     )
+    assert any(fill.get("color") == UNASSIGNED_OPEN_COLOR for fill in axes.fills)

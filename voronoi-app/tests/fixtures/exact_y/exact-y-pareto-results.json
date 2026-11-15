@@ -1,0 +1,1064 @@
+{
+  "prior_results_sha256": "331a7bd3e93a8da0b23e419c5e380ee5e23ffbfd99aaa35be6203aaa955ebc17",
+  "first_search_sha256": "a02cd5d4a3bd9ddac61dfefcfdfcee4a0b3c51218d7238ec0700f91ff6d2db00",
+  "refine_search_sha256": "57fcfce572e3d6ed9033a64b7f0a7675237bb2ffef6a838ca6c54c5b4a2bc0b8",
+  "reference23_sha256": "0533583d141ccac09aa2503b587767dace2d6a31d5135a0aabe1c20c889f421c",
+  "baseline_sha256": "14b57691bbcd9241a86441eabf3a89ddf9f0fe42755d44dbfc778e8d4eecd857",
+  "pool_sha256": "ce80fb861d6be7396bead81b3192974cc7781a9861c809324f214e3072eec4d0",
+  "settlement_sha256": "14ed31c12c61166390b2812c40810cc8d23edb6417f34bfbec74962a0929e27e",
+  "unique_map_count": 1605,
+  "counts_by_budget": {
+    "23": 469,
+    "24": 490,
+    "25": 646
+  },
+  "simultaneous_count_by_budget": {
+    "23": 147,
+    "24": 58
+  },
+  "simultaneous_best_by_budget": {
+    "23": {
+      "selected": [
+        13,
+        63,
+        79,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1255,
+        1260,
+        1356,
+        1389,
+        1392,
+        1574,
+        1579,
+        1591,
+        1644
+      ],
+      "added": [
+        1255,
+        1389,
+        1392,
+        1579
+      ],
+      "removed": [
+        25,
+        30,
+        31,
+        41,
+        89
+      ],
+      "metrics": {
+        "count": 23,
+        "length": 1019.8642252202238,
+        "angular": 4.309300774895197,
+        "topological": 2.4047619047619047
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 31,
+      "unsafe_lines": [],
+      "samples": 36,
+      "source": "refine-23"
+    },
+    "24": {
+      "selected": [
+        7,
+        13,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        512,
+        577,
+        657,
+        668,
+        700,
+        972,
+        1044,
+        1078,
+        1206,
+        1260,
+        1356,
+        1445,
+        1505,
+        1574,
+        1591,
+        1644
+      ],
+      "added": [
+        7,
+        577,
+        668,
+        972,
+        1206,
+        1445,
+        1505
+      ],
+      "removed": [
+        25,
+        30,
+        31,
+        41,
+        473,
+        622,
+        965
+      ],
+      "metrics": {
+        "count": 24,
+        "length": 1093.63476339403,
+        "angular": 4.5112885326928165,
+        "topological": 2.6031746031746033
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 32,
+      "unsafe_lines": [],
+      "samples": 36,
+      "source": "refine-24-exclude-four"
+    }
+  },
+  "single_exclusions": {
+    "25": {
+      "selected": [
+        13,
+        30,
+        31,
+        41,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1256,
+        1260,
+        1356,
+        1574,
+        1591,
+        1644
+      ],
+      "added": [
+        1256
+      ],
+      "removed": [
+        25
+      ],
+      "metrics": {
+        "count": 24,
+        "length": 1019.6388865235659,
+        "angular": 4.33500681369687,
+        "topological": 2.407936507936508
+      },
+      "matching_exclusions": [
+        [
+          25
+        ]
+      ],
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 33,
+      "unsafe_lines": [],
+      "samples": 36,
+      "sources": [
+        "exhaustive-one-added-direct-24-baseline"
+      ]
+    },
+    "30": {
+      "selected": [
+        13,
+        25,
+        41,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1260,
+        1266,
+        1356,
+        1392,
+        1574,
+        1591,
+        1644
+      ],
+      "added": [
+        1266,
+        1392
+      ],
+      "removed": [
+        30,
+        31
+      ],
+      "metrics": {
+        "count": 24,
+        "length": 1032.5387945885748,
+        "angular": 4.309540654578976,
+        "topological": 2.407936507936508
+      },
+      "matching_exclusions": [
+        [
+          30
+        ],
+        [
+          31
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 33,
+      "unsafe_lines": [],
+      "samples": 36,
+      "sources": [
+        "bounded-sequential-forced-exchange"
+      ]
+    },
+    "31": {
+      "selected": [
+        13,
+        25,
+        41,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1260,
+        1266,
+        1356,
+        1392,
+        1574,
+        1591,
+        1644
+      ],
+      "added": [
+        1266,
+        1392
+      ],
+      "removed": [
+        30,
+        31
+      ],
+      "metrics": {
+        "count": 24,
+        "length": 1032.5387945885748,
+        "angular": 4.309540654578976,
+        "topological": 2.407936507936508
+      },
+      "matching_exclusions": [
+        [
+          30
+        ],
+        [
+          31
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 33,
+      "unsafe_lines": [],
+      "samples": 36,
+      "sources": [
+        "bounded-sequential-forced-exchange"
+      ]
+    },
+    "41": {
+      "selected": [
+        13,
+        25,
+        30,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1260,
+        1356,
+        1392,
+        1443,
+        1574,
+        1591,
+        1644
+      ],
+      "added": [
+        1392,
+        1443
+      ],
+      "removed": [
+        31,
+        41
+      ],
+      "metrics": {
+        "count": 24,
+        "length": 1026.8237019978121,
+        "angular": 4.331187093969393,
+        "topological": 2.407936507936508
+      },
+      "matching_exclusions": [
+        [
+          31
+        ],
+        [
+          41
+        ],
+        [
+          31,
+          41
+        ]
+      ],
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 33,
+      "unsafe_lines": [],
+      "samples": 36,
+      "sources": [
+        "bounded-sequential-forced-exchange"
+      ]
+    }
+  },
+  "single_30_31_identical": true,
+  "frontier_objectives": [
+    "line_count",
+    "mean_angular_depth"
+  ],
+  "frontier_counts": [
+    23,
+    24,
+    25
+  ],
+  "certifications": {
+    "reference24": {
+      "selected": [
+        13,
+        25,
+        30,
+        31,
+        41,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1260,
+        1356,
+        1574,
+        1591,
+        1644
+      ],
+      "added": [],
+      "removed": [],
+      "metrics": {
+        "count": 24,
+        "length": 1020.2276333716969,
+        "angular": 4.336670865110891,
+        "topological": 2.407936507936508
+      },
+      "remaining_priority_ids": [
+        25,
+        30,
+        31,
+        41
+      ],
+      "face_lines": {
+        "13": [
+          {
+            "building": 174,
+            "edge": 2
+          }
+        ],
+        "25": [
+          {
+            "building": 271,
+            "edge": 5
+          }
+        ],
+        "30": [
+          {
+            "building": 273,
+            "edge": 3
+          }
+        ],
+        "31": [
+          {
+            "building": 296,
+            "edge": 5
+          }
+        ],
+        "41": [
+          {
+            "building": 363,
+            "edge": 0
+          }
+        ],
+        "63": [
+          {
+            "building": 336,
+            "edge": 4
+          }
+        ],
+        "79": [
+          {
+            "building": 386,
+            "edge": 3
+          }
+        ],
+        "89": [
+          {
+            "building": 412,
+            "edge": 2
+          }
+        ],
+        "91": [
+          {
+            "building": 390,
+            "edge": 4
+          }
+        ],
+        "151": [
+          {
+            "building": 83,
+            "edge": 3
+          }
+        ]
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 33,
+      "unsafe_lines": [],
+      "samples": 36,
+      "ordered_sample_pairs": 1260,
+      "angular_reference_max_error": 0.0,
+      "topological_reference_identical": true
+    },
+    "reference23": {
+      "selected": [
+        13,
+        31,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1255,
+        1260,
+        1356,
+        1389,
+        1574,
+        1591,
+        1644
+      ],
+      "added": [
+        1255,
+        1389
+      ],
+      "removed": [
+        25,
+        30,
+        41
+      ],
+      "metrics": {
+        "count": 23,
+        "length": 1007.6096933496367,
+        "angular": 4.381078829850179,
+        "topological": 2.4904761904761905
+      },
+      "remaining_priority_ids": [
+        31
+      ],
+      "face_lines": {
+        "13": [
+          {
+            "building": 174,
+            "edge": 2
+          }
+        ],
+        "31": [
+          {
+            "building": 296,
+            "edge": 5
+          }
+        ],
+        "63": [
+          {
+            "building": 336,
+            "edge": 4
+          }
+        ],
+        "79": [
+          {
+            "building": 386,
+            "edge": 3
+          }
+        ],
+        "89": [
+          {
+            "building": 412,
+            "edge": 2
+          }
+        ],
+        "91": [
+          {
+            "building": 390,
+            "edge": 4
+          }
+        ],
+        "151": [
+          {
+            "building": 83,
+            "edge": 3
+          }
+        ]
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 31,
+      "unsafe_lines": [],
+      "samples": 36,
+      "ordered_sample_pairs": 1260,
+      "angular_reference_max_error": 0.0,
+      "topological_reference_identical": true
+    },
+    "best23": {
+      "selected": [
+        13,
+        31,
+        63,
+        79,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1078,
+        1240,
+        1255,
+        1260,
+        1356,
+        1389,
+        1574,
+        1579,
+        1591,
+        1644
+      ],
+      "added": [
+        1240,
+        1255,
+        1389,
+        1579
+      ],
+      "removed": [
+        25,
+        30,
+        41,
+        89,
+        1044
+      ],
+      "metrics": {
+        "count": 23,
+        "length": 1015.9540249294241,
+        "angular": 4.300026590303383,
+        "topological": 2.4047619047619047
+      },
+      "remaining_priority_ids": [
+        31
+      ],
+      "face_lines": {
+        "13": [
+          {
+            "building": 174,
+            "edge": 2
+          }
+        ],
+        "31": [
+          {
+            "building": 296,
+            "edge": 5
+          }
+        ],
+        "63": [
+          {
+            "building": 336,
+            "edge": 4
+          }
+        ],
+        "79": [
+          {
+            "building": 386,
+            "edge": 3
+          }
+        ],
+        "91": [
+          {
+            "building": 390,
+            "edge": 4
+          }
+        ],
+        "151": [
+          {
+            "building": 83,
+            "edge": 3
+          }
+        ]
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 31,
+      "unsafe_lines": [],
+      "samples": 36,
+      "ordered_sample_pairs": 1260,
+      "angular_reference_max_error": 0.0,
+      "topological_reference_identical": true
+    },
+    "best24": {
+      "selected": [
+        13,
+        25,
+        41,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1260,
+        1266,
+        1356,
+        1392,
+        1523,
+        1546,
+        1591,
+        1644
+      ],
+      "added": [
+        1266,
+        1392,
+        1523,
+        1546
+      ],
+      "removed": [
+        30,
+        31,
+        63,
+        1574
+      ],
+      "metrics": {
+        "count": 24,
+        "length": 1029.355071104058,
+        "angular": 4.249757143483105,
+        "topological": 2.3079365079365077
+      },
+      "remaining_priority_ids": [
+        25,
+        41
+      ],
+      "face_lines": {
+        "13": [
+          {
+            "building": 174,
+            "edge": 2
+          }
+        ],
+        "25": [
+          {
+            "building": 271,
+            "edge": 5
+          }
+        ],
+        "41": [
+          {
+            "building": 363,
+            "edge": 0
+          }
+        ],
+        "79": [
+          {
+            "building": 386,
+            "edge": 3
+          }
+        ],
+        "89": [
+          {
+            "building": 412,
+            "edge": 2
+          }
+        ],
+        "91": [
+          {
+            "building": 390,
+            "edge": 4
+          }
+        ],
+        "151": [
+          {
+            "building": 83,
+            "edge": 3
+          }
+        ]
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 34,
+      "unsafe_lines": [],
+      "samples": 36,
+      "ordered_sample_pairs": 1260,
+      "angular_reference_max_error": 0.0,
+      "topological_reference_identical": true
+    },
+    "best25": {
+      "selected": [
+        13,
+        25,
+        41,
+        63,
+        79,
+        89,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1038,
+        1044,
+        1078,
+        1260,
+        1266,
+        1356,
+        1392,
+        1546,
+        1591,
+        1644
+      ],
+      "added": [
+        1038,
+        1266,
+        1392,
+        1546
+      ],
+      "removed": [
+        30,
+        31,
+        1574
+      ],
+      "metrics": {
+        "count": 25,
+        "length": 1048.3447313039928,
+        "angular": 4.220619167763254,
+        "topological": 2.3523809523809525
+      },
+      "remaining_priority_ids": [
+        25,
+        41
+      ],
+      "face_lines": {
+        "13": [
+          {
+            "building": 174,
+            "edge": 2
+          }
+        ],
+        "25": [
+          {
+            "building": 271,
+            "edge": 5
+          }
+        ],
+        "41": [
+          {
+            "building": 363,
+            "edge": 0
+          }
+        ],
+        "63": [
+          {
+            "building": 336,
+            "edge": 4
+          }
+        ],
+        "79": [
+          {
+            "building": 386,
+            "edge": 3
+          }
+        ],
+        "89": [
+          {
+            "building": 412,
+            "edge": 2
+          }
+        ],
+        "91": [
+          {
+            "building": 390,
+            "edge": 4
+          }
+        ],
+        "151": [
+          {
+            "building": 83,
+            "edge": 3
+          }
+        ]
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 38,
+      "unsafe_lines": [],
+      "samples": 36,
+      "ordered_sample_pairs": 1260,
+      "angular_reference_max_error": 0.0,
+      "topological_reference_identical": true
+    },
+    "best_all_excluded": {
+      "selected": [
+        13,
+        63,
+        79,
+        91,
+        151,
+        437,
+        473,
+        512,
+        622,
+        657,
+        700,
+        965,
+        1044,
+        1078,
+        1255,
+        1260,
+        1356,
+        1389,
+        1392,
+        1574,
+        1579,
+        1591,
+        1644
+      ],
+      "added": [
+        1255,
+        1389,
+        1392,
+        1579
+      ],
+      "removed": [
+        25,
+        30,
+        31,
+        41,
+        89
+      ],
+      "metrics": {
+        "count": 23,
+        "length": 1019.8642252202238,
+        "angular": 4.309300774895197,
+        "topological": 2.4047619047619047
+      },
+      "remaining_priority_ids": [],
+      "face_lines": {
+        "13": [
+          {
+            "building": 174,
+            "edge": 2
+          }
+        ],
+        "63": [
+          {
+            "building": 336,
+            "edge": 4
+          }
+        ],
+        "79": [
+          {
+            "building": 386,
+            "edge": 3
+          }
+        ],
+        "91": [
+          {
+            "building": 390,
+            "edge": 4
+          }
+        ],
+        "151": [
+          {
+            "building": 83,
+            "edge": 3
+          }
+        ]
+      },
+      "regions_covered": 267,
+      "region_count": 267,
+      "rings_preserved": 3,
+      "ring_count": 3,
+      "graph_components": 1,
+      "graph_intersections": 31,
+      "unsafe_lines": [],
+      "samples": 36,
+      "ordered_sample_pairs": 1260,
+      "angular_reference_max_error": 0.0,
+      "topological_reference_identical": true
+    }
+  },
+  "limits": {
+    "first": {
+      "simultaneous_seeds_per_remaining_forbidden_and_count": 8,
+      "simultaneous_ring_checks_per_seed": 35,
+      "simultaneous_feasible_per_seed": 5,
+      "local_seeds_per_count": "five, plus 24-line baseline",
+      "local_removals_per_seed": "10, except all 23 from best 23-line seed",
+      "local_ring_checks_per_removal": 12,
+      "local_feasible_per_removal": 3,
+      "augmentation_24_seeds": 3,
+      "augmentation_ring_checks_per_seed": 50,
+      "augmentation_feasible_per_seed": 30
+    },
+    "refine": {
+      "best_seeds_per_count": 3,
+      "additional_best_all_excluded_seed": 1,
+      "removals": "all for best seed, 12 for each other seed",
+      "ring_checks_per_removal": 18,
+      "feasible_per_removal": 4,
+      "augmentation_seeds": 3,
+      "augmentation_ring_checks_per_seed": 100,
+      "augmentation_feasible_per_seed": 80
+    }
+  },
+  "stats": {
+    "first": {
+      "coverage_eligible": 66523,
+      "ring_checks": 859,
+      "feasible": 506,
+      "ring_failures": 353,
+      "disconnected": 7212,
+      "duplicate": 145,
+      "augmentation_ring_checks": 90,
+      "augmentation_feasible": 90
+    },
+    "refine": {
+      "ring_checks": 1152,
+      "feasible": 709,
+      "disconnected": 2982,
+      "ring_failures": 443,
+      "duplicate": 13
+    }
+  }
+}
