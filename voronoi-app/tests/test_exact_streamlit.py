@@ -12,6 +12,13 @@ from voronoi_app.orchestrator import ExperimentOrchestrator, run_experiment_pipe
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_streamlit_imports_and_initial_controls():
+    app = AppTest.from_file(str(ROOT / "app" / "streamlit_app.py"), default_timeout=120).run()
+    assert not app.exception
+    assert app.button(key="run_experiment")
+    assert app.selectbox(key="axial_display")
+
+
 @pytest.mark.parametrize(("seed", "grid", "grid_params"), [
     (11, "voronoi", {"num_points": 30}),
     (42, "voronoi", {"num_points": 30}),
