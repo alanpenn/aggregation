@@ -10,12 +10,14 @@ zero behind:
 * `b445e76` Secure and display certified axial research maps
 * `3c7dc55` Integrate exact axial candidate inspection
 
-These commits include `tests/fixtures/exact_y/` and
-`tests/fixtures/angular_y_geometry.json`. They are tracked but were not present
-on the local remote-tracking ref. Push both commits after review or a clone of
-that ref will not contain these fixtures.
+The main research handover commit is
+`49cc7ec4cebbe2b5b70ea8208b954085ce531575`. It and both earlier commits were
+pushed to `origin/morphic-grammar-local`. The earlier commits include
+`tests/fixtures/exact_y/` and `tests/fixtures/angular_y_geometry.json`.
+This document has a subsequent documentation commit; use `git rev-parse HEAD`
+after cloning to see the final branch commit.
 
-Worktree changes to review and commit:
+Files included in the main handover commit:
 
 * Modified: `README.md`, `src/voronoi_app/convex_coverage.py`,
   `tests/test_axial_generator.py`, `tests/test_render_doors.py`.
@@ -95,15 +97,35 @@ This size check excludes dependency directories and Git history.
 
 ## Setup on the second Mac
 
-Clone the repository and, **after the reviewed changes and two commits are
-pushed**, check out `morphic-grammar-local`. From `voronoi-app/`, with Python
-3.12 recommended:
+After separately transferring the archive to the second Mac, clone the branch
+and set up the app with Python 3.12:
 
 ```sh
+git clone --branch morphic-grammar-local https://github.com/alanpenn/aggregation.git
+cd aggregation/voronoi-app
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -e . pytest
 ./run_streamlit.sh
 ```
+
+For the archived research, replace `ARCHIVE` below with its transferred path.
+Extract into a new directory and copy the three replay inputs to a separate
+working directory, because the experiment scripts overwrite named results:
+
+```sh
+ARCHIVE="$HOME/Downloads/aggregation-research-transfer-2026-11-16.tar.gz"
+shasum -a 256 "$ARCHIVE"
+TRANSFER="$(mktemp -d "${TMPDIR:-/tmp}/voronoi-transfer.XXXXXX")"
+tar -xzf "$ARCHIVE" -C "$TRANSFER"
+SOURCE="$TRANSFER/home/.copilot/session-state/3191f707-b920-4e07-817a-e0bca07f81eb/files"
+DATA="$(mktemp -d "${TMPDIR:-/tmp}/voronoi-hill-work.XXXXXX")"
+cp "$SOURCE/hill42-corridor-pool.json" "$SOURCE/hill42-fresh-exact-baseline.json" \
+  "$SOURCE/boundary-hill42.json" "$DATA/"
+```
+
+Compare the `shasum` result to the archive hash above. Use `DATA` with the
+commands in `ANGULAR_FIDELITY_RESEARCH.md`; the extracted diagnostics are under
+`$TRANSFER/repository/voronoi-app/diagnostics/`.
 
 The app requires Python 3.11+, NumPy, SciPy, Matplotlib, NetworkX,
 Shapely >= 2.1 and Streamlit 1.67.0. `pytest` is not declared as a project
