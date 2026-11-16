@@ -1,19 +1,25 @@
-import pytest
-import networkx as nx
+import os
+from fractions import Fraction
 from math import hypot
 from types import SimpleNamespace
-from shapely.geometry import LineString, Point, Polygon, box
-from shapely.ops import polygonize, unary_union
 
+import networkx as nx
+import pytest
+from shapely.geometry import LineString, Point, Polygon, box
+from shapely.geometry.polygon import orient
+from shapely.ops import nearest_points, polygonize, unary_union
+
+from voronoi_app.angular import LineClearance, _exact_point
 from voronoi_app.axial_generator import (
     ConvexCoverageError,
     _candidate_graph, _closed_routes, _comparable_mean_depths, _connect_selected,
-    _maximal_interval, _reduce_collectively_redundant, _reduce_dominated,
+    _maximal_interval, _occludes, _parts, _reduce_collectively_redundant, _reduce_dominated,
     _select_axial_candidates, generate_axial_map,
 )
 from voronoi_app.axial import AxialLine, AxialMap
 from voronoi_app.convex_coverage import convex_regions, line_region_coverage
 from voronoi_app.core import ExperimentPipeline
+from voronoi_app.exact_enumeration import _supports, _vertices
 from voronoi_app.orchestrator import (
     ExperimentOrchestrator, generate_experiment_axial_map, run_experiment_pipeline,
 )
@@ -94,6 +100,138 @@ def test_convex_regions_preserve_domain_without_obstacle_interiors(domain):
     assert all(domain.covers(region) and region.equals(region.convex_hull)
                for region in regions.values())
     assert len(regions) >= 2
+
+
+def hill_seed42_experiment():
+    return run_experiment_pipeline(ExperimentPipeline(
+        terrain_provider="hill", terrain_params={"peak_height": 1.0},
+        grid_params={"num_points": 500, "jitter_ratio": 1.0},
+        aggregation_params={
+            "contour_preference": 0.95, "building_slope_preference": 0.95,
+            "max_dyads": 100, "stagnation_limit": 1000,
+        },
+        seed=42,
+    ))
+
+
+def assert_hill_components_and_regions(experiment, polygons, regions):
+    open_polygons = {cell: polygon for cell, polygon in polygons.items()
+                     if cell not in experiment.buildings}
+    occupied = unary_union([polygons[cell] for cell in experiment.buildings])
+    domain = unary_union(list(open_polygons.values())).difference(occupied)
+    parts = list(domain.geoms)
+    assert len(parts) == 3
+    dyads = unary_union([polygons[cell] for cell in experiment.open_spaces])
+    unpaired_parts = [part for part in parts if part.intersection(dyads).area == 0]
+    assert len(unpaired_parts) == 2
+    for cell in (335, 383):
+        assert cell in open_polygons and cell not in experiment.open_spaces
+        assert any(part.equals(open_polygons[cell]) for part in unpaired_parts)
+    for part in parts:
+        component_regions = [region for region in regions.values() if part.covers(region)]
+        assert component_regions
+        assert unary_union(component_regions).equals(part)
+    assert all(any(part.covers(region) for part in parts) for region in regions.values())
+    return domain
+
+
+def test_hill_seed42_convex_decomposition_keeps_disconnected_open_components():
+    experiment = hill_seed42_experiment()
+    polygons = ExperimentOrchestrator(experiment.pipeline)._space_polygons(experiment.grid)
+    opened = [polygon for cell, polygon in polygons.items() if cell not in experiment.buildings]
+    occupied = [polygons[cell] for cell in experiment.buildings]
+    domain = unary_union(opened).difference(unary_union(occupied))
+    regions = convex_regions(domain)
+    assert_hill_components_and_regions(experiment, polygons, regions)
+
+
+def test_hill_seed42_corridor_support_is_clear_and_directionally_maximal():
+    experiment = hill_seed42_experiment()
+    polygons = ExperimentOrchestrator(experiment.pipeline)._space_polygons(experiment.grid)
+    buildings = {experiment.building_labels[cell]: polygons[cell]
+                 for cell in experiment.buildings}
+    occupied = unary_union(list(buildings.values()))
+    opened = [polygon for cell, polygon in polygons.items() if cell not in experiment.buildings]
+    accessible = unary_union(opened).difference(occupied)
+    start = tuple(buildings[6].exterior.coords[0])
+    end = tuple(buildings[2].exterior.coords[1])
+    clearance = LineClearance(accessible, occupied, original_obstacles=buildings.values())
+    first, last = clearance.maximal_interval(start, end)
+    assert clearance.permits_exact(first, last)
+    direction = tuple(last[i] - first[i] for i in range(2))
+    step = Fraction(1, 1_000_000)
+    before = tuple(first[i] - step * direction[i] for i in range(2))
+    after = tuple(last[i] + step * direction[i] for i in range(2))
+    assert not clearance.permits_exact(before, last)
+    assert not clearance.permits_exact(first, after)
+    rendered = LineString([(float(x), float(y)) for x, y in (first, last)])
+    gate = LineString(nearest_points(buildings[2], buildings[15]))
+    assert rendered.crosses(gate)
+    assert Point(rendered.coords[0]).distance(buildings[19]) < 1e-8
+    assert Point(rendered.coords[-1]).distance(buildings[7]) < 1e-8
+    boundary_vertex = tuple(buildings[9].exterior.coords[5])
+    assert boundary_vertex == tuple(buildings[19].exterior.coords[0])
+    vertices, _ = _vertices({cell: polygons[cell] for cell in experiment.buildings})
+    a, b = _exact_point(boundary_vertex), _exact_point(end)
+    assert any(vertex.convex and _supports(vertex, b) for vertex in vertices[a])
+    assert any(vertex.convex and _supports(vertex, a) for vertex in vertices[b])
+    long_first, long_last = clearance.maximal_interval(boundary_vertex, end)
+    assert clearance.permits_exact(long_first, long_last)
+    long_direction = tuple(long_last[i] - long_first[i] for i in range(2))
+    assert not clearance.permits_exact(
+        tuple(long_first[i] - step * long_direction[i] for i in range(2)), long_last
+    )
+    assert not clearance.permits_exact(
+        long_first, tuple(long_last[i] + step * long_direction[i] for i in range(2))
+    )
+    long_line = LineString([(float(x), float(y)) for x, y in (long_first, long_last)])
+    assert long_line.crosses(gate)
+    assert long_line.length > rendered.length
+    corners = []
+    for part in _parts(accessible):
+        if not isinstance(part, Polygon):
+            continue
+        part = orient(part, sign=1.0)
+        for ring in (part.exterior, *part.interiors):
+            vertices = list(ring.coords)[:-1]
+            for index, vertex in enumerate(vertices):
+                if tuple(vertex) == boundary_vertex:
+                    corners.append((vertices[index - 1], vertex,
+                                    vertices[(index + 1) % len(vertices)]))
+    assert corners
+    min_x, min_y, max_x, max_y = accessible.bounds
+    tolerance = max(hypot(max_x - min_x, max_y - min_y) * 1e-9, 1e-12)
+    assert all(not _occludes(*corner, end, tolerance) for corner in corners)
+
+
+@pytest.mark.skipif(os.environ.get("HILL42_FULL_REGENERATION") != "1",
+                    reason="Slow Hill axial generation; set HILL42_FULL_REGENERATION=1")
+def test_hill_seed42_convex_axial_map_covers_each_component():
+    experiment = hill_seed42_experiment()
+    result, polygons = generate_experiment_axial_map(experiment, coverage_model="convex")
+    domain = assert_hill_components_and_regions(experiment, polygons, result.coverage_regions)
+    lines = [LineString((line.start, line.end)) for line in result.axial_map.lines]
+    assert result.covered_regions == set(result.coverage_regions)
+    assert set().union(*line_region_coverage(lines, result.coverage_regions)) == set(
+        result.coverage_regions
+    )
+    assert all(domain.buffer(1e-8).covers(line) for line in lines)
+    assert result.required_rings == result.preserved_rings
+    assert result.open_components == result.axial_components == 3
+    assert_connected(result)
+    buildings = {experiment.building_labels[cell]: polygons[cell]
+                 for cell in experiment.buildings}
+    support = (tuple(buildings[6].exterior.coords[0]),
+               tuple(buildings[2].exterior.coords[1]))
+    candidates = [
+        line for line in result.candidate_lines
+        if any(item["source"] == "vertex"
+               and (tuple(item["start"]), tuple(item["end"])) in (support, support[::-1])
+               for item in line.attributes["supports"])
+    ]
+    assert candidates
+    gate = LineString(nearest_points(buildings[2], buildings[15]))
+    assert any(LineString((line.start, line.end)).crosses(gate) for line in candidates)
 
 
 def test_convex_region_selection_is_stable_under_open_cell_refinement():

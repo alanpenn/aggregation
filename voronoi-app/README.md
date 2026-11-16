@@ -83,10 +83,13 @@ and occupied geometry subtracted. Zero-tolerance simplification removes redundan
 boundary vertices only when the domain remains geometrically equal. Constrained
 triangles of each component seed overlapping convex regions; each seed grows
 by taking its convex hull with domain-boundary vertices whenever the result
-remains within the component. Duplicate regions are removed and their union
-must equal the accessible domain. A line covers a region only if it enters its
-interior. The same candidate set, greedy scoring, ring checks and connectivity
-rules are used, but the coverage targets are these regions rather than cells.
+remains within the component. Duplicate regions are removed and each component's
+region union must equal that original accessible component using GEOS predicates.
+Components without dyad cells remain traversable and are covered independently;
+they are not connected to another component by the selection. A line covers a
+region only if it enters its interior. The same candidate set, greedy scoring,
+ring checks and connectivity rules are used, but the coverage targets are
+these regions rather than cells.
 The app shows region coverage and marks uncovered regions in the diagnostic plot.
 If candidates cannot cover every region, generation fails and the plot shows the
 partial selection and uncovered regions instead of a completed axial map.
@@ -102,6 +105,11 @@ mode requires Shapely 2.1 or later and GEOS 3.10 or later.
 Existing candidate endpoints can have tiny floating-point penetrations into
 occupied interiors, including in the experimental selection; obstacle clearance
 is therefore not certified. Convex coverage does not repair candidate geometry.
+Hill seed 42 has an end-to-end regression that can take many minutes:
+
+```bash
+HILL42_FULL_REGENERATION=1 .venv/bin/python -m pytest -q tests/test_axial_generator.py -k hill_seed42_convex_axial_map
+```
 
 #### Experimental angular selection
 
@@ -246,6 +254,18 @@ they are not classified as numerical failures. Accepted-support completeness is
 checked within the implemented support rules only, not for all possible lines.
 The underlying settlement coordinates are binary64 values represented as exact
 rationals, while the domain overlay and convex decomposition use GEOS.
+
+An isolated experimental boundary-endpoint enumerator investigates additional
+exact support rules; it is not used by the app or either selector. Its
+definition, comparisons and limitations are documented in
+[boundary-endpoint research](BOUNDARY_ENDPOINT_RESEARCH.md).
+
+The separate Hill angular-fidelity experiment combines the saved exact and
+boundary-endpoint pools, fixes sample attachments, and checks convex coverage,
+component connectivity, specified ring witnesses and angular-depth bounds.
+Its sparse routing and bounded search do not affect the app or certify global
+optimality. See [the experiment report](ANGULAR_FIDELITY_RESEARCH.md) for
+inputs, replay commands, results and numerical limitations.
 
 The separate research path uses `exact_enumeration.generate_fresh_exact_candidate_pool`
 and `exact_pool_from_dict`, with exact predicates, coverage, connectivity,

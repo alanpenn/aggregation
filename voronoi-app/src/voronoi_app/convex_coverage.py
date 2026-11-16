@@ -20,8 +20,15 @@ def convex_regions(accessible):
     parts = [domain] if isinstance(domain, Polygon) else list(domain.geoms)
     if not parts or any(not isinstance(part, Polygon) for part in parts):
         raise ValueError("Convex coverage requires a polygonal accessible domain")
+    original_parts = [accessible] if isinstance(accessible, Polygon) else list(accessible.geoms)
+    if len(parts) != len(original_parts):
+        raise ValueError("Simplified accessible components do not match the original domain")
     regions = {}
     for part in sorted(parts, key=lambda item: (item.bounds, item.normalize().wkb_hex)):
+        matches = [original for original in original_parts if original.equals(part)]
+        if len(matches) != 1:
+            raise ValueError("Simplified accessible components do not match the original domain")
+        component_regions = {}
         anchors = sorted({
             tuple(point) for ring in [part.exterior, *part.interiors]
             for point in list(ring.coords)[:-1]
@@ -37,10 +44,13 @@ def convex_regions(accessible):
                     hull = expanded
             if not part.covers(hull):
                 raise ValueError("A convex coverage region leaves the accessible domain")
-            regions[hull.normalize().wkb_hex] = hull
+            component_regions[hull.normalize().wkb_hex] = hull
+        # Comparing the whole MultiPolygon can introduce overlay slivers between
+        # otherwise equal component unions.
+        if not unary_union(list(component_regions.values())).equals(matches[0]):
+            raise ValueError("Convex regions do not cover the accessible component")
+        regions.update(component_regions)
     ordered = sorted(regions.values(), key=lambda item: (item.bounds, item.normalize().wkb_hex))
-    if not unary_union(ordered).equals(accessible):
-        raise ValueError("Convex regions do not cover the accessible domain")
     return {index: region for index, region in enumerate(ordered)}
 
 
