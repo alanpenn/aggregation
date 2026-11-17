@@ -22,7 +22,10 @@ from voronoi_app.convex_coverage import convex_regions
 from voronoi_app.exact_axial import (
     _attach_selected_samples, candidate_graph, closed_routes, region_coverage,
 )
-from voronoi_app.exact_enumeration import exact_pool_from_dict, generate_fresh_exact_candidate_pool
+from voronoi_app.exact_enumeration import (
+    _supports, _vertices, exact_pool_from_dict, generate_fresh_exact_candidate_pool,
+)
+from voronoi_app.experimental_boundary_candidates import canonical_interval
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "exact_y"
@@ -142,6 +145,36 @@ def test_certified_exact_map_replay(replay, name):
     }
     for metric, value in calculated.items():
         assert value == pytest.approx(saved["metrics"][metric], abs=1e-10, rel=0)
+
+
+@pytest.mark.parametrize(("buildings", "expected"), [
+    ((251, 370), 1),
+    ((317, 363), 2),
+    ((317, 271), 1),
+])
+def test_requested_building_pair_mutual_tangents_are_in_exact_pool(replay, buildings, expected):
+    _, _, _, pool, _, clearance, _, _ = replay
+    snapshot = json.loads(gzip.decompress(
+        (FIXTURES / "axial-648f8da1364449a6aa70fd24038eea21.json.gz").read_bytes()
+    ))
+    _, occupied, _, _, _ = load_axial_snapshot(snapshot)
+    points, _ = _vertices(occupied)
+    vertices = {
+        building: [vertex for group in points.values() for vertex in group
+                   if vertex.reference.building_id == building]
+        for building in buildings
+    }
+    valid = set()
+    for left in vertices[buildings[0]]:
+        for right in vertices[buildings[1]]:
+            if (left.point != right.point and left.convex and right.convex
+                    and _supports(left, right.point) and _supports(right, left.point)
+                    and clearance.permits_exact(left.point, right.point)):
+                valid.add(canonical_interval(*clearance.maximal_interval(left.point, right.point)))
+    assert len(valid) == expected
+    candidates = {canonical_interval(line.start, line.end): line for line in pool.candidates}
+    assert valid <= candidates.keys()
+    assert all(clearance.permits_exact(*interval) for interval in valid)
 
 
 @pytest.mark.skipif(os.environ.get("EXACT_Y_REGENERATE") != "1",

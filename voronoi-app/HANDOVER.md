@@ -74,8 +74,22 @@ against the manifest. It contains the diagnostics under
 `repository/voronoi-app/diagnostics/` and the session data under
 `home/.copilot/session-state/3191f707-b920-4e07-817a-e0bca07f81eb/files/`.
 Volatile `.log` files and Python bytecode/cache were excluded and are listed
-in the manifest. **The archive is local and must be transferred separately**;
-it is not in Git.
+in the manifest.
+
+On 2026-11-17 the older archive was **not present at that recorded path**;
+its current location is unknown. A new archive of the currently accessible
+diagnostics and session research, including the later Valley exchange and
+connectivity results and the exact diagnostic input, was created at
+`$HOME/Developer/aggregation-valley-research-2026-11-17.tar.gz`
+(91,829,964 bytes; SHA-256
+`9128d543e2527588a3562ca2767f6b81de6daed9ecc412d8e376008c373bf3b7`).
+Its `MANIFEST.json` lists 349 files with sizes and SHA-256 hashes. Every
+archive member was decompressed and checked against the manifest; original
+files were not changed. File symlinks are archived as regular copies of their
+target contents. Logs, bytecode, caches and temporary status/output files
+were excluded. The new archive cannot verify whether anything from the missing
+older archive is no longer accessible. **It remains local and must be
+transferred separately**; it is not in Git.
 
 For integrity checks, SHA-256 of key external files:
 
@@ -169,6 +183,15 @@ PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider \
   tests/test_axial_generator.py tests/test_render_doors.py \
   -k 'not default_voronoi_experiment_coverage_and_rings'
 ```
+
+On 2026-11-17 the expanded angular, exact-Y, Valley connectivity, exchange,
+generator and Streamlit regressions passed **162 tests**, with two skipped
+and one deselected. The saved Valley replay data directories were supplied
+through `VALLEY_EXCHANGE_DATA` and `VALLEY_CONNECTIVITY_DATA`; the archive
+above preserves them. The successful combined headless run used
+`MPLBACKEND=Agg`; an earlier run without it had three Streamlit interaction
+failures and a Matplotlib GUI-thread warning. The separate Streamlit test file
+also passed with the Agg backend.
 
 The live full Hill regeneration requires `HILL42_FULL_REGENERATION=1`; the
 fresh exact-Y enumeration requires `EXACT_Y_REGENERATE=1`. Neither was rerun

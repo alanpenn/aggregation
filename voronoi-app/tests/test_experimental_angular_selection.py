@@ -7,7 +7,9 @@ from voronoi_app.angular import (
     AngularConnectivityError, AngularNetwork, LineClearance, SampleAttachment,
 )
 from voronoi_app.exact_axial import ExactCandidate, closed_routes
-from voronoi_app.experimental_angular_selection import angular_reference, optimise_fidelity
+from voronoi_app.experimental_angular_selection import (
+    angular_reference, improve_fidelity, optimise_fidelity,
+)
 
 
 def line(identifier, start, end):
@@ -95,3 +97,81 @@ def test_fidelity_selection_preserves_fixed_pairs_coverage_rings_and_components(
     assert all(clearance.permits_exact(lines[i].start, lines[i].end) for i in result.selected)
     assert all(isinstance(value, Fraction) for i in result.selected
                for value in (*lines[i].start, *lines[i].end))
+
+
+def test_exchange_search_finds_three_for_two_and_preserves_fixed_attachments():
+    lines = [
+        line(0, (-3, 0), (3, 0)),
+        line(1, (-1, -2), (-1, 2)),
+        line(2, (0, -2), (0, 2)),
+        line(3, (1, -2), (1, 2)),
+        line(4, (-2, -2), (2, 2)),
+        line(5, (-2, 2), (2, -2)),
+    ]
+    covers = [{0}, {1, 4}, {2, 5}, {3, 6}, {1, 2, 3}, {4, 5, 6}]
+    attachments = [SampleAttachment((-3, 0), (-3, 0), 0),
+                   SampleAttachment((3, 0), (3, 0), 0)]
+    components = [0, 0]
+    reference = angular_reference(lines, attachments, components)
+    obstacle = box(8, 8, 9, 9)
+    clearance = LineClearance(box(-4, -4, 10, 10).difference(obstacle), obstacle,
+                              original_obstacles=[obstacle])
+    args = (lines, covers, set(range(7)), [set(range(6))], [],
+            attachments, components, reference, 0, {0, 1, 2, 3}, clearance)
+    result = improve_fidelity(*args, additions=[4, 5], attempt_limit=100)
+    assert result == improve_fidelity(*args, additions=[4, 5], attempt_limit=100)
+    assert result.selected == {0, 4, 5}
+    assert result.exchanges == (((1, 2, 3), (4, 5)),)
+    assert result.depths == pytest.approx(reference.depths)
+
+
+def test_exchange_search_finds_two_for_one():
+    lines = [
+        line(0, (-3, 0), (3, 0)),
+        line(1, (-1, -2), (-1, 2)),
+        line(2, (1, -2), (1, 2)),
+        line(3, (-2, -2), (2, 2)),
+    ]
+    covers = [{0}, {1}, {2}, {1, 2}]
+    attachments = [SampleAttachment((-3, 0), (-3, 0), 0),
+                   SampleAttachment((3, 0), (3, 0), 0)]
+    components = [0, 0]
+    reference = angular_reference(lines, attachments, components)
+    obstacle = box(8, 8, 9, 9)
+    clearance = LineClearance(box(-4, -4, 10, 10).difference(obstacle), obstacle,
+                              original_obstacles=[obstacle])
+    result = improve_fidelity(
+        lines, covers, {0, 1, 2}, [set(range(4))], [], attachments, components,
+        reference, 0, {0, 1, 2}, clearance, additions=[3],
+    )
+    assert result.selected == {0, 3}
+    assert result.exchanges == (((1, 2), (3,)),)
+    assert result.depths == pytest.approx(reference.depths)
+
+
+def test_exchange_search_rejects_angular_loss_and_uncertified_candidates():
+    lines = [
+        line(0, (-2, 0), (2, 0)),
+        line(1, (0, 0), (2, 2)),
+        line(2, (2, 0), (0, 2)),
+        line(3, (-2, 2), (2, 2)),
+        line(4, (1, 0), (1, 2)),
+    ]
+    covers = [{0}, {1}, {2}, {3}, {1, 2}]
+    attachments = [SampleAttachment((0, 0), (0, 0), 0),
+                   SampleAttachment((0, 2), (0, 2), 3)]
+    components = [0, 0]
+    reference = angular_reference(lines, attachments, components)
+    obstacle = box(8, 8, 9, 9)
+    clearance = LineClearance(box(-4, -4, 10, 10).difference(obstacle), obstacle,
+                              original_obstacles=[obstacle])
+    args = (lines, covers, {0, 1, 2, 3}, [set(range(5))], [],
+            attachments, components, reference, 0, {0, 1, 2, 3}, clearance)
+    result = improve_fidelity(*args, additions=[4])
+    assert result.selected == {0, 1, 2, 3}
+    assert not result.exchanges
+    blocked = box(.9, .4, 1.1, .6)
+    bad_clearance = LineClearance(box(-4, -4, 10, 10).difference(blocked), blocked,
+                                  original_obstacles=[blocked])
+    with pytest.raises(ValueError, match="Candidate 4 fails exact clearance"):
+        improve_fidelity(*args[:-1], bad_clearance, additions=[4])

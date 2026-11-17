@@ -1,6 +1,7 @@
 """Experimental angular-fidelity selection; not used by the production pipeline."""
 
 from dataclasses import dataclass
+from itertools import combinations
 from math import inf, isfinite, nextafter, pi
 
 import networkx as nx
@@ -26,6 +27,14 @@ class SelectionResult:
     depths: dict[tuple[int, int], float]
     attempted: int
     accepted: int
+
+
+@dataclass(frozen=True)
+class ExchangeResult:
+    selected: frozenset[int]
+    depths: dict[tuple[int, int], float]
+    attempted: int
+    exchanges: tuple[tuple[tuple[int, ...], tuple[int, ...]], ...]
 
 
 def _unit(direction):
@@ -280,3 +289,96 @@ def optimise_fidelity(lines, covers, targets, groups, obstacles, attachments,
             depths = trial_depths
             accepted += 1
     return SelectionResult(frozenset(selected), depths, attempted, accepted)
+
+
+def improve_fidelity(lines, covers, targets, groups, obstacles, attachments,
+                     sample_components, reference, epsilon, selected, clearance, *,
+                     additions, attempt_limit=100, removal_limit=20, numerical_slack=1e-10):
+    """Try bounded 2-for-1 and 3-for-2 exchanges on a feasible exact selection.
+
+    Candidate indices in ``additions`` are examined in the supplied order.
+    Removals are restricted to unpinned selected lines intersecting an addition;
+    this is a heuristic search, not an exhaustive local-optimality certificate.
+    """
+    if (not isfinite(epsilon) or epsilon < 0 or not isfinite(numerical_slack)
+            or numerical_slack < 0 or attempt_limit < 0 or removal_limit < 2):
+        raise ValueError("Invalid tolerance or exchange budget")
+    if len(lines) != len(covers) or set().union(*groups) != set(range(len(lines))):
+        raise ValueError("Coverage and groups must partition the candidate pool")
+    if sum(map(len, groups)) != len(lines):
+        raise ValueError("Candidate components must not overlap")
+    ids = {line.line_id: i for i, line in enumerate(lines)}
+    if len(ids) != len(lines) or len(attachments) != len(sample_components):
+        raise ValueError("Unique line IDs and attachment components are required")
+    for attachment, component in zip(attachments, sample_components, strict=True):
+        if (not isinstance(component, int) or not 0 <= component < len(groups)
+                or attachment.line_id not in ids
+                or ids[attachment.line_id] not in groups[component]):
+            raise ValueError("Attachment is not on its declared candidate component")
+    pinned = {ids[item.line_id] for item in attachments}
+    chosen = set(selected)
+    if not chosen <= set(range(len(lines))) or not pinned <= chosen:
+        raise ValueError("Initial selection must contain all fixed attachment candidates")
+    additions = tuple(dict.fromkeys(additions))
+    if any(i not in range(len(lines)) for i in additions):
+        raise ValueError("An exchange candidate is outside the candidate pool")
+    for i in chosen | set(additions):
+        if not clearance.permits_exact(lines[i].start, lines[i].end):
+            raise ValueError(f"Candidate {i} fails exact clearance")
+
+    def depths_for(indices):
+        return angular_reference([lines[i] for i in sorted(indices)], attachments,
+                                 sample_components).depths
+
+    def angular_ok(depths):
+        if depths.keys() != reference.depths.keys():
+            return False
+        return all(
+            (isfinite(depths[pair]) and depths[pair] <= full + epsilon + numerical_slack)
+            if isfinite(full) else full == inf and depths[pair] == inf
+            for pair, full in reference.depths.items()
+        )
+
+    failure = _structural_failure(lines, covers, targets, groups, obstacles, chosen)
+    if failure:
+        raise ValueError(f"Initial selection fails {failure}")
+    depths = depths_for(chosen)
+    if not angular_ok(depths):
+        raise ValueError("Initial selection is not angularly feasible")
+
+    attempted = 0
+    accepted = []
+    while attempted < attempt_limit:
+        changed = False
+        available = [i for i in additions if i not in chosen]
+        for add_count in (1, 2):
+            for add in combinations(available, add_count):
+                add_coverage = set().union(*(covers[i] for i in add))
+                neighbours = [
+                    i for i in chosen - pinned
+                    if any(_intersections(lines[i].start, lines[i].end,
+                                          lines[j].start, lines[j].end) for j in add)
+                ]
+                neighbours.sort(key=lambda i: (-len(covers[i] & add_coverage),
+                                                lines[i].length, i))
+                for remove in combinations(neighbours[:removal_limit], add_count + 1):
+                    if attempted >= attempt_limit:
+                        break
+                    attempted += 1
+                    trial = chosen.difference(remove).union(add)
+                    if _structural_failure(lines, covers, targets, groups, obstacles, trial):
+                        continue
+                    trial_depths = depths_for(trial)
+                    if not angular_ok(trial_depths):
+                        continue
+                    chosen, depths = trial, trial_depths
+                    accepted.append((tuple(remove), tuple(add)))
+                    changed = True
+                    break
+                if changed or attempted >= attempt_limit:
+                    break
+            if changed or attempted >= attempt_limit:
+                break
+        if not changed:
+            break
+    return ExchangeResult(frozenset(chosen), depths, attempted, tuple(accepted))
