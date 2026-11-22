@@ -110,6 +110,7 @@ class ExperimentOrchestrator:
             self.pipeline.aggregation_strategy,
             self.pipeline.aggregation_params,
         )
+        self._prepare_aggregation_geometry(grid, agg_strategy)
         aggregation = agg_strategy.aggregate(
             terrain=terrain,
             grid=grid,
@@ -255,8 +256,14 @@ class ExperimentOrchestrator:
         graph.add_edges_from(representation.edges)
         return graph
 
+    def _prepare_aggregation_geometry(self, grid, strategy):
+        if getattr(strategy, "requires_clipped_polygons", False):
+            grid.metadata["cell_polygons"] = self._space_polygons(grid)
+
     def _space_polygons(self, grid: Grid) -> Dict[int, Polygon]:
         """Return clipped polygons for grid nodes where geometry is available."""
+        if "cell_polygons" in grid.metadata:
+            return grid.metadata["cell_polygons"]
         grid_type = grid.metadata.get("grid_type", "voronoi")
         extent = grid.metadata.get("extent", (0, 0, self.pipeline.canvas_size, self.pipeline.canvas_size))
         if grid_type in ("voronoi", "topography_responsive_voronoi"):

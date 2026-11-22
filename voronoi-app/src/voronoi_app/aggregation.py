@@ -7,6 +7,7 @@ import numpy as np
 from typing import Dict, Any, Optional, Tuple, Set, List
 from scipy.spatial import Voronoi
 
+from .face_adjacency import face_adjacency
 from .core import (
     AggregationStrategy, Grid, TerrainProvider, UrbanFormComposition,
     AggregationResult, ParameterSchema
@@ -83,6 +84,8 @@ class SlopePreferenceStrategy(AggregationStrategy):
             ),
         }
     
+    requires_clipped_polygons = False
+
     def aggregate(
         self,
         terrain: TerrainProvider,
@@ -113,6 +116,7 @@ class SlopePreferenceStrategy(AggregationStrategy):
         open_spaces: Set[int] = set()
         doors: List[Tuple[int, int]] = []
         building_labels: Dict[int, int] = {}
+        placements = []
         
         # Find center and initialize
         center = np.array([
@@ -130,17 +134,23 @@ class SlopePreferenceStrategy(AggregationStrategy):
         # Find adjacent building
         neighbors = adjacency[initial_open]
         if not neighbors:
+            if self.requires_clipped_polygons:
+                open_spaces.clear()
             return AggregationResult(
                 buildings=buildings,
                 open_spaces=open_spaces,
                 doors=doors,
                 building_labels=building_labels,
+                diagnostics={"placements": placements} if self.requires_clipped_polygons else {},
             )
         
         initial_building = random.choice(list(neighbors))
         buildings.add(initial_building)
         building_labels[initial_building] = 1
         doors.append((initial_open, initial_building))
+        if self.requires_clipped_polygons:
+            placements.append(self._record_placement(adjacency, None, initial_open, initial_building, 1))
+
         
         # Aggregation loop
         label_counter = 2
@@ -204,6 +214,10 @@ class SlopePreferenceStrategy(AggregationStrategy):
                 new_building = next_neighbors[0]
                 buildings.add(new_building)
                 building_labels[new_building] = label_counter
+                if self.requires_clipped_polygons:
+                    placements.append(
+                        self._record_placement(adjacency, open_idx, new_open, new_building, label_counter)
+                    )
                 label_counter += 1
                 doors.append((new_open, new_building))
                 placed = True
@@ -217,6 +231,7 @@ class SlopePreferenceStrategy(AggregationStrategy):
             open_spaces=open_spaces,
             doors=doors,
             building_labels=building_labels,
+            diagnostics={"placements": placements} if self.requires_clipped_polygons else {},
         )
     
     def _find_adjacent_regions(
@@ -272,6 +287,45 @@ class SlopePreferenceStrategy(AggregationStrategy):
             "max_dyads": self._max_dyads,
             "stagnation_limit": self._stagnation_limit,
         }
+
+
+class FacewiseSlopePreferenceStrategy(SlopePreferenceStrategy):
+    """Slope-preference dyads grown through faces of the clipped cells."""
+
+    requires_clipped_polygons = True
+
+    @property
+    def name(self) -> str:
+        return "slope_preference_facewise_v1"
+
+    @property
+    def description(self) -> str:
+        return "Slope-preference dyad growth using clipped polygon faces"
+
+    def _build_adjacency(self, voronoi, grid, grid_type):
+        polygons = grid.metadata.get("cell_polygons")
+        if (not polygons or set(polygons) != set(range(len(grid.nodes)))
+                or any(p.geom_type != "Polygon" or not p.is_valid or p.area <= 0
+                       for p in polygons.values())):
+            raise ValueError("Facewise growth requires a complete valid clipped cell inventory.")
+        graph = face_adjacency(polygons, polygons)
+        return {cell: dict(sorted(neighbors.items())) for cell, neighbors in graph.items()}
+
+    @staticmethod
+    def _record_placement(graph, parent, opened, building, label):
+        # The growth loop chooses the parent from the existing open component
+        # and both new cells from its unassigned, face-adjacent candidates.
+        return {
+            "label": label,
+            "open_cell": int(opened),
+            "building_cell": int(building),
+            "parent_open_cell": int(parent) if parent is not None else None,
+            "parent_face_length": graph[parent][opened] if parent is not None else None,
+            "building_face_length": graph[opened][building],
+        }
+
+    def get_config(self):
+        return super().get_config() | {"type": self.name, "version": "1"}
 
 
 class DistanceBasedStrategy(AggregationStrategy):

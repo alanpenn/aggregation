@@ -44,11 +44,12 @@ def convex_regions(accessible):
                     hull = expanded
             if not part.covers(hull):
                 raise ValueError("A convex coverage region leaves the accessible domain")
+            if not hull.covers(triangle):
+                raise ValueError("A convex coverage region lost its certified seed triangle")
             component_regions[hull.normalize().wkb_hex] = hull
-        # Comparing the whole MultiPolygon can introduce overlay slivers between
-        # otherwise equal component unions.
-        if not unary_union(list(component_regions.values())).equals(matches[0]):
-            raise ValueError("Convex regions do not cover the accessible component")
+        # The triangle union was certified above. Each hull contains its seed
+        # and is contained in the component. This avoids overlaying intersecting
+        # hull boundaries, which can introduce numerical slivers in GEOS.
         regions.update(component_regions)
     ordered = sorted(regions.values(), key=lambda item: (item.bounds, item.normalize().wkb_hex))
     return {index: region for index, region in enumerate(ordered)}

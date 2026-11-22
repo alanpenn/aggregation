@@ -333,6 +333,56 @@ def fig_certified_axial_map(open_polygons, occupied_polygons, paired_open_cells,
     return fig
 
 
+def fig_entrance_axial_map(polygons, building_labels, analysis):
+    """Show selected lines on an axial mean-depth scale with labelled buildings."""
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.collections import LineCollection
+    from matplotlib.colors import Normalize
+    from matplotlib.figure import Figure
+    from matplotlib.lines import Line2D
+
+    fig = Figure(figsize=(9, 8), layout="constrained")
+    FigureCanvasAgg(fig)
+    ax = fig.subplots()
+    excluded = set(analysis["excluded_cells"])
+    for cell, polygon in polygons.items():
+        x, y = polygon.exterior.xy
+        color = "#313946" if cell in building_labels else (
+            "#d1a15a" if cell in excluded else "#f4f2ec"
+        )
+        ax.fill(x, y, facecolor=color, edgecolor="#d6d3cb", linewidth=0.35)
+        if cell in building_labels:
+            point = polygon.representative_point()
+            ax.text(point.x, point.y, str(building_labels[cell]), color="white",
+                    fontsize=7, ha="center", va="center", zorder=5)
+
+    lines = analysis["lines"]
+    depths = [analysis["axial_depths"][line.line_id] for line in lines]
+    low, high = min(depths), max(depths)
+    norm = Normalize(low, high) if low != high else Normalize(low - 0.5, high + 0.5)
+    collection = LineCollection(
+        [[tuple(map(float, line.start)), tuple(map(float, line.end))] for line in lines],
+        cmap="RdYlBu", norm=norm, linewidths=1.35, zorder=3,
+    )
+    collection.set_array(depths)
+    ax.add_collection(collection)
+    colorbar = fig.colorbar(collection, ax=ax, shrink=0.76)
+    colorbar.set_label("Axial mean depth (line changes)")
+    if low == high:
+        colorbar.set_ticks([low])
+    entrances = [tuple(map(float, point)) for point in analysis["entrances"]]
+    if entrances:
+        ax.scatter(*zip(*entrances), color="#302049", edgecolor="white",
+                   s=17, linewidth=0.55, zorder=4)
+        ax.legend(handles=[Line2D([], [], marker="o", color="#302049",
+                                  linestyle="", label="Building entrance")],
+                  loc="upper right")
+    ax.autoscale_view()
+    ax.set_aspect("equal")
+    ax.set_axis_off()
+    return fig
+
+
 def fig_generated_axial_map(result, generated, polygons, show_candidates=False):
     """Render the generated lines on the same cell polygons used for analysis."""
     fig, ax = plt.subplots(figsize=(10, 10))

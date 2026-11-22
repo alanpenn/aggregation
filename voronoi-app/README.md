@@ -436,3 +436,170 @@ To add a new terrain type, grid generator, or space-syntax measure:
 4. **Update UI** - Wire selector controls in `streamlit_app.py` (coming soon)
 
 See [ARCHITECTURE_PROGRESS.md](ARCHITECTURE_PROGRESS.md) for detailed examples and API reference.
+
+## Batch axial robustness experiments
+
+Run the pilot from the repository root. Choose a store you intend to keep.
+
+```bash
+.venv/bin/python -m voronoi_app.batch --store /path/to/batch-store pilot
+```
+
+The pilot pairs candidate and selection methods on four small settlements with
+two grid and terrain configurations and two seeds. It reuses each settlement
+and topology, then reuses each certified pool across selectors. It reports
+coverage, clearance, independent circulation, connectivity, axial depth, and
+entrance reachability. The small, coupled configurations are for finding
+robustness problems. They do not support estimates of terrain effects. The
+full-pool selector provides a feasibility reference.
+
+Each invocation of `run` prints a new record ID and its status. Use the
+appropriate earlier record as `--parent` to start a new branch.
+
+```bash
+batch=(.venv/bin/python -m voronoi_app.batch --store /path/to/batch-store)
+"${batch[@]}" run settlement --params settlement-config.json
+"${batch[@]}" run topology --parent "$settlement_id"
+"${batch[@]}" run candidates --parent "$topology_id" --method projected-faces
+"${batch[@]}" run selection --parent "$candidate_id" --method entrance-guided
+"${batch[@]}" run measures --parent "$selection_id" --params route-config.json
+"${batch[@]}" run validation --parent "$measures_id"
+"${batch[@]}" inspect "$selection_id"
+```
+
+Set each shell variable to the printed ID for that stage. A settlement
+parameter file can specify any `ExperimentPipeline` fields, including the seed,
+terrain, grid, and aggregation parameters. Use `preserve-settlement` instead of
+`generate-settlement` to import an existing settlement in the batch settlement
+output format. Include `configuration`, exact binary64 cell polygons in
+`polygons_wkb` as WKB hex, `building_labels` keyed by cell, `dyad_open_cells`,
+and `doors` as open-cell and building-cell pairs.
+
+- To change the candidate generator, run `candidates` again with the same
+  topology ID. The built-in methods are `fresh-exact` and `projected-faces`.
+- To change the selector, run `selection` again with the same candidate ID.
+  The built-in methods are `exact-greedy`, `entrance-guided`, and `full-pool`.
+  The entrance-guided adapter consumes the saved pool directly and records
+  a connector limit and extra-line budget.
+- To change route analysis, run `measures` again with the same selection ID.
+  For example, `route-config.json` can contain `{"connector_limit": 32}`.
+  Validation can start from a measures record or directly from a selection
+  record for geometric and topological checks.
+- To register a revision outside the built-in adapters, pass
+  `--method package.module:function --version VERSION` for the stage. Trusted
+  methods receive a dictionary of verified upstream outputs keyed by stage
+  and the JSON parameter object. They return
+  `voronoi_app.batch_store.StageResult(output, valid=True)`, with a JSON object
+  as output. A replacement that feeds an existing downstream adapter should
+  keep that stage's data format.
+
+The store keeps each attempt in `records/<id>/record.json`, with its stage
+output in `output.json`. Records link to the original settlement and the
+immediate input by ID and SHA-256. They record parameters, output hashes,
+method identity and version, runtime versions, and archived Python source
+hashes. Settlement and topology records retain cell and block geometry,
+candidate records retain exact rational intervals and support provenance,
+and selection records retain the selected exact line geometry. Route records
+include doorway order, connectors, and the upper-triangular pair depths
+in that order. A null depth represents an unreachable pair.
+
+`export-source RECORD_ID NEW_DIRECTORY` checks the source hashes and restores
+the package as it was recorded. Use it with the recorded Python and dependency
+versions to run that revision. For custom methods, also preserve any external
+dependencies or inputs they use. The store archives the custom method's
+defining source file alongside the package source.
+
+**Successful** means the stage completed and passed its own checks.
+**Invalid** means it returned an output that failed a check.
+**Failed** means the method raised an error, recorded with its traceback.
+**Incomplete** means the attempt was started but never finished, for example
+after interruption. Restart an incomplete stage from its recorded parent to
+create a new attempt. A selection can complete successfully and be marked
+invalid by a separate validator. Earlier records remain available in all cases.
+
+### Preserved Hill 42 and Y 42 benchmark
+
+See [the preserved-fixture research report](PRESERVED_AXIAL_BENCHMARK.md) for
+the comparison and source limitations.
+
+`python -m experiments.preserved_axial_benchmark --help` lists the preserved
+snapshot, cell or label inventory, and saved doorway-result inputs for this
+benchmark. Use the same store for all stages. Each run writes its case manifest
+under `benchmarks/<id>/cases.json`, plus one checkpoint manifest per generator
+branch. Source file hashes and doorway provenance are recorded in the imported
+settlement outputs.
+
+Export the case manifest as one row per generator–selector combination:
+
+```bash
+.venv/bin/python -m voronoi_app.batch --store diagnostics/preserved-axial-benchmark \
+  export-comparison diagnostics/preserved-axial-benchmark/benchmarks/ID/cases.json \
+  /path/to/new-comparison.csv
+```
+
+Use a `.json` destination for typed values. CSV encodes missing values as
+`null` and structured cells as JSON. Depth statistics use population standard
+deviation over the available values, with unreachable entrance pairs counted
+separately. The raw per-line and pair data remain in each measures record.
+Pool circulation is certified when validation supplies a clear winding
+witness from that pool. The export records the full pool's rank separately.
+A missing region in the entire pool proves that no subset
+can meet the coverage requirement. An unverified winding rank alone leaves
+subset feasibility open.
+
+### Sheaf-aware reduction experiment
+
+The [sheaf research report](SHEAF_REDUCTION_RESEARCH.md) compares backward
+orders, local sheaf subsets and bounded substitutions on the preserved maps.
+Run `python -m experiments.sheaf_reduction --help` for the batch replay
+arguments and optional JSON search settings.
+
+### Full-pool doorway routing reference
+
+The [routing benchmark report](FULL_POOL_ROUTING_REFERENCE.md) records
+fixed-connector full-pool costs, comparisons with preserved reductions, and
+the separate continuous-space metric reference. It includes the command
+for comparing a new validated map with a saved full-pool result.
+
+### Route-efficient sparse maps
+
+The [sparse-map pilot](ROUTE_EFFICIENT_SPARSE_RESEARCH.md) evaluates individual
+line deletions, corridor sheaf exchanges and bounded route-budget searches
+against the preserved full-pool routing records.
+
+### Extreme corridor diagonals
+
+The [extreme-diagonal experiment](EXTREME_DIAGONAL_RESEARCH.md) compares
+geometric pairs, repairs and route-ranked alternatives on controlled
+street grids and the preserved Hill and Y settlements.
+
+### Doorway angular depth through convex regions
+
+The [convex-region incidence experiment](REGION_INCIDENCE_ANGULAR_RESEARCH.md)
+evaluates free axial entry and exit at incident convex regions and reports
+the separate archived geometric-connector metric results.
+
+### Strict convex coverage and doorway repair
+
+The [strict coverage experiment](STRICT_CONVEX_COVERAGE_RESEARCH.md) audits
+saved selections for interior traversal, repairs missing regions and
+compares backward reductions with and without a geometric metric
+reachability requirement.
+
+### Extreme corridors under strict coverage
+
+The [strict corridor reassessment](STRICT_CORRIDOR_REASSESSMENT.md) compares
+geometric and route-ranked opposed pairs from the strictly validated Hill
+and Y maps and audits gaps in the geometric metric connector inventory.
+
+### Convex-region metric attachment
+
+The [regional metric and joint corridor experiment](CONVEX_METRIC_CORRIDOR_RESEARCH.md)
+certifies unrestricted line eligibility within incident convex regions
+and evaluates simultaneous corridor replacements.
+
+### Strict axial generalisation
+
+The [paired terrain generalisation experiment](STRICT_AXIAL_GENERALISATION_RESEARCH.md)
+generates Hill and Converging Valleys for seeds 40–45 and compares strict
+coverage, angular incidence and regional metric routes with numbered maps.

@@ -139,7 +139,7 @@ def register_defaults() -> None:
     from .grid_generators import (
         VoronoiGridGenerator, CartesianGridGenerator, TopographyResponsiveVoronoiGenerator
     )
-    from .aggregation import SlopePreferenceStrategy
+    from .aggregation import FacewiseSlopePreferenceStrategy, SlopePreferenceStrategy
     from .analysis import MeanDepthMeasure, ConnectivityMeasure
     
     registry = get_registry()
@@ -162,6 +162,7 @@ def register_defaults() -> None:
     
     # Register aggregation strategies
     registry.register_aggregation("slope_preference", SlopePreferenceStrategy)
+    registry.register_aggregation("slope_preference_facewise_v1", FacewiseSlopePreferenceStrategy)
     
     # Register space-syntax measures
     registry.register_measure("mean_depth", MeanDepthMeasure)

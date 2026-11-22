@@ -212,7 +212,7 @@ class ExactProblem:
     obstacles: list[tuple[float, float]]
 
 
-def build_candidates(clearance, regions, ring_seeds, seeds):
+def build_candidates(clearance, regions, ring_seeds, seeds, *, progress=None):
     """Build a safe exact pool; preserve rejected seeds and deduplicated provenance."""
     candidates = []
     index_by_interval = {}
@@ -252,12 +252,14 @@ def build_candidates(clearance, regions, ring_seeds, seeds):
         else:
             start, end = seed
             add("ring-boundary", start, end, required_ring=True)
-    for seed in seeds:
+    for index, seed in enumerate(seeds, 1):
         if isinstance(seed, ExactSupport):
             add(seed.source, seed.start, seed.end, support=seed)
         else:
             source, start, end = seed
             add(source, start, end)
+        if progress and (index % 16 == 0 or index == len(seeds)):
+            progress(index, len(seeds))
 
     covers = region_coverage(candidates, regions)
     covered = set().union(*covers) if covers else set()

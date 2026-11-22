@@ -1,0 +1,13 @@
+case,variant,settlement,topology,dyads,buildings,assigned_open,assigned_components,excluded_assigned,excluded_unassigned,internal_blocks,circulation_holes,invalid_dyads,shared_building_cells,same_number_same_building_cell
+hill-40,legacy,95c1151907b94edfacab99e438a7e2f4,33083f30dc45463b8ab364ec640ee13f,100,100,100,1,0,0,16,16,0,43,4
+hill-40,corrected,3761df589ec74714b79a803075d18047,3a329fc1afda47acad3afa977fd1030a,100,100,100,1,0,0,17,17,0,43,4
+hill-41,legacy,e005ab40a516439cbf1eda01c3ae49e0,bdb0cfa163b54dc08d5c79379779de08,100,100,100,1,0,0,13,13,0,50,3
+hill-41,corrected,10de07efdded4007a34e019b2e23c8b0,7ce25af0b53b4d04858da3adca1afa7b,100,100,100,1,0,0,15,15,0,50,3
+hill-42,legacy,d6ad424ac1324db3965dba5780d5474b,7d32bd41dad1486598f5825606450a9c,100,100,100,1,0,2,11,11,0,43,4
+hill-42,corrected,116cfc03cc2a45b599a0a3859b688e56,9f108044cfb341d2a97a08fd8da7427b,100,100,100,1,0,2,16,16,0,43,4
+converging_valleys-40,legacy,29e866546a4645faaf85e4dc487e8fb8,fd5aed31ce7f48f48a87add0a9e87583,100,100,100,3,3,54,6,6,7,66,4
+converging_valleys-40,corrected,2456fa75f1594f8ca25c7323530576b9,d29d17e1c2a640038bf08c41fe220664,100,100,100,1,0,184,6,6,0,66,4
+converging_valleys-41,legacy,60c75bb495c546f6a2ecb272c45f43b0,85d2793225194ba8b1699c0e88313f4c,100,100,100,4,4,115,2,2,6,57,2
+converging_valleys-41,corrected,c0aab576c0ab4aa3ab1837ad42d3a80a,41996be10d9c4ab0bef20f518f292743,100,100,100,1,0,130,6,6,0,57,2
+converging_valleys-42,legacy,e739396e63374a5684b5cf0312f88e4b,e55776af93694176bf75c99ca8e2a35b,100,100,100,1,0,0,3,3,1,67,2
+converging_valleys-42,corrected,06d9e3c700214390a58c8d012c8cc4b9,829855deecaf4586a74f423ec4c4fafd,100,100,100,1,0,29,5,5,0,67,2

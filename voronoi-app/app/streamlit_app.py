@@ -25,7 +25,7 @@ from voronoi_app.core import ExperimentPipeline, UrbanFormComposition
 from voronoi_app.render import (
     fig_aggregation, fig_elevation, fig_axial_map, fig_generated_axial_map,
     fig_angular_comparison, fig_axial_diagnostics, fig_certified_axial_map,
-    fig_convex_coverage, fig_unresolved_tangents,
+    fig_convex_coverage, fig_entrance_axial_map, fig_unresolved_tangents,
 )
 from voronoi_app.angular import (
     AngularAttachmentError, AngularConnectivityError, LineClearance,
@@ -38,6 +38,41 @@ from voronoi_app.axial_generator import ConvexCoverageError
 from voronoi_app.axial_snapshot import load_axial_snapshot, make_axial_snapshot, save_axial_snapshot
 from voronoi_app.certified_maps import decode_certified_research, read_certified_fixture_bytes
 from voronoi_app.exact_enumeration import generate_fresh_exact_candidate_pool
+from voronoi_app.experimental_entrance_reduction import generate_entrance_axial_map
+
+
+ENTRANCE_DISPLAY = "Entrance depth-guided (exact)"
+
+# Rough share of a full-size run spent in each phase. Displayed progress and
+# remaining time are estimates because the geometry can change these shares.
+ENTRANCE_PROGRESS = {
+    "Classifying open space and occupied blocks": (0.00, 0.01),
+    "Generating exact projected-face candidates": (0.01, 0.02),
+    "Testing corner pairs": (0.03, 0.13),
+    "Extending maximal axial lines": (0.16, 0.27),
+    "Checking coverage and circulation": (0.43, 0.13),
+    "Completing uncovered regions and circulation supports": (0.43, 0.13),
+    "Reducing the circulation witnesses": (0.56, 0.20),
+    "Checking doorway connections": (0.76, 0.20),
+    "Selecting axial lines and shortcuts": (0.96, 0.03),
+    "Certifying the map and calculating axial mean depth": (0.99, 0.01),
+}
+
+
+def cached_entrance_map(polygons, buildings, dyads, doors, extra_lines, progress):
+    # Keep the computed data without replaying progress updates from an earlier run.
+    key = (tuple((cell, polygon.wkb) for cell, polygon in sorted(polygons.items())),
+           buildings, dyads, doors, extra_lines)
+    cache = st.session_state.setdefault("entrance_map_cache", {})
+    if key in cache:
+        return cache[key], True
+    analysis = generate_entrance_axial_map(
+        polygons, buildings, dyads, doors, extra_lines, work_progress=progress,
+    )
+    if len(cache) >= 4:
+        del cache[next(iter(cache))]
+    cache[key] = analysis
+    return analysis, False
 
 
 @st.cache_data(max_entries=2)
@@ -53,6 +88,63 @@ def display_figure(figure, alt=None):
     image = Image.open(image_buffer).convert("RGB")
     image.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
     st.image(image, alt=alt)
+
+
+def format_run_time(seconds):
+    minutes, seconds = divmod(round(seconds), 60)
+    return f"{minutes}m {seconds:02d}s" if minutes else f"{seconds}s"
+
+
+def entrance_progress_callback(bar, started):
+    current_stage = ""
+    last_update = 0.0
+
+    def update(stage, done, total):
+        nonlocal current_stage, last_update
+        now = time.monotonic()
+        if stage == current_stage and now - last_update < 0.5 and done != total:
+            return
+        current_stage, last_update = stage, now
+        elapsed = now - started
+        offset, weight = ENTRANCE_PROGRESS[stage]
+        estimated_fraction = offset + weight * (done / total if total else 0)
+        detail = f"{stage} ({done:,}/{total:,})" if total else stage
+        eta = "Estimating time remaining"
+        if elapsed >= 5 and estimated_fraction >= 0.08:
+            remaining = elapsed * (1 - estimated_fraction) / estimated_fraction
+            eta = f"About {format_run_time(remaining)} remaining"
+        bar.progress(
+            estimated_fraction,
+            text=f"{detail} · {format_run_time(elapsed)} elapsed · {eta}",
+        )
+
+    return update
+
+
+def display_entrance_map(seed, polygons, labels, analysis):
+    st.subheader("Entrance depth-guided axial map")
+    st.caption(f"Seed {seed}. Run the experiment again to apply sidebar changes.")
+    depth = analysis["entrance_depth"]
+    entrance_mean = depth["mean"]
+    row = st.columns(4)
+    row[0].metric("Selected axial lines", f"{len(analysis['lines'])} / {analysis['candidate_count']}")
+    row[1].metric("Mean entrance depth", f"{entrance_mean:.2f}" if entrance_mean is not None else "—")
+    row[2].metric("Axial mean depth", f"{analysis['axial_mean_depth']:.2f}")
+    row[3].metric("Circulation rings", f"{analysis['rings']} / {analysis['required_rings']}")
+    st.caption(
+        f"{analysis['regions']} convex regions covered. "
+        f"{depth['attached_entrances']} entrances attached. "
+        f"{depth['pairs'] - depth['unreachable']:,} of {depth['pairs']:,} entrance pairs reachable. "
+        "Line colours show mean line changes to every other selected axial line."
+    )
+    st.caption("Entrance depth counts line changes using up to 64 visible connectors per entrance.")
+    if analysis["skipped_doors"]:
+        buildings = ", ".join(str(labels.get(i, i)) for i in analysis["skipped_doors"])
+        st.warning(f"Entrances outside the analysis domain or without a clear shared face: {buildings}.")
+    display_figure(
+        fig_entrance_axial_map(polygons, labels, analysis),
+        alt="Numbered buildings and entrances with axial lines coloured from shallow red to deep blue",
+    )
 
 
 def display_exact_candidates(result):
@@ -535,27 +627,38 @@ with st.sidebar:
     axial_display = st.selectbox(
         "Axial display (floating-point unless marked exact)",
         ["Existing sightlines", "Axial Map", "All axial candidates",
-         "Axial candidate audit", "Exact axial candidates"],
+         "Axial candidate audit", "Exact axial candidates", ENTRANCE_DISPLAY],
         key="axial_display",
     )
-    axial_coverage = st.segmented_control(
-        "Axial coverage",
-        ["Voronoi cells", "Convex regions (experimental)"],
-        default="Voronoi cells",
-        help="Convex regions are overlapping boundary-derived approximations, not all maximal spaces.",
-    )
+    axial_coverage = "Convex regions (experimental)"
+    selection_method = "Greedy (baseline)"
+    if axial_display != ENTRANCE_DISPLAY:
+        axial_coverage = st.segmented_control(
+            "Axial coverage",
+            ["Voronoi cells", "Convex regions (experimental)"],
+            default="Voronoi cells",
+            help="Convex regions are overlapping boundary-derived approximations, not all maximal spaces.",
+        )
+        selection_method = st.selectbox(
+            "Axial selection method",
+            ["Greedy (baseline)", "Fewest lines, then angular (experimental)",
+             "Angular depth + line penalty (experimental)"],
+        )
     coverage_model = "convex" if axial_coverage == "Convex regions (experimental)" else "cells"
     if axial_coverage is None:
         st.warning("Choose an axial coverage model before running an experiment.")
-    selection_method = st.selectbox(
-        "Axial selection method",
-        ["Greedy (baseline)", "Fewest lines, then angular (experimental)",
-         "Angular depth + line penalty (experimental)"],
-    )
     angular_mode = "penalty" if selection_method.startswith("Angular depth") else "fewest"
     angular_iterations = 0
     angular_seed = 42
     angular_penalty = 0.1
+    entrance_extra_lines = 17
+    if axial_display == ENTRANCE_DISPLAY:
+        entrance_extra_lines = st.number_input(
+            "Maximum entrance shortcuts", min_value=0, max_value=100, value=17,
+            key="entrance_extra_lines",
+            help="Additional lines above the compact map, chosen by improvement across all valid entrance pairs.",
+        )
+        st.caption("This exact experiment uses convex visibility coverage and may take several minutes.")
     if selection_method != "Greedy (baseline)" and axial_display != "Exact axial candidates":
         angular_iterations = st.number_input(
             "Angular search iterations", min_value=1, max_value=10000, value=20, step=1,
@@ -668,6 +771,7 @@ if run_clicked:
         st.session_state["current_exact_experiment"] = result
         st.session_state["experiment_configuration"] = json.dumps(pipeline.to_dict(), indent=2)
         st.session_state.pop("axial_snapshot", None)
+        st.session_state.pop("entrance_axial_result", None)
         
         # Display results
         st.success(f"✅ Experiment completed with seed {seed}")
@@ -900,6 +1004,33 @@ if run_clicked:
                 )
             except ValueError as error:
                 st.error(f"Axial map generation failed: {error}")
+        elif axial_display == ENTRANCE_DISPLAY:
+            polygons = ExperimentOrchestrator(result.pipeline)._space_polygons(result.grid)
+            with st.status("Generating entrance depth-guided axial map", expanded=True) as status:
+                started = time.monotonic()
+                bar = status.progress(0.0, text="Preparing axial generation")
+                try:
+                    analysis, from_cache = cached_entrance_map(
+                        polygons, tuple(sorted(result.buildings)), tuple(sorted(result.open_spaces)),
+                        tuple(result.doors), entrance_extra_lines,
+                        entrance_progress_callback(bar, started),
+                    )
+                except ValueError as error:
+                    bar.empty()
+                    status.update(label="Entrance-guided map could not be certified", state="error")
+                    st.error(str(error))
+                else:
+                    st.session_state["entrance_axial_result"] = (
+                        seed, polygons, result.building_labels, analysis,
+                    )
+                    elapsed = format_run_time(time.monotonic() - started)
+                    detail = "Loaded a completed map" if from_cache else f"Completed in {elapsed}"
+                    bar.progress(1.0, text=detail)
+                    label = "Loaded certified entrance-guided map" if from_cache else (
+                        f"Entrance-guided map certified in {elapsed}"
+                    )
+                    status.update(label=label,
+                                  state="complete", expanded=False)
         elif axial_display == "Existing sightlines":
             st.subheader("Axial sightlines")
             st.caption(
@@ -968,7 +1099,9 @@ if run_clicked:
         import traceback
         st.text(traceback.format_exc())
 
-elif axial_display != "Exact axial candidates" or "current_exact_experiment" not in st.session_state:
+elif (axial_display != ENTRANCE_DISPLAY or "entrance_axial_result" not in st.session_state) and (
+    axial_display != "Exact axial candidates" or "current_exact_experiment" not in st.session_state
+):
     st.info(
         "👈 Configure your experiment in the sidebar and click **▶ Run Experiment** to begin. "
         "\n\n**Terrain Types:** Procedurally generated elevation fields"
@@ -976,6 +1109,9 @@ elif axial_display != "Exact axial candidates" or "current_exact_experiment" not
         "\n\n**Urban Forms:** Simple dyads, front/back yards, or courtyard clusters"
         "\n\n**Analysis Measures:** Connectivity, integration, depth, and choice centrality"
     )
+
+if axial_display == ENTRANCE_DISPLAY and "entrance_axial_result" in st.session_state:
+    display_entrance_map(*st.session_state["entrance_axial_result"])
 
 if axial_display == "Exact axial candidates":
     experiment = st.session_state.get("current_exact_experiment")
