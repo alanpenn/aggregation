@@ -210,25 +210,30 @@ def analyze(inputs,parameters):
         if any(not _on_segment(nodes[a],lines[i].start,lines[i].end) or
                not _on_segment(nodes[b],lines[i].start,lines[i].end) for i in owners):
             raise ValueError("An atomic transition left its certified interval.")
+    connector_started = monotonic()
     metric_doors,evidence,rejected=build_master_doors(lines,saved,regions,clearance)
     metric_graph=RegionalNetwork(axial,metric_doors)
     pairs=list(combinations(range(len(doors)),2))
     reference_path = Path(parameters["reference_path"]) if "reference_path" in parameters else None
     identity = {"candidate_record": parameters.get("candidate_record"), "doorways": doors,
                 "pairs": [list(pair) for pair in pairs]}
+    connector_seconds = monotonic() - connector_started
+    reference_started = monotonic()
     if reference_path is not None and reference_path.exists():
         reference = json.loads(reference_path.read_bytes())
         if reference["identity"] != identity:
             raise ValueError("Saved route reference does not match candidate and doorway identity.")
         full_angular, full_metric = reference["angular"], reference["metric"]
+        reference_seconds = reference.get("routing_seconds")
     else:
         full_angular,status=angular_depth(axial,master,links,pairs)
         if not strict_routes and any(value != "reachable" for value in status):
             raise ValueError("The validated full-pool angular graph failed reachability.")
         full_metric=metric_graph.route(master,False)
+        reference_seconds = monotonic() - reference_started
         if reference_path is not None:
             atomic_write(reference_path, encode({"identity": identity, "angular": full_angular,
-                                                "metric": full_metric}))
+                                                "metric": full_metric, "routing_seconds": reference_seconds}))
     print(*title,"full routes",len(pairs),"metric unreachable",full_metric.count(None),flush=True)
     cover=[0]*len(lines)
     for i, group in members.items():
@@ -263,11 +268,13 @@ def analyze(inputs,parameters):
                "length":sum(lines[i].length for i in sorted(chosen))}
         if strict_routes:
             value["intersections"] = graph.subgraph(chosen).number_of_edges()
+            value["mean_connectivity"] = 2 * value["intersections"] / len(chosen) if chosen else 0.0
         if not validated["valid"]:
             if strict_routes:
                 value.update(reason="Failed structural validation.",
                              evaluation_seconds=monotonic() - evaluation_started)
             return value
+        routing_started = monotonic()
         if chosen==master:
             routes=full_routing
         else:
@@ -275,6 +282,7 @@ def analyze(inputs,parameters):
             if not strict_routes and any(s!="reachable" for s in status):
                 raise ValueError("A strict map failed angular reachability.")
             routes={"angular":angular,"metric":metric_graph.route(chosen,False)}
+        routing_seconds = monotonic() - routing_started if chosen != master else reference_seconds
         comparisons={}
         for k, values in routes.items():
             verify_monotone(full_routing[k],values)
@@ -288,6 +296,7 @@ def analyze(inputs,parameters):
             unreachable = {key: sum(item is None for item in costs) for key, costs in routes.items()}
             peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
             value.update(evaluation_seconds=monotonic() - evaluation_started, unreachable_pairs=unreachable,
+                         routing_seconds=routing_seconds,
                          evaluation_peak_rss_mib=peak/(1024**2 if sys.platform == "darwin" else 1024))
             if any(unreachable.values()):
                 value.update(status="invalid", reason="Incomplete doorway route reachability.")
@@ -295,15 +304,19 @@ def analyze(inputs,parameters):
                         "metric_unattached_doors":[i for i,x in enumerate(metric_graph.options(chosen)) if not x]}
 
     # The seed uses exact ring-boundary supports. If they fail, start reduction from the proven pool.
+    guided_started = monotonic()
     compact,door_masks=entrance_seed(graph,links,witnesses,cover,target)
     guided,trail=improve_entrance_depth(graph,lines,links,door_masks,compact,len(compact)+8)
     guided=frozenset(guided)
-    maps={"full_pool":evaluate(master),"strict_entrance_guided":evaluate(guided)}
+    guided_seconds = monotonic() - guided_started
+    maps={"full_pool":evaluate(master) | {"selection_seconds": 0.0},
+          "strict_entrance_guided":evaluate(guided) | {"selection_seconds": guided_seconds}}
     # If line arrangement changes lose complete winding, retain that failed guided result
     # and use the certified full pool only when sized for the bounded deletion search.
     if not maps["strict_entrance_guided"]["constraints"]["valid"]:
         return StageResult(original | {"maps":maps,"pairs":pairs,"metric_connector_rejections":rejected,
                                       "circulation_proof":proof,"seconds":monotonic()-started},valid=False)
+    backward_started = monotonic()
     order=sorted(guided,key=lambda i:(lines[i].length,lines[i].start,lines[i].end))
     selected=guided
     trace=[]
@@ -314,9 +327,11 @@ def analyze(inputs,parameters):
                 selected=selected-{i}
                 trace.append(i)
         if len(selected)==n: break
-    maps["strict_backward"]=evaluate(selected)
+    backward_seconds = monotonic() - backward_started
+    maps["strict_backward"]=evaluate(selected) | {"selection_seconds": backward_seconds}
     base=evaluate(selected)
     print(*title,"selection",len(guided),len(selected),flush=True)
+    corridor_started = monotonic()
     corridors=corridor_bands(lines,obstacles)
     tested={"geometric_extreme":[],"route_ranked":[]}
     details=[]
@@ -362,6 +377,7 @@ def analyze(inputs,parameters):
                 maps[method]["attempted_line_ids"] = entries[0]["line_ids"]
     return StageResult(original | {"maps":maps,"pairs":pairs,"corridors":details,"deletion_trace":trace,
                                   "entrance_growth":trail,"circulation_proof":proof,
+                                  "connector_seconds": connector_seconds, "shared_corridor_seconds": monotonic() - corridor_started,
                                   "metric_connector_rejections":rejected,"metric_connectors":evidence,
                                   "full_pair_counts":{k:d["reachable"] for k,d in stats.items()},
                                   "seconds":monotonic()-started})

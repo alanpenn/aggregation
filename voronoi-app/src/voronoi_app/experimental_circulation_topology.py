@@ -147,7 +147,7 @@ def _matrix_rank(rows):
 
 def analyse_circulation_topology(polygons, building_cells, dyad_open_cells, selected_lines,
                                  settlement_boundary: BaseGeometry | None = None, *,
-                                 include_witness_faces=False,
+                                 include_witness_faces=False, main_open_seed=None,
                                  clearance_factory=LineClearance,
                                  face_builder=bounded_face_rings,
                                  face_location=_ring_location,
@@ -179,6 +179,9 @@ def analyse_circulation_topology(polygons, building_cells, dyad_open_cells, sele
     open_components = _ordered_components(open_adjacency)
     if not open_components:
         raise ValueError("Settlement has no geometrically open cells")
+    if main_open_seed is not None:
+        index = next(i for i, group in enumerate(open_components) if main_open_seed in group)
+        open_components.insert(0, open_components.pop(index))
     main_open = open_components[0]
     excluded_components = open_components[1:]
     excluded = set().union(*excluded_components) if excluded_components else set()
@@ -304,7 +307,8 @@ def analyse_circulation_topology(polygons, building_cells, dyad_open_cells, sele
                              for block in all_occupied_blocks)]
     result = {
         "rule": {
-            "main_open_component": "largest edge-connected component; ties by sorted cell IDs",
+            "main_open_component": ("seed-connected open component" if main_open_seed is not None else
+                                    "largest edge-connected component; ties by sorted cell IDs"),
             "open_adjacency": "positive-length shared polygon boundary",
             "occupied_contact": "any shared polygon boundary, including a vertex",
             "outer_boundary": "boundary of the union of all cell polygons",

@@ -1,0 +1,37 @@
+case,terrain,seed,dyads,valid,termination,seed_component_recovery,assigned_components,accessible_open,accessible_unassigned,excluded_assigned,excluded_unassigned,internal_blocks,geometric_holes,required_rank,rank_hole_count_agrees,settlement_record,topology_record
+flat-40,flat,40,100,True,dyad limit reached,False,1,383,283,0,1,24,24,24,True,4018f5772ba345e0b9e01dd74eb7c54c,15069565a498424fba37ead5d5781a61
+flat-41,flat,41,100,True,dyad limit reached,False,1,384,284,0,0,15,15,15,True,093205c4dd7b4ce7abefbde0ca246751,5222a28882254b47942d40f2b651ad1e
+flat-42,flat,42,100,True,dyad limit reached,False,1,384,284,0,0,26,26,26,True,46df5743d545474881ecce923bda27a7,fda707b2436c417f971eb94f9d176b34
+flat-43,flat,43,100,True,dyad limit reached,False,1,381,281,0,3,18,18,18,True,02d6d734ec50452baa4d8765d6cad414,76649323edf84d70b7ca88c0c87b69c6
+flat-44,flat,44,100,True,dyad limit reached,False,1,384,284,0,0,26,26,26,True,1dfac57c11c84a6ab6bd929f0ce95bd3,9464b734f4e246f3b70f6cfc85e617bb
+flat-45,flat,45,100,True,dyad limit reached,False,1,384,284,0,0,19,19,19,True,1b57c0d7600845ef95f03f55cee94e69,3e15bc8de0484f2e8fe5a3543b79c6cb
+ridge-40,ridge,40,100,True,dyad limit reached,False,1,384,284,0,0,12,12,12,True,0203c40950704b8eb7c03c31f7190171,1799dbd92b854b87b4a6c487e8b272af
+ridge-41,ridge,41,100,True,dyad limit reached,False,1,384,284,0,0,7,7,7,True,b4492e16bfa64ae2a7f202265d2f0c48,eb47497f8b2549259380e79706e40abf
+ridge-42,ridge,42,100,True,dyad limit reached,False,1,384,284,0,0,3,3,3,True,6efbd335738b4ec5a431b104f598be3f,57837d124a934c8d9e19abcab8a5de08
+ridge-43,ridge,43,100,True,dyad limit reached,False,1,383,283,0,1,12,12,12,True,9bc0b2326b8c49d381a68b55cde22bb3,5c62326ea9284ef5b0f0ccb546e51c7e
+ridge-44,ridge,44,100,True,dyad limit reached,False,1,384,284,0,0,10,10,10,True,5364c2f42ce04f629766a150dafd52c1,5c38d3b7c9a94307b30205226959105e
+ridge-45,ridge,45,100,True,dyad limit reached,True,1,176,76,0,208,0,0,0,True,30500451814843749931fd03fbcffdec,85f400372fca42348d88866097eba23a
+shoulder-40,shoulder,40,100,True,dyad limit reached,False,1,384,284,0,0,11,11,11,True,01c2f27ed8d1460e9f8f6883cc718975,ba09dd3a60c742558d4d4f411ca31ea0
+shoulder-41,shoulder,41,100,True,dyad limit reached,False,1,373,273,0,11,4,4,4,True,d3b46c708fa54724bf75c42ae77d95ef,b797c7c58bb1415cb02fc05e9f60b89a
+shoulder-42,shoulder,42,89,True,stagnation limit reached,False,1,229,140,0,166,4,4,4,True,1283f2daa18e415a8db0a9fab018d6ab,e7ee893bfc29461db877650f90e19c4f
+shoulder-43,shoulder,43,100,True,dyad limit reached,False,1,383,283,0,1,7,7,7,True,026d07acfe7e493587d5bde4b0585725,984ffbd596f041fa9a16745940ddc158
+shoulder-44,shoulder,44,100,True,dyad limit reached,False,1,383,283,0,1,12,12,12,True,1fc070b349534193a3eaab9344774dcf,ad39b03e06f54ddb858f086e958c598a
+shoulder-45,shoulder,45,100,True,dyad limit reached,False,1,382,282,0,2,10,10,10,True,3c4459fa60ed4a0386bd48f956b6b7ba,c8893a789923497d83275e0c2bc7d54d
+twin_peaks-40,twin_peaks,40,100,True,dyad limit reached,False,1,371,271,0,13,10,10,10,True,5acc025a273648cf9dfa08aa867763d0,453126d50ae14554982d3dc2662a92c9
+twin_peaks-41,twin_peaks,41,100,True,dyad limit reached,False,1,384,284,0,0,20,20,20,True,2253dc6c6acd4e6cb4561eb1abbd455d,9fae43c3cbab4994a154b72ae011ed9c
+twin_peaks-42,twin_peaks,42,100,True,dyad limit reached,False,1,379,279,0,5,14,14,14,True,fa8729aaf1754af9b97a6091f1d44ba4,cdd9e5a9c09f423fb84a30c19bf8729d
+twin_peaks-43,twin_peaks,43,100,True,dyad limit reached,False,1,384,284,0,0,15,15,15,True,a48310688a1144298b602c9fd6cd9dfc,8ae0084172434c0b8a64c804ecd72eee
+twin_peaks-44,twin_peaks,44,100,True,dyad limit reached,False,1,383,283,0,1,15,15,15,True,3a0a1eea7c484b3e9e6f90b74524bedc,b7da54751f2e493185505895f9b2a782
+twin_peaks-45,twin_peaks,45,100,True,dyad limit reached,False,1,380,280,0,4,13,13,13,True,faba425ef07a4435a47107f99bdfd362,cf63966f742845d793a4fb6b65be5ea4
+hill-40,hill,40,100,True,,False,1,384,284,0,0,17,17,17,True,d788c865abf545f1a3cbfb3bf017d905,b3d98a11259a423b9730a9ccde2503b1
+hill-41,hill,41,100,True,,False,1,384,284,0,0,15,15,15,True,12a357c0dd71450dbd6ff57d45452071,2d6445ee1a094e8faa0bf7b4d63b89a5
+hill-42,hill,42,100,True,,False,1,382,282,0,2,16,16,16,True,5245f54c516f414783d8526c9fce4e6a,3cfb7e3ae2f64d37833a326b717e4c40
+hill-43,hill,43,100,True,,False,1,381,281,0,3,13,13,13,True,ec5699a49c084e53a455277017c48c8c,c17c1d2501df4769b1e46dc5b63f871b
+hill-44,hill,44,100,True,,False,1,384,284,0,0,10,10,10,True,0bcaddd9bc28414da5cb60aa2f190bab,03d69815bf9f4c61a5d1494b47082697
+hill-45,hill,45,100,True,,False,1,384,284,0,0,10,10,10,True,b712c0a78d4749528c0ca3031c90b50a,1541999a178149d6915a553305ddf416
+converging_valleys-40,converging_valleys,40,100,True,,False,1,200,100,0,184,6,6,6,True,e6c501be88484e85a693fb65daca7208,a5e9aa51b3d74972ae9323b7c0b8c1d5
+converging_valleys-41,converging_valleys,41,100,True,,False,1,254,154,0,130,6,6,6,True,9a236fe34ffd4ec9a4c0760be3c696cf,55984f7a876c49fcb66a088ba021aae1
+converging_valleys-42,converging_valleys,42,100,True,,False,1,355,255,0,29,5,5,5,True,46f56ef4e1d14f9189c2945e24d82d8b,c5fcbb72cb8c444793e6bd27f919e8ee
+converging_valleys-43,converging_valleys,43,100,True,,False,1,383,283,0,1,7,7,7,True,da5519067880447da401640c869eb88e,d49210c52e664a6e81832ebbb90d3f7d
+converging_valleys-44,converging_valleys,44,100,True,,False,1,381,281,0,3,6,6,6,True,a3213d3bedf4432d9f46a8f1c9689681,70e101656d0c4baea88b342d5d525723
+converging_valleys-45,converging_valleys,45,100,True,,False,1,250,150,0,134,4,4,4,True,6fab37728022410696e6929075bee69f,1624e2c3633a48199f9082c8f408b54c

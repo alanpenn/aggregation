@@ -91,7 +91,8 @@ def preserve_settlement(inputs, parameters):
 
 def derive_topology(inputs, parameters):
     polygons, buildings, dyads = _settlement(inputs)
-    topology = analyse_circulation_topology(polygons, buildings, dyads, [])
+    topology = analyse_circulation_topology(polygons, buildings, dyads, [],
+                                           main_open_seed=parameters.get("main_open_seed"))
     opened = {i: polygons[i] for i in topology["main_open_cells"]}
     occupied = {i: polygons[i] for i in topology["effective_occupied_cells"]}
     occupied_union = unary_union(list(occupied.values()))

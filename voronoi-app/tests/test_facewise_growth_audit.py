@@ -121,3 +121,30 @@ def test_y_regressions_regenerate_connected_growth(seed, excluded_unassigned):
     assert not assigned & excluded
     assert len(excluded) == excluded_unassigned
     assert len(topology["internal_blocks"]) == len(topology["circulation_holes"]) == 6
+
+
+def test_ridge_45_seed_component_preserves_all_doorway_cells():
+    from experiments.facewise_rerun import generate_certified
+    from voronoi_app.batch_methods import derive_topology
+
+    result = generate_certified({}, {
+        "terrain_provider": "ridge",
+        "terrain_params": {"peak_height": 1.0, "orientation": "y", "width": 12.5},
+        "canvas_size": 100.0,
+        "grid_generator": "voronoi",
+        "grid_params": {"num_points": 500, "jitter_ratio": 1.0},
+        "aggregation_params": {
+            "building_slope_preference": 0.95, "contour_preference": 0.95,
+            "max_dyads": 100, "stagnation_limit": 1000,
+        },
+        "seed": 45,
+    })
+    assert result.valid and result.output["aggregation_certificate"]["completed_dyads"] == 100
+    inputs = {"settlement": result.output}
+    assigned = set(result.output["dyad_open_cells"])
+    largest = derive_topology(inputs, {}).output["topology"]
+    assert assigned.isdisjoint(largest["main_open_cells"])
+    seed = result.output["doors"][0][0]
+    seeded = derive_topology(inputs, {"main_open_seed": seed}).output["topology"]
+    assert assigned <= set(seeded["main_open_cells"])
+    assert len(seeded["circulation_holes"]) == len(seeded["internal_blocks"])

@@ -80,7 +80,7 @@ def generate_certified(inputs, parameters):
                                        "grid": "NumPy legacy seeded stream"}}, valid=certificate["valid"])
 
 
-def run_case(root, terrain, seed, retry_failed=False, through="analysis"):
+def run_case(root, terrain, seed, retry_failed=False, through="analysis", configuration=None):
     claims = root / "claims"
     claims.mkdir(parents=True, exist_ok=True)
     with (claims / f"{terrain}-{seed}.lock").open("a") as lock:
@@ -89,21 +89,25 @@ def run_case(root, terrain, seed, retry_failed=False, through="analysis"):
         except BlockingIOError:
             print(f"{terrain}-{seed} already has a worker", flush=True)
             return
-        run_claimed_case(root, terrain, seed, retry_failed, through)
+        run_claimed_case(root, terrain, seed, retry_failed, through, configuration)
 
 
-def run_claimed_case(root, terrain, seed, retry_failed, through):
+def run_claimed_case(root, terrain, seed, retry_failed, through, configuration):
     path = case_path(root, terrain, seed)
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():
         journal = json.loads(path.read_text())
     else:
-        original = case_path(LEGACY, terrain, seed).read_bytes()
-        legacy = json.loads(original)
-        config = legacy["configuration"] | {"aggregation_strategy": "slope_preference_facewise_v1"}
-        journal = {"case": path.stem, "terrain": terrain, "seed": seed, "configuration": config,
-                   "legacy_journal_sha256": sha256(original).hexdigest(),
+        journal = {"case": path.stem, "terrain": terrain, "seed": seed,
                    "git_head": check_output(["git", "rev-parse", "HEAD"], text=True).strip(), "stages": {}}
+        if configuration is None:
+            original = case_path(LEGACY, terrain, seed).read_bytes()
+            legacy = json.loads(original)
+            configuration = legacy["configuration"] | {"aggregation_strategy": "slope_preference_facewise_v1"}
+            journal["legacy_journal_sha256"] = sha256(original).hexdigest()
+        journal["configuration"] = configuration
+    if configuration is not None and configuration != journal["configuration"]:
+        raise ValueError(f"Configuration differs from the saved checkpoint for {path.stem}.")
     store = BatchStore(root)
     parent = None
     references = root / "route-references"
@@ -134,6 +138,24 @@ def run_claimed_case(root, terrain, seed, retry_failed, through):
         if entry["status"] != "successful":
             break
         parent = entry["record"]
+        if key == "topology" and configuration is not None and "candidates" not in journal["stages"]:
+            domain = store.load(parent)[1]["topology"]
+            settlement = store.load(journal["stages"]["settlement"]["record"])[1]
+            assigned = set(settlement["dyad_open_cells"])
+            if assigned.intersection(domain["excluded_open_cells"]):
+                started = monotonic()
+                anchored = run_stage(store, "topology", "voronoi_app.batch_methods:derive_topology",
+                                     {"main_open_seed": settlement["doors"][0][0]},
+                                     journal["stages"]["settlement"]["record"], "seed-component-1")
+                journal.setdefault("earlier_attempts", {}).setdefault("topology", []).append(entry)
+                entry = {"record": anchored["id"], "status": anchored["status"], "error": anchored.get("error"),
+                         "seconds": monotonic() - started, "peak_rss_mib": rss_mib()}
+                journal["stages"]["topology"] = entry
+                atomic_write(path, encode(journal))
+                print(path.stem, "seed-connected topology", entry["status"], flush=True)
+                if entry["status"] != "successful":
+                    break
+                parent = entry["record"]
         if key == through:
             break
 
