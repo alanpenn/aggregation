@@ -390,6 +390,20 @@ From the project root:
 
 The script activates the venv, sets PYTHONPATH, and starts Streamlit on port 8501.
 
+### Complementary tangents and structural reduction
+
+Generate a settlement, choose **Complementary tangents + structural reduction** under **Axial selection method**, and click **Generate complementary axial map**. The method builds the certified candidate pool from the current settlement. It indexes exact supporting tangents at exposed convex vertices of the aggregated occupied blocks. The frozen pair score multiplies the smaller of the two intersection degrees by half of one plus the Jaccard distance between their intersection sets. This favours pairs whose two members both reach other lines and whose connections differ. Vertices with a single tangent contribute that tangent. Candidates without indexed support are carried into the starting pool for structural testing.
+
+Completion adds certified intervals for missing strict convex-region coverage, doorway incidence, connectivity and independent circulation. Coverage repair uses the shortest eligible interval with the canonical candidate ID breaking ties. Connectivity and winding repairs have bounded search budgets. An incomplete result remains available for inspection and is marked uncertified.
+
+**Sheaf-priority (C-H)** is the default. It tries to remove redundant members of geometrically similar corridor sheaves first. **Shortest-first (C-S)** considers shorter lines first. Both reuse the same completed pool and test every deletion for coverage, doorway access, connectivity and independent winding. Dynamic winding checks recompute which independent circulations remain as the graph changes. Final certification also verifies exact clearance and checks winding independently.
+
+Optional **Geometric exchanges** try bounded substitutions and reduce again, preferring fewer lines, then shorter total length, then more distinct transverse crossings. The search finds a valid sparse map when it succeeds. It does not prove a global minimum. Archive replay uses the frozen historical exchange acceptance policy to reproduce its original inventories.
+
+Choose a stage to inspect the full, complementary, completed, reduced or exchange-improved map. Toggle building numbers, vertices, regions, doors and line categories. Select a candidate ID to inspect its certified interval and incidences. The summary table reports structural checks and the effect of reduction. Use **Run angular and metric doorway analysis** separately to compare available maps on the same settlement. Angular routes use zero-cost doorway entry and exit turns. Metric routes use finite certified regional connectors. Routes are calculated only on request.
+
+Geometry, completion, reduction and route results are cached separately in the current browser session. Display changes reuse stored results, and changing reduction order reuses the completed pool. Large settlements can take substantial time or memory. The interactive time limit is checked between search steps.
+
 ## Running Tests
 
 ```bash
@@ -398,6 +412,12 @@ python -m pytest tests/ -v
 ```
 
 Run the test suite with the command above to see the current result.
+
+With the immutable benchmark fixtures installed, replay Flat 40 and the six other corrected settlements with:
+
+```bash
+VORONOI_ARCHIVE_TESTS=1 PYTHONPATH=src:. .venv/bin/python -m pytest -q tests/test_complementary_axial_archive.py
+```
 
 ## Project Structure
 

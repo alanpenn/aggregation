@@ -1,204 +1,110 @@
-# Voronoi axial-map handover
+# Voronoi research handover · 24 November 2026
 
-## Git state
+The GitHub repository is `alanpenn/aggregation`. Use branch
+`shortest-path-tangent-backbone` and run Python commands from its
+`voronoi-app` subdirectory. The data archive is
+`voronoi-research-handover-2026-11-24.tar.gz`. Its internal
+`research-handover-manifest.json` records the exact source commit, file
+inventory, sizes and SHA-256 checksums. The independent checksum sidecar
+verifies the compressed archive. Earlier handover notes remain in Git history.
 
-On 2026-11-16 the branch was `morphic-grammar-local`, tracking
-`origin/morphic-grammar-local` at `https://github.com/alanpenn/aggregation.git`.
-Before the handover commit, a fetch confirmed it was two commits ahead and
-zero behind:
+## Implemented and verified
 
-* `b445e76` Secure and display certified axial research maps
-* `3c7dc55` Integrate exact axial candidate inspection
+- Corrected facewise aggregation and numbered building geometry underpin the
+  exact candidate, incidence and winding records. See
+  [facewise research](FACEWISE_CORRECTED_RESEARCH.md) and
+  [strict generalisation](STRICT_AXIAL_GENERALISATION_RESEARCH.md).
+- The Streamlit selector enumerates fresh certified candidates, chooses pairs
+  of well-connected tangents with different intersection sets at exposed
+  convex occupied-block vertices, and repairs strict coverage, doorway
+  incidence, connectivity and winding. C-H removes sheaf redundancy first.
+  C-S tries shorter intervals first. Both recompute winding during deletion,
+  then check final winding and clearance independently. Optional bounded
+  exchanges prefer fewer lines, then shorter total length, then more distinct
+  transverse crossings. Archived replay uses the frozen acceptance policy.
+- Flat 40 replay passed with 1,534 full candidates, 628 complementary lines,
+  and 629 after coverage repair with candidate 1212. Both frozen modes reached
+  34 lines, 292/292 strict regions, 100/100 doorways, one component and winding
+  rank 24/24. All seven archived settlements reproduced both frozen inventories.
+- Flat 40 parent recombination found alternative valid 34-line maps within the
+  tested unions. The factorial analysis documents 128 minimum configurations
+  in its stated search scope. The seven reproducible cross-terrain cases all
+  favoured C-S and C-H on line count over strict backward selection.
 
-The main research handover commit is
-`49cc7ec4cebbe2b5b70ea8208b954085ce531575`. It and both earlier commits were
-pushed to `origin/morphic-grammar-local`. The earlier commits include
-`tests/fixtures/exact_y/` and `tests/fixtures/angular_y_geometry.json`.
-This document has a subsequent documentation commit; use `git rev-parse HEAD`
-after cloning to see the final branch commit.
+## Reports and atlases
 
-Files included in the main handover commit:
+- [Flat 40 recombination](diagnostics/strict-generalisation/recombined-axial-maps-2/report.md)
+  and [numbered atlas](diagnostics/strict-generalisation/recombined-axial-maps-2/flat-40-numbered-atlas.pdf)
+- [Flat 40 factorial analysis](diagnostics/strict-generalisation/flat-40-factorial-1/report.md)
+  and [all 128 maps](diagnostics/strict-generalisation/flat-40-factorial-1/flat-40-all-128-maps.pdf)
+- [Cross-terrain benchmark](diagnostics/strict-generalisation/cross-terrain-constructive-1/report.md),
+  [numbered atlas](diagnostics/strict-generalisation/cross-terrain-constructive-1/numbered-cross-terrain-atlas.pdf)
+  and [input lineage](diagnostics/strict-generalisation/cross-terrain-constructive-1/lineage.json)
 
-* Modified: `README.md`, `src/voronoi_app/convex_coverage.py`,
-  `tests/test_axial_generator.py`, `tests/test_render_doors.py`.
-* New research reports: `ANGULAR_FIDELITY_RESEARCH.md`,
-  `BOUNDARY_ENDPOINT_RESEARCH.md`, and this `HANDOVER.md`.
-* New experimental modules: `src/voronoi_app/experimental_angular_selection.py`,
-  `src/voronoi_app/experimental_boundary_candidates.py`.
-* New tests: `tests/test_experimental_angular_selection.py`,
-  `tests/test_experimental_boundary_candidates.py`.
-* New experiment scripts: `experiments/angular_hill_{prepare,reference,solve,combine,validate,plots}.py`.
+## Open work
 
-No changes outside `voronoi-app/` were found in the worktree.
+1. Recover the 348 missing immutable files for 29 of 36 benchmark settlements
+   before extending the matched comparison. Keep the original stage IDs and
+   confirm recorded hashes before using recovered inputs. Published maps,
+   journals and configuration files are insufficient to reproduce those cases.
+2. Continue interactive checks on larger fresh settlements. Live controls,
+   session caching, movement gating and legacy displays already passed
+   automated tests. The interactive time limit is cooperative and bounded
+   search does not prove a global minimum.
+3. Implement the historical town-plan import after locating the original
+   research image and confirming its provenance and scale. Classify streets
+   and passages as accessible and exclude buildings, green areas and enclosed
+   precincts. No town-specific source drawing or importer was identified for
+   this handover.
 
-## Data that Git will not transfer
+## Home Mac
 
-The following paths are **not included** by committing the worktree:
-
-1. `diagnostics/` is Git-ignored. Preserve the whole directory separately if
-   the full research history matters: it contains exact-Y map plots, reports,
-   candidate records, certifications, angular investigations and saved axial
-   snapshots. It contains about 118 non-log files totalling 124 MB. Some
-   snapshots duplicate the tracked exact-Y fixtures, but do not assume all
-   diagnostics are duplicates.
-2. The earlier session's files are outside the repository at
-   `$HOME/.copilot/session-state/3191f707-b920-4e07-817a-e0bca07f81eb/files/`.
-   Preserve this directory separately for a complete handover, including its
-   research scripts and results; it contains about 189 non-log, non-cache files
-   totalling 43.8 MB. In particular:
-   * **Required Hill replay inputs:** `hill42-corridor-pool.json`,
-     `hill42-fresh-exact-baseline.json`, `boundary-hill42.json`.
-   * **Exact provenance and results:** `angular-hill-prepared.json`,
-     `angular-hill-reference.json`, `angular-hill-*-results.json`,
-     `angular-hill-validation.json`, `boundary-exact-y.json`,
-     `boundary-{cartesian,voronoi}-{11,42}.json` and `boundary-angular-*.json`.
-   * **Plots and map data:** `angular-hill-*.png`,
-     `hill42-axial-map-numbered.png`, `hill42-axial-map-data.json`,
-     `hill42-components*.png` and `hill42-corridor-2-15.png`.
-   * `hill42_axial_overlay.py` is identical to the shared overlay snapshot but
-     hard-codes this Mac's session path; adapt its path before reuse.
-
-The session also contains disposable logs, caches, scratch scripts and
-intermediate measurements; retaining the whole directory separately is safest
-until its contents have been reviewed. Do not copy `.venv/`, `node_modules/`,
-bytecode, caches or logs into Git. Review data before sharing: diagnostics
-contain settlement geometry and experiment configuration.
-
-On 2026-11-16, a separate local archive was created at
-`$HOME/Developer/aggregation-research-transfer-2026-11-16.tar.gz`
-(75,605,176 bytes; SHA-256
-`873d6e45d5750f56d12ee7f008f5ce08d128b2a7fab0158970642fed26fd6496`).
-Its `MANIFEST.json` records sizes and SHA-256 hashes for 307 files. The archive
-was extracted into a fresh verification directory and every file was checked
-against the manifest. It contains the diagnostics under
-`repository/voronoi-app/diagnostics/` and the session data under
-`home/.copilot/session-state/3191f707-b920-4e07-817a-e0bca07f81eb/files/`.
-Volatile `.log` files and Python bytecode/cache were excluded and are listed
-in the manifest.
-
-On 2026-11-17 the older archive was **not present at that recorded path**;
-its current location is unknown. A new archive of the currently accessible
-diagnostics and session research, including the later Valley exchange and
-connectivity results and the exact diagnostic input, was created at
-`$HOME/Developer/aggregation-valley-research-2026-11-17.tar.gz`
-(91,829,964 bytes; SHA-256
-`9128d543e2527588a3562ca2767f6b81de6daed9ecc412d8e376008c373bf3b7`).
-Its `MANIFEST.json` lists 349 files with sizes and SHA-256 hashes. Every
-archive member was decompressed and checked against the manifest; original
-files were not changed. File symlinks are archived as regular copies of their
-target contents. Logs, bytecode, caches and temporary status/output files
-were excluded. The new archive cannot verify whether anything from the missing
-older archive is no longer accessible. **It remains local and must be
-transferred separately**; it is not in Git.
-
-For integrity checks, SHA-256 of key external files:
-
-```text
-8600caead6af8243a95e0203fe76f755bc03440042c28bd8e72246a94fd2812c  hill42-corridor-pool.json
-6a1f3515742c7c3ca62d66479d6db5cb5789f041bb42ec13ac1517d6ec19aaaa  hill42-fresh-exact-baseline.json
-347e92513b9fc875438ba2f9aaafd378c0f127c201c301d44edba20ace267945  boundary-hill42.json
-e9a917dae22be1cd78d1468c9190e6af10feb6ca69eee8cc5e342ad4a97b7dea  boundary-exact-y.json
-579a87b56926482b26ea9b61df49d22674ccc529b4d262c94cc46b4c357f71fd  angular-hill-prepared.json
-93beb90ce3f83a89741f65c5440c72479757a08a3041dcb6d4441eec4457f26e  angular-hill-final-results.json
-```
-
-No relevant current file checked exceeds 50 MiB; the largest diagnostic is
-9,001,982 bytes. GitHub warns above 50 MiB and blocks files above 100 MiB, so
-Git LFS is not required for these individual files. It is not installed here.
-The directories contain many generated files, however: a separate archive or
-selective reviewed Git additions are preferable to blindly adding everything.
-This size check excludes dependency directories and Git history.
-
-## Setup on the second Mac
-
-After separately transferring the archive to the second Mac, clone the branch
-and set up the app with Python 3.12:
+Python 3.12 was used on the work Mac. Python 3.11 or later is required.
+Start at the existing clone of `alanpenn/aggregation`. If the status output
+shows local changes, preserve them before switching branches. Use a separate
+checkout when keeping local work in place.
 
 ```sh
-git clone --branch morphic-grammar-local https://github.com/alanpenn/aggregation.git
-cd aggregation/voronoi-app
+cd /path/to/aggregation
+git status --short --branch
+git remote -v
+git fetch origin
+git switch shortest-path-tangent-backbone
+git pull --ff-only origin shortest-path-tangent-backbone
+git rev-parse HEAD origin/shortest-path-tangent-backbone
+cd voronoi-app
+
+archive_dir="$HOME/Library/Mobile Documents/com~apple~CloudDocs/ResearchArchives"
+bundle=voronoi-research-handover-2026-11-24.tar.gz
+(cd "$archive_dir" && shasum -a 256 -c "$bundle.sha256")
+archive="$archive_dir/$bundle"
+tar -tzf "$archive" | less
+tar -xOzf "$archive" research-handover-manifest.json | less
+
 python3.12 -m venv .venv
-.venv/bin/python -m pip install -e . pytest
+.venv/bin/python -m pip install -r requirements.txt pytest
+.venv/bin/python restore_research_archive.py "$archive"
+.venv/bin/python restore_research_archive.py "$archive" --apply
+MPLBACKEND=Agg PYTHONPATH=src:. .venv/bin/python -m pytest -q tests/test_complementary_axial.py tests/test_complementary_streamlit.py tests/test_exact_streamlit.py tests/test_constructive_axial.py
 ./run_streamlit.sh
 ```
 
-For the archived research, replace `ARCHIVE` below with its transferred path.
-Extract into a new directory and copy the three replay inputs to a separate
-working directory, because the experiment scripts overwrite named results:
+For a fresh clone where the branch does not yet exist locally, use
+`git switch --track origin/shortest-path-tangent-backbone`. If the archive is
+transferred separately, point `archive_dir` at the directory holding both
+files. Stop if the sidecar check fails. Check the manifest commit against the
+checked-out commit. The restore utility verifies every file before applying
+changes, skips byte-identical files and prints conflicting paths. If there
+are conflicts, it leaves the original files in place and prints the temporary
+directory containing verified incoming copies.
+
+At [localhost:8501](http://localhost:8501), generate a settlement, choose
+**Complementary tangents + structural reduction**, then click **Generate
+complementary axial map**. The stage selector, candidate inspector and
+optional doorway routing are described in the [README](README.md).
+
+To replay all seven exact archives, run:
 
 ```sh
-ARCHIVE="$HOME/Downloads/aggregation-research-transfer-2026-11-16.tar.gz"
-shasum -a 256 "$ARCHIVE"
-TRANSFER="$(mktemp -d "${TMPDIR:-/tmp}/voronoi-transfer.XXXXXX")"
-tar -xzf "$ARCHIVE" -C "$TRANSFER"
-SOURCE="$TRANSFER/home/.copilot/session-state/3191f707-b920-4e07-817a-e0bca07f81eb/files"
-DATA="$(mktemp -d "${TMPDIR:-/tmp}/voronoi-hill-work.XXXXXX")"
-cp "$SOURCE/hill42-corridor-pool.json" "$SOURCE/hill42-fresh-exact-baseline.json" \
-  "$SOURCE/boundary-hill42.json" "$DATA/"
+VORONOI_ARCHIVE_TESTS=1 MPLBACKEND=Agg PYTHONPATH=src:. .venv/bin/python -m pytest -q tests/test_complementary_axial_archive.py
 ```
-
-Compare the `shasum` result to the archive hash above. Use `DATA` with the
-commands in `ANGULAR_FIDELITY_RESEARCH.md`; the extracted diagnostics are under
-`$TRANSFER/repository/voronoi-app/diagnostics/`.
-
-The app requires Python 3.11+, NumPy, SciPy, Matplotlib, NetworkX,
-Shapely >= 2.1 and Streamlit 1.67.0. `pytest` is not declared as a project
-dependency. Apart from Streamlit and the Shapely minimum, dependencies are not
-locked; exact replay across package versions is not guaranteed. The tested
-environment was Python 3.12.13, NumPy 2.5.2, SciPy 1.18.0, Matplotlib 3.11.1,
-NetworkX 3.6.1, Shapely 2.1.2, Streamlit 1.67.0 and pytest 9.1.1. A clean
-installation on the second Mac has not been tested.
-
-The tracked root `.agents/skills/developing-with-streamlit` symlink points
-inside `.venv/lib/python3.12/`; it works here but may be broken until the
-Python 3.12 environment and Streamlit are installed. This affects the optional
-agent skill, not the application. The old absolute `cd` example in
-`PHASES_9_11_SUMMARY.md` is machine-specific. The Hill experiment scripts take
-`--data-dir` rather than hard-coding the old Mac's path. The app binds to
-`0.0.0.0:8501` by default.
-
-The repository root also contains a separate Vite project. Its tracked lockfile
-requires Node `^20.19.0 || >=22.12.0`; this Mac's default Node is 5.5.0, so its
-build was not verified. The Vite project is not required to run Streamlit.
-
-## Results, validation and next steps
-
-The experimental boundary rule adds 1,238 distinct intervals to the Hill
-seed-42 exact baseline. The combined pool contains 2,610 rational intervals.
-The fixed-attachment angular experiment found feasible 365-line subsets for
-ε=0 and 0.02 and 362-line subsets for ε=0.05–0.50. Both cover 268/268 convex
-regions, preserve 11/11 ring witnesses and all three connected components.
-These are not proven minima; ε=0 uses a `1e-10` numerical comparison slack.
-The 21.0679-unit corridor candidate is in the pool but not in those selected
-subsets. See `BOUNDARY_ENDPOINT_RESEARCH.md` and
-`ANGULAR_FIDELITY_RESEARCH.md` for the geometry, limitations and diagnostics.
-
-On this Mac the following targeted command passed **138 tests**, with two
-opt-in regeneration tests skipped and one slow default-Voronoi test deselected:
-
-```sh
-PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider \
-  tests/test_experimental_angular_selection.py tests/test_experimental_boundary_candidates.py \
-  tests/test_angular.py tests/test_exact_axial.py tests/test_exact_replay.py \
-  tests/test_axial_generator.py tests/test_render_doors.py \
-  -k 'not default_voronoi_experiment_coverage_and_rings'
-```
-
-On 2026-11-17 the expanded angular, exact-Y, Valley connectivity, exchange,
-generator and Streamlit regressions passed **162 tests**, with two skipped
-and one deselected. The saved Valley replay data directories were supplied
-through `VALLEY_EXCHANGE_DATA` and `VALLEY_CONNECTIVITY_DATA`; the archive
-above preserves them. The successful combined headless run used
-`MPLBACKEND=Agg`; an earlier run without it had three Streamlit interaction
-failures and a Matplotlib GUI-thread warning. The separate Streamlit test file
-also passed with the Agg backend.
-
-The live full Hill regeneration requires `HILL42_FULL_REGENERATION=1`; the
-fresh exact-Y enumeration requires `EXACT_Y_REGENERATE=1`. Neither was rerun
-for this handover. The Hill research report documents the complete replay
-commands using a user-chosen `DATA` directory containing the three saved
-inputs. **Use a fresh working copy:** those scripts write and may overwrite
-their named result files in `DATA`. Exact geometry is authoritative, but the
-accessible-domain overlay and convex decomposition are GEOS-constructed;
-the candidate pool and angular sample do not prove axial-map completeness or
-global optimality.

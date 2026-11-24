@@ -7,14 +7,21 @@ from dataclasses import replace
 from io import BytesIO
 from pathlib import Path
 
-import streamlit as st
+import matplotlib
 import numpy as np
+import streamlit as st
 from PIL import Image
 from shapely.geometry import LineString
 from shapely.ops import unary_union
 
+matplotlib.use("Agg")
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "app"))
+
+from complementary_ui import METHOD as COMPLEMENTARY_METHOD, display_complementary
+from voronoi_app.complementary_axial import settlement_snapshot
 
 # Import new architecture
 from voronoi_app.registry import get_registry
@@ -642,7 +649,8 @@ with st.sidebar:
         selection_method = st.selectbox(
             "Axial selection method",
             ["Greedy (baseline)", "Fewest lines, then angular (experimental)",
-             "Angular depth + line penalty (experimental)"],
+             "Angular depth + line penalty (experimental)", COMPLEMENTARY_METHOD],
+            key="axial_selection_method",
         )
     coverage_model = "convex" if axial_coverage == "Convex regions (experimental)" else "cells"
     if axial_coverage is None:
@@ -659,7 +667,17 @@ with st.sidebar:
             help="Additional lines above the compact map, chosen by improvement across all valid entrance pairs.",
         )
         st.caption("This exact experiment uses convex visibility coverage and may take several minutes.")
-    if selection_method != "Greedy (baseline)" and axial_display != "Exact axial candidates":
+    complementary = selection_method == COMPLEMENTARY_METHOD
+    angular_selection = selection_method not in ("Greedy (baseline)", COMPLEMENTARY_METHOD)
+    if complementary:
+        complementary_order = st.selectbox(
+            "Reduction order", ["sheaf", "shortest"],
+            format_func={"sheaf": "Sheaf-priority (C-H)", "shortest": "Shortest-first (C-S)"}.get,
+            key="complementary_order",
+        )
+        complementary_exchanges = st.checkbox("Improve selection with geometric exchanges", value=True,
+                                                key="complementary_exchanges")
+    if angular_selection and axial_display != "Exact axial candidates":
         angular_iterations = st.number_input(
             "Angular search iterations", min_value=1, max_value=10000, value=20, step=1,
         )
@@ -680,8 +698,8 @@ with st.sidebar:
     
     run_clicked = st.button("▶ Run Experiment", type="primary", width="stretch",
                             key="run_experiment",
-                            disabled=(axial_coverage is None or (
-                                selection_method != "Greedy (baseline)" and
+                            disabled=((axial_coverage is None and not complementary) or (
+                                angular_selection and
                                 axial_display != "Exact axial candidates" and
                                 (coverage_model != "convex" or axial_display == "Existing sightlines")
                             )))
@@ -736,6 +754,7 @@ if st.checkbox("Show certified research maps", key="show_certified_research"):
 if run_clicked:
     st.session_state.pop("current_exact_experiment", None)
     st.session_state.pop("exact_candidate_result", None)
+    st.session_state.pop("complementary_snapshot", None)
     if use_random_seed:
         seed = random.randint(0, 999999)
     
@@ -786,7 +805,9 @@ if run_clicked:
             st.subheader("Digital Elevation Model")
             display_figure(fig_elevation(result))
 
-        if axial_display in ("Axial Map", "All axial candidates", "Axial candidate audit"):
+        if complementary:
+            st.caption("Use the complementary map controls below to select certified axial lines.")
+        elif axial_display in ("Axial Map", "All axial candidates", "Axial candidate audit"):
             st.subheader(axial_display)
             st.caption(
                 "Greedy geometric approximation; boundary segments are permitted "
@@ -1099,7 +1120,7 @@ if run_clicked:
         import traceback
         st.text(traceback.format_exc())
 
-elif (axial_display != ENTRANCE_DISPLAY or "entrance_axial_result" not in st.session_state) and (
+elif not complementary and (axial_display != ENTRANCE_DISPLAY or "entrance_axial_result" not in st.session_state) and (
     axial_display != "Exact axial candidates" or "current_exact_experiment" not in st.session_state
 ):
     st.info(
@@ -1113,7 +1134,20 @@ elif (axial_display != ENTRANCE_DISPLAY or "entrance_axial_result" not in st.ses
 if axial_display == ENTRANCE_DISPLAY and "entrance_axial_result" in st.session_state:
     display_entrance_map(*st.session_state["entrance_axial_result"])
 
-if axial_display == "Exact axial candidates":
+if complementary:
+    experiment = st.session_state.get("current_exact_experiment")
+    if experiment is None:
+        st.info("Run an experiment before generating a complementary axial map.")
+    else:
+        if "complementary_snapshot" not in st.session_state:
+            polygons = ExperimentOrchestrator(experiment.pipeline)._space_polygons(experiment.grid)
+            st.session_state["complementary_snapshot"] = settlement_snapshot(
+                polygons, experiment.building_labels, experiment.open_spaces, experiment.doors,
+            )
+        display_complementary(experiment, st.session_state["complementary_snapshot"],
+                              complementary_order, complementary_exchanges, display_figure)
+
+if axial_display == "Exact axial candidates" and not complementary:
     experiment = st.session_state.get("current_exact_experiment")
     if experiment is None:
         st.info("Run an experiment before generating exact candidates.")

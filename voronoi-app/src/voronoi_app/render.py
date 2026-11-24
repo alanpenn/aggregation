@@ -579,3 +579,50 @@ def fig_unresolved_tangents(open_polygons, occupied_polygons, audit):
     ax.axis("off")
     fig.tight_layout()
     return fig
+
+
+def fig_complementary_axial_map(polygons, labels, excluded, groups, colors, *,
+                               show_labels=True, vertices=(), regions=(), doorways=(), highlighted=None):
+    """Plot exact line endpoints with optional settlement and stage overlays."""
+    from fractions import Fraction
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    from matplotlib.collections import LineCollection, PolyCollection
+    from matplotlib.figure import Figure
+
+    fig = Figure(figsize=(9, 8), layout="constrained")
+    FigureCanvasAgg(fig)
+    ax = fig.subplots()
+    blocked = set(excluded)
+    ax.add_collection(PolyCollection(
+        [list(p.exterior.coords) for p in polygons.values()],
+        facecolors=["#44515b" if i in labels else "#ead7ab" if i in blocked else "#eff0eb"
+                    for i in polygons],
+        edgecolors="#b1bab7", linewidths=.35,
+    ))
+    for region in regions:
+        ax.plot(*region.exterior.xy, color="#8c9f94", lw=.6, alpha=.58)
+    for name, lines in groups.items():
+        if not lines:
+            continue
+        segments = [tuple(tuple(map(float, p)) for p in (line.start, line.end)) for line in lines]
+        ax.add_collection(LineCollection(segments, colors=colors[name], linewidths=.66 if len(lines)>150 else 1.4,
+                                         alpha=.32 if len(lines)>150 else .86, zorder=3))
+        ax.plot([], [], color=colors[name], label=f"{name} ({len(lines)})")
+    if highlighted:
+        points = [tuple(map(float, p)) for p in (highlighted.start, highlighted.end)]
+        ax.plot(*zip(*points), color="#cc392b", lw=2.6, zorder=5)
+    if show_labels:
+        for i, label in labels.items():
+            point = polygons[i].representative_point()
+            ax.text(point.x, point.y, str(label), color="white", fontsize=7,
+                    ha="center", va="center", zorder=6)
+    for records, color in ((vertices, "#b83d65"), (doorways, "#027f83")):
+        if records:
+            points = [tuple(float(Fraction(c)) for c in record["point"]) for record in records]
+            ax.scatter(*zip(*points), color=color, s=10, zorder=7)
+    ax.autoscale_view()
+    ax.set_aspect("equal")
+    ax.set_axis_off()
+    if any(groups.values()):
+        ax.legend(loc="lower center", bbox_to_anchor=(.5, -.08), ncol=2, fontsize=8, frameon=False)
+    return fig
