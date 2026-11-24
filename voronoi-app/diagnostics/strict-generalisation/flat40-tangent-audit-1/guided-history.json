@@ -1,0 +1,2312 @@
+{
+  "907": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 413,
+        "doorway_rank": 211,
+        "chosen": false
+      },
+      {
+        "primary_rank": 383,
+        "doorway_rank": 209,
+        "chosen": false
+      },
+      {
+        "primary_rank": 347,
+        "doorway_rank": 201,
+        "chosen": false
+      },
+      {
+        "primary_rank": 321,
+        "doorway_rank": 195,
+        "chosen": false
+      },
+      {
+        "primary_rank": 329,
+        "doorway_rank": 195,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "141": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "1421": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 86,
+        "doorway_rank": 347,
+        "chosen": false
+      },
+      {
+        "primary_rank": 84,
+        "doorway_rank": 346,
+        "chosen": false
+      },
+      {
+        "primary_rank": 87,
+        "doorway_rank": 345,
+        "chosen": false
+      },
+      {
+        "primary_rank": 84,
+        "doorway_rank": 344,
+        "chosen": false
+      },
+      {
+        "primary_rank": 83,
+        "doorway_rank": 343,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1039": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 527,
+        "doorway_rank": 222,
+        "chosen": false
+      },
+      {
+        "primary_rank": 498,
+        "doorway_rank": 219,
+        "chosen": false
+      },
+      {
+        "primary_rank": 473,
+        "doorway_rank": 217,
+        "chosen": false
+      },
+      {
+        "primary_rank": 438,
+        "doorway_rank": 216,
+        "chosen": false
+      },
+      {
+        "primary_rank": 446,
+        "doorway_rank": 216,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "914": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 493,
+        "doorway_rank": 402,
+        "chosen": false
+      },
+      {
+        "primary_rank": 508,
+        "doorway_rank": 401,
+        "chosen": false
+      },
+      {
+        "primary_rank": 486,
+        "doorway_rank": 394,
+        "chosen": false
+      },
+      {
+        "primary_rank": 495,
+        "doorway_rank": 394,
+        "chosen": false
+      },
+      {
+        "primary_rank": 502,
+        "doorway_rank": 393,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "787": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 918,
+        "doorway_rank": 563,
+        "chosen": false
+      },
+      {
+        "primary_rank": 920,
+        "doorway_rank": 562,
+        "chosen": false
+      },
+      {
+        "primary_rank": 921,
+        "doorway_rank": 561,
+        "chosen": false
+      },
+      {
+        "primary_rank": 921,
+        "doorway_rank": 560,
+        "chosen": false
+      },
+      {
+        "primary_rank": 921,
+        "doorway_rank": 559,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "926": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 483,
+        "doorway_rank": 214,
+        "chosen": false
+      },
+      {
+        "primary_rank": 459,
+        "doorway_rank": 211,
+        "chosen": false
+      },
+      {
+        "primary_rank": 428,
+        "doorway_rank": 210,
+        "chosen": false
+      },
+      {
+        "primary_rank": 397,
+        "doorway_rank": 208,
+        "chosen": false
+      },
+      {
+        "primary_rank": 402,
+        "doorway_rank": 208,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "927": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 454,
+        "doorway_rank": 307,
+        "chosen": false
+      },
+      {
+        "primary_rank": 424,
+        "doorway_rank": 305,
+        "chosen": false
+      },
+      {
+        "primary_rank": 394,
+        "doorway_rank": 301,
+        "chosen": false
+      },
+      {
+        "primary_rank": 370,
+        "doorway_rank": 296,
+        "chosen": false
+      },
+      {
+        "primary_rank": 374,
+        "doorway_rank": 295,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "928": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 880,
+        "doorway_rank": 665,
+        "chosen": false
+      },
+      {
+        "primary_rank": 881,
+        "doorway_rank": 664,
+        "chosen": false
+      },
+      {
+        "primary_rank": 841,
+        "doorway_rank": 651,
+        "chosen": false
+      },
+      {
+        "primary_rank": 842,
+        "doorway_rank": 650,
+        "chosen": false
+      },
+      {
+        "primary_rank": 844,
+        "doorway_rank": 649,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "289": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "1279": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 143,
+        "doorway_rank": 37,
+        "chosen": false
+      },
+      {
+        "primary_rank": 133,
+        "doorway_rank": 36,
+        "chosen": false
+      },
+      {
+        "primary_rank": 128,
+        "doorway_rank": 35,
+        "chosen": false
+      },
+      {
+        "primary_rank": 124,
+        "doorway_rank": 34,
+        "chosen": false
+      },
+      {
+        "primary_rank": 126,
+        "doorway_rank": 34,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1188": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 226,
+        "doorway_rank": 148,
+        "chosen": false
+      },
+      {
+        "primary_rank": 241,
+        "doorway_rank": 147,
+        "chosen": false
+      },
+      {
+        "primary_rank": 228,
+        "doorway_rank": 146,
+        "chosen": false
+      },
+      {
+        "primary_rank": 231,
+        "doorway_rank": 146,
+        "chosen": false
+      },
+      {
+        "primary_rank": 235,
+        "doorway_rank": 146,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1189": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 58,
+        "doorway_rank": 22,
+        "chosen": false
+      },
+      {
+        "primary_rank": 57,
+        "doorway_rank": 21,
+        "chosen": false
+      },
+      {
+        "primary_rank": 55,
+        "doorway_rank": 20,
+        "chosen": false
+      },
+      {
+        "primary_rank": 51,
+        "doorway_rank": 19,
+        "chosen": false
+      },
+      {
+        "primary_rank": 50,
+        "doorway_rank": 19,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1190": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 57,
+        "doorway_rank": 23,
+        "chosen": false
+      },
+      {
+        "primary_rank": 56,
+        "doorway_rank": 22,
+        "chosen": false
+      },
+      {
+        "primary_rank": 54,
+        "doorway_rank": 21,
+        "chosen": false
+      },
+      {
+        "primary_rank": 50,
+        "doorway_rank": 20,
+        "chosen": false
+      },
+      {
+        "primary_rank": 49,
+        "doorway_rank": 20,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1449": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 85,
+        "doorway_rank": 256,
+        "chosen": false
+      },
+      {
+        "primary_rank": 83,
+        "doorway_rank": 255,
+        "chosen": false
+      },
+      {
+        "primary_rank": 86,
+        "doorway_rank": 254,
+        "chosen": false
+      },
+      {
+        "primary_rank": 83,
+        "doorway_rank": 253,
+        "chosen": false
+      },
+      {
+        "primary_rank": 82,
+        "doorway_rank": 252,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1195": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 103,
+        "doorway_rank": 58,
+        "chosen": false
+      },
+      {
+        "primary_rank": 105,
+        "doorway_rank": 58,
+        "chosen": false
+      },
+      {
+        "primary_rank": 99,
+        "doorway_rank": 57,
+        "chosen": false
+      },
+      {
+        "primary_rank": 104,
+        "doorway_rank": 56,
+        "chosen": false
+      },
+      {
+        "primary_rank": 111,
+        "doorway_rank": 56,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1073": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 144,
+        "doorway_rank": 35,
+        "chosen": false
+      },
+      {
+        "primary_rank": 134,
+        "doorway_rank": 34,
+        "chosen": false
+      },
+      {
+        "primary_rank": 129,
+        "doorway_rank": 33,
+        "chosen": false
+      },
+      {
+        "primary_rank": 125,
+        "doorway_rank": 32,
+        "chosen": false
+      },
+      {
+        "primary_rank": 127,
+        "doorway_rank": 32,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1074": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 480,
+        "doorway_rank": 125,
+        "chosen": false
+      },
+      {
+        "primary_rank": 494,
+        "doorway_rank": 124,
+        "chosen": false
+      },
+      {
+        "primary_rank": 469,
+        "doorway_rank": 120,
+        "chosen": false
+      },
+      {
+        "primary_rank": 483,
+        "doorway_rank": 119,
+        "chosen": false
+      },
+      {
+        "primary_rank": 490,
+        "doorway_rank": 119,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1075": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 142,
+        "doorway_rank": 36,
+        "chosen": false
+      },
+      {
+        "primary_rank": 132,
+        "doorway_rank": 35,
+        "chosen": false
+      },
+      {
+        "primary_rank": 127,
+        "doorway_rank": 34,
+        "chosen": false
+      },
+      {
+        "primary_rank": 123,
+        "doorway_rank": 33,
+        "chosen": false
+      },
+      {
+        "primary_rank": 125,
+        "doorway_rank": 33,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1207": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 79,
+        "doorway_rank": 29,
+        "chosen": false
+      },
+      {
+        "primary_rank": 78,
+        "doorway_rank": 28,
+        "chosen": false
+      },
+      {
+        "primary_rank": 75,
+        "doorway_rank": 27,
+        "chosen": false
+      },
+      {
+        "primary_rank": 74,
+        "doorway_rank": 26,
+        "chosen": false
+      },
+      {
+        "primary_rank": 75,
+        "doorway_rank": 26,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1208": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 44,
+        "doorway_rank": 16,
+        "chosen": false
+      },
+      {
+        "primary_rank": 43,
+        "doorway_rank": 15,
+        "chosen": false
+      },
+      {
+        "primary_rank": 39,
+        "doorway_rank": 15,
+        "chosen": false
+      },
+      {
+        "primary_rank": 33,
+        "doorway_rank": 14,
+        "chosen": false
+      },
+      {
+        "primary_rank": 33,
+        "doorway_rank": 14,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1465": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 236,
+        "doorway_rank": 280,
+        "chosen": false
+      },
+      {
+        "primary_rank": 219,
+        "doorway_rank": 277,
+        "chosen": false
+      },
+      {
+        "primary_rank": 233,
+        "doorway_rank": 276,
+        "chosen": false
+      },
+      {
+        "primary_rank": 217,
+        "doorway_rank": 274,
+        "chosen": false
+      },
+      {
+        "primary_rank": 222,
+        "doorway_rank": 273,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "954": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 43,
+        "doorway_rank": 15,
+        "chosen": false
+      },
+      {
+        "primary_rank": 42,
+        "doorway_rank": 14,
+        "chosen": false
+      },
+      {
+        "primary_rank": 38,
+        "doorway_rank": 14,
+        "chosen": false
+      },
+      {
+        "primary_rank": 32,
+        "doorway_rank": 13,
+        "chosen": false
+      },
+      {
+        "primary_rank": 32,
+        "doorway_rank": 13,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "956": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 75,
+        "doorway_rank": 26,
+        "chosen": false
+      },
+      {
+        "primary_rank": 74,
+        "doorway_rank": 25,
+        "chosen": false
+      },
+      {
+        "primary_rank": 64,
+        "doorway_rank": 24,
+        "chosen": false
+      },
+      {
+        "primary_rank": 57,
+        "doorway_rank": 23,
+        "chosen": false
+      },
+      {
+        "primary_rank": 66,
+        "doorway_rank": 23,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "61": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "957": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 40,
+        "doorway_rank": 14,
+        "chosen": false
+      },
+      {
+        "primary_rank": 36,
+        "doorway_rank": 13,
+        "chosen": false
+      },
+      {
+        "primary_rank": 30,
+        "doorway_rank": 13,
+        "chosen": false
+      },
+      {
+        "primary_rank": 28,
+        "doorway_rank": 12,
+        "chosen": false
+      },
+      {
+        "primary_rank": 27,
+        "doorway_rank": 12,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "63": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "1084": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 294,
+        "doorway_rank": 154,
+        "chosen": false
+      },
+      {
+        "primary_rank": 302,
+        "doorway_rank": 153,
+        "chosen": false
+      },
+      {
+        "primary_rank": 272,
+        "doorway_rank": 149,
+        "chosen": false
+      },
+      {
+        "primary_rank": 277,
+        "doorway_rank": 148,
+        "chosen": false
+      },
+      {
+        "primary_rank": 282,
+        "doorway_rank": 148,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1085": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 185,
+        "doorway_rank": 141,
+        "chosen": false
+      },
+      {
+        "primary_rank": 191,
+        "doorway_rank": 140,
+        "chosen": false
+      },
+      {
+        "primary_rank": 171,
+        "doorway_rank": 139,
+        "chosen": false
+      },
+      {
+        "primary_rank": 178,
+        "doorway_rank": 140,
+        "chosen": false
+      },
+      {
+        "primary_rank": 185,
+        "doorway_rank": 140,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1089": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 261,
+        "doorway_rank": 191,
+        "chosen": false
+      },
+      {
+        "primary_rank": 268,
+        "doorway_rank": 190,
+        "chosen": false
+      },
+      {
+        "primary_rank": 252,
+        "doorway_rank": 183,
+        "chosen": false
+      },
+      {
+        "primary_rank": 256,
+        "doorway_rank": 182,
+        "chosen": false
+      },
+      {
+        "primary_rank": 260,
+        "doorway_rank": 182,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1091": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 201,
+        "doorway_rank": 180,
+        "chosen": false
+      },
+      {
+        "primary_rank": 213,
+        "doorway_rank": 179,
+        "chosen": false
+      },
+      {
+        "primary_rank": 204,
+        "doorway_rank": 178,
+        "chosen": false
+      },
+      {
+        "primary_rank": 214,
+        "doorway_rank": 178,
+        "chosen": false
+      },
+      {
+        "primary_rank": 219,
+        "doorway_rank": 178,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1353": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 346,
+        "doorway_rank": 588,
+        "chosen": false
+      },
+      {
+        "primary_rank": 360,
+        "doorway_rank": 589,
+        "chosen": false
+      },
+      {
+        "primary_rank": 371,
+        "doorway_rank": 588,
+        "chosen": false
+      },
+      {
+        "primary_rank": 381,
+        "doorway_rank": 587,
+        "chosen": false
+      },
+      {
+        "primary_rank": 384,
+        "doorway_rank": 587,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1354": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 84,
+        "doorway_rank": 254,
+        "chosen": false
+      },
+      {
+        "primary_rank": 82,
+        "doorway_rank": 253,
+        "chosen": false
+      },
+      {
+        "primary_rank": 85,
+        "doorway_rank": 252,
+        "chosen": false
+      },
+      {
+        "primary_rank": 82,
+        "doorway_rank": 251,
+        "chosen": false
+      },
+      {
+        "primary_rank": 81,
+        "doorway_rank": 250,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1355": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 99,
+        "doorway_rank": 257,
+        "chosen": false
+      },
+      {
+        "primary_rank": 93,
+        "doorway_rank": 256,
+        "chosen": false
+      },
+      {
+        "primary_rank": 96,
+        "doorway_rank": 255,
+        "chosen": false
+      },
+      {
+        "primary_rank": 93,
+        "doorway_rank": 254,
+        "chosen": false
+      },
+      {
+        "primary_rank": 93,
+        "doorway_rank": 253,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1231": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 151,
+        "doorway_rank": 137,
+        "chosen": false
+      },
+      {
+        "primary_rank": 138,
+        "doorway_rank": 136,
+        "chosen": false
+      },
+      {
+        "primary_rank": 132,
+        "doorway_rank": 134,
+        "chosen": false
+      },
+      {
+        "primary_rank": 128,
+        "doorway_rank": 133,
+        "chosen": false
+      },
+      {
+        "primary_rank": 131,
+        "doorway_rank": 133,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1232": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 130,
+        "doorway_rank": 135,
+        "chosen": false
+      },
+      {
+        "primary_rank": 124,
+        "doorway_rank": 133,
+        "chosen": false
+      },
+      {
+        "primary_rank": 117,
+        "doorway_rank": 131,
+        "chosen": false
+      },
+      {
+        "primary_rank": 109,
+        "doorway_rank": 130,
+        "chosen": false
+      },
+      {
+        "primary_rank": 116,
+        "doorway_rank": 130,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1233": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 152,
+        "doorway_rank": 138,
+        "chosen": false
+      },
+      {
+        "primary_rank": 139,
+        "doorway_rank": 137,
+        "chosen": false
+      },
+      {
+        "primary_rank": 133,
+        "doorway_rank": 135,
+        "chosen": false
+      },
+      {
+        "primary_rank": 129,
+        "doorway_rank": 134,
+        "chosen": false
+      },
+      {
+        "primary_rank": 132,
+        "doorway_rank": 134,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1234": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 233,
+        "doorway_rank": 184,
+        "chosen": false
+      },
+      {
+        "primary_rank": 215,
+        "doorway_rank": 180,
+        "chosen": false
+      },
+      {
+        "primary_rank": 206,
+        "doorway_rank": 179,
+        "chosen": false
+      },
+      {
+        "primary_rank": 183,
+        "doorway_rank": 176,
+        "chosen": false
+      },
+      {
+        "primary_rank": 190,
+        "doorway_rank": 176,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1235": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 836,
+        "doorway_rank": 555,
+        "chosen": false
+      },
+      {
+        "primary_rank": 837,
+        "doorway_rank": 554,
+        "chosen": false
+      },
+      {
+        "primary_rank": 838,
+        "doorway_rank": 553,
+        "chosen": false
+      },
+      {
+        "primary_rank": 839,
+        "doorway_rank": 552,
+        "chosen": false
+      },
+      {
+        "primary_rank": 841,
+        "doorway_rank": 551,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1360": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 206,
+        "doorway_rank": 275,
+        "chosen": false
+      },
+      {
+        "primary_rank": 195,
+        "doorway_rank": 272,
+        "chosen": false
+      },
+      {
+        "primary_rank": 210,
+        "doorway_rank": 273,
+        "chosen": false
+      },
+      {
+        "primary_rank": 190,
+        "doorway_rank": 271,
+        "chosen": false
+      },
+      {
+        "primary_rank": 196,
+        "doorway_rank": 270,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1237": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 199,
+        "doorway_rank": 143,
+        "chosen": false
+      },
+      {
+        "primary_rank": 211,
+        "doorway_rank": 144,
+        "chosen": false
+      },
+      {
+        "primary_rank": 202,
+        "doorway_rank": 143,
+        "chosen": false
+      },
+      {
+        "primary_rank": 213,
+        "doorway_rank": 142,
+        "chosen": false
+      },
+      {
+        "primary_rank": 218,
+        "doorway_rank": 142,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1362": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 553,
+        "doorway_rank": 607,
+        "chosen": false
+      },
+      {
+        "primary_rank": 565,
+        "doorway_rank": 607,
+        "chosen": false
+      },
+      {
+        "primary_rank": 569,
+        "doorway_rank": 609,
+        "chosen": false
+      },
+      {
+        "primary_rank": 575,
+        "doorway_rank": 609,
+        "chosen": false
+      },
+      {
+        "primary_rank": 582,
+        "doorway_rank": 608,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "215": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "1363": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 205,
+        "doorway_rank": 276,
+        "chosen": false
+      },
+      {
+        "primary_rank": 194,
+        "doorway_rank": 273,
+        "chosen": false
+      },
+      {
+        "primary_rank": 209,
+        "doorway_rank": 274,
+        "chosen": false
+      },
+      {
+        "primary_rank": 189,
+        "doorway_rank": 272,
+        "chosen": false
+      },
+      {
+        "primary_rank": 195,
+        "doorway_rank": 271,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "985": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 202,
+        "doorway_rank": 179,
+        "chosen": false
+      },
+      {
+        "primary_rank": 214,
+        "doorway_rank": 178,
+        "chosen": false
+      },
+      {
+        "primary_rank": 205,
+        "doorway_rank": 177,
+        "chosen": false
+      },
+      {
+        "primary_rank": 215,
+        "doorway_rank": 177,
+        "chosen": false
+      },
+      {
+        "primary_rank": 220,
+        "doorway_rank": 177,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1242": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 131,
+        "doorway_rank": 136,
+        "chosen": false
+      },
+      {
+        "primary_rank": 125,
+        "doorway_rank": 134,
+        "chosen": false
+      },
+      {
+        "primary_rank": 118,
+        "doorway_rank": 132,
+        "chosen": false
+      },
+      {
+        "primary_rank": 110,
+        "doorway_rank": 131,
+        "chosen": false
+      },
+      {
+        "primary_rank": 117,
+        "doorway_rank": 131,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1243": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 153,
+        "doorway_rank": 139,
+        "chosen": false
+      },
+      {
+        "primary_rank": 140,
+        "doorway_rank": 138,
+        "chosen": false
+      },
+      {
+        "primary_rank": 134,
+        "doorway_rank": 136,
+        "chosen": false
+      },
+      {
+        "primary_rank": 130,
+        "doorway_rank": 135,
+        "chosen": false
+      },
+      {
+        "primary_rank": 133,
+        "doorway_rank": 135,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "860": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 458,
+        "doorway_rank": 392,
+        "chosen": false
+      },
+      {
+        "primary_rank": 471,
+        "doorway_rank": 393,
+        "chosen": false
+      },
+      {
+        "primary_rank": 440,
+        "doorway_rank": 385,
+        "chosen": false
+      },
+      {
+        "primary_rank": 453,
+        "doorway_rank": 386,
+        "chosen": false
+      },
+      {
+        "primary_rank": 461,
+        "doorway_rank": 385,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "989": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 228,
+        "doorway_rank": 146,
+        "chosen": false
+      },
+      {
+        "primary_rank": 242,
+        "doorway_rank": 145,
+        "chosen": false
+      },
+      {
+        "primary_rank": 229,
+        "doorway_rank": 144,
+        "chosen": false
+      },
+      {
+        "primary_rank": 232,
+        "doorway_rank": 144,
+        "chosen": false
+      },
+      {
+        "primary_rank": 236,
+        "doorway_rank": 144,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "862": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 651,
+        "doorway_rank": 712,
+        "chosen": false
+      },
+      {
+        "primary_rank": 659,
+        "doorway_rank": 713,
+        "chosen": false
+      },
+      {
+        "primary_rank": 663,
+        "doorway_rank": 713,
+        "chosen": false
+      },
+      {
+        "primary_rank": 665,
+        "doorway_rank": 713,
+        "chosen": false
+      },
+      {
+        "primary_rank": 676,
+        "doorway_rank": 712,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "863": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 422,
+        "doorway_rank": 382,
+        "chosen": false
+      },
+      {
+        "primary_rank": 429,
+        "doorway_rank": 383,
+        "chosen": false
+      },
+      {
+        "primary_rank": 402,
+        "doorway_rank": 374,
+        "chosen": false
+      },
+      {
+        "primary_rank": 413,
+        "doorway_rank": 375,
+        "chosen": false
+      },
+      {
+        "primary_rank": 418,
+        "doorway_rank": 374,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "990": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 186,
+        "doorway_rank": 140,
+        "chosen": false
+      },
+      {
+        "primary_rank": 192,
+        "doorway_rank": 139,
+        "chosen": false
+      },
+      {
+        "primary_rank": 172,
+        "doorway_rank": 138,
+        "chosen": false
+      },
+      {
+        "primary_rank": 179,
+        "doorway_rank": 139,
+        "chosen": false
+      },
+      {
+        "primary_rank": 186,
+        "doorway_rank": 139,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "865": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 320,
+        "doorway_rank": 116,
+        "chosen": false
+      },
+      {
+        "primary_rank": 297,
+        "doorway_rank": 115,
+        "chosen": false
+      },
+      {
+        "primary_rank": 269,
+        "doorway_rank": 114,
+        "chosen": false
+      },
+      {
+        "primary_rank": 251,
+        "doorway_rank": 111,
+        "chosen": false
+      },
+      {
+        "primary_rank": 255,
+        "doorway_rank": 111,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "866": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 252,
+        "doorway_rank": 112,
+        "chosen": false
+      },
+      {
+        "primary_rank": 235,
+        "doorway_rank": 109,
+        "chosen": false
+      },
+      {
+        "primary_rank": 226,
+        "doorway_rank": 107,
+        "chosen": false
+      },
+      {
+        "primary_rank": 210,
+        "doorway_rank": 105,
+        "chosen": false
+      },
+      {
+        "primary_rank": 215,
+        "doorway_rank": 105,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "1244": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 53,
+        "doorway_rank": 21,
+        "chosen": false
+      },
+      {
+        "primary_rank": 51,
+        "doorway_rank": 20,
+        "chosen": false
+      },
+      {
+        "primary_rank": 48,
+        "doorway_rank": 19,
+        "chosen": false
+      },
+      {
+        "primary_rank": 47,
+        "doorway_rank": 18,
+        "chosen": false
+      },
+      {
+        "primary_rank": 46,
+        "doorway_rank": 18,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "742": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 759,
+        "doorway_rank": 542,
+        "chosen": false
+      },
+      {
+        "primary_rank": 759,
+        "doorway_rank": 541,
+        "chosen": false
+      },
+      {
+        "primary_rank": 759,
+        "doorway_rank": 541,
+        "chosen": false
+      },
+      {
+        "primary_rank": 761,
+        "doorway_rank": 540,
+        "chosen": false
+      },
+      {
+        "primary_rank": 763,
+        "doorway_rank": 539,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "743": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 293,
+        "doorway_rank": 153,
+        "chosen": false
+      },
+      {
+        "primary_rank": 264,
+        "doorway_rank": 148,
+        "chosen": false
+      },
+      {
+        "primary_rank": 250,
+        "doorway_rank": 147,
+        "chosen": false
+      },
+      {
+        "primary_rank": 234,
+        "doorway_rank": 143,
+        "chosen": false
+      },
+      {
+        "primary_rank": 238,
+        "doorway_rank": 143,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "744": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 321,
+        "doorway_rank": 115,
+        "chosen": false
+      },
+      {
+        "primary_rank": 298,
+        "doorway_rank": 114,
+        "chosen": false
+      },
+      {
+        "primary_rank": 270,
+        "doorway_rank": 112,
+        "chosen": false
+      },
+      {
+        "primary_rank": 252,
+        "doorway_rank": 110,
+        "chosen": false
+      },
+      {
+        "primary_rank": 256,
+        "doorway_rank": 110,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "745": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 253,
+        "doorway_rank": 110,
+        "chosen": false
+      },
+      {
+        "primary_rank": 237,
+        "doorway_rank": 108,
+        "chosen": false
+      },
+      {
+        "primary_rank": 227,
+        "doorway_rank": 105,
+        "chosen": false
+      },
+      {
+        "primary_rank": 211,
+        "doorway_rank": 103,
+        "chosen": false
+      },
+      {
+        "primary_rank": 216,
+        "doorway_rank": 103,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "111": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "114": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "375": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "122": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "1021": {
+    "ring_seed": false,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": 198,
+        "doorway_rank": 142,
+        "chosen": false
+      },
+      {
+        "primary_rank": 210,
+        "doorway_rank": 143,
+        "chosen": false
+      },
+      {
+        "primary_rank": 201,
+        "doorway_rank": 142,
+        "chosen": false
+      },
+      {
+        "primary_rank": 212,
+        "doorway_rank": 141,
+        "chosen": false
+      },
+      {
+        "primary_rank": 217,
+        "doorway_rank": 141,
+        "chosen": false
+      }
+    ],
+    "in_guided": false
+  },
+  "126": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  },
+  "127": {
+    "ring_seed": true,
+    "coverage_eligible_rounds": 0,
+    "coverage_selected": false,
+    "coverage_pruned": false,
+    "shortcut_shortlisted_rounds": 0,
+    "shortcut_eligibility": [
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      },
+      {
+        "primary_rank": null,
+        "doorway_rank": null,
+        "chosen": false
+      }
+    ],
+    "in_guided": true
+  }
+}
