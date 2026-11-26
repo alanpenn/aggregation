@@ -49,6 +49,19 @@ def positive_interior(start, end, planes):
     return start != end
 
 
+def exact_region_lines(lines, rings):
+    """Index candidate bounds and test exact positive-length interior traversal."""
+    index = STRtree([_bounds(line) for line in lines])
+    result = {}
+    for key, ring in rings.items():
+        lower = tuple(min(p[i] for p in ring) for i in (0, 1))
+        upper = tuple(max(p[i] for p in ring) for i in (0, 1))
+        planes = halfplanes(ring)
+        result[key] = {int(i) for i in index.query(_outward_bounds(lower, upper))
+                       if positive_interior(lines[i].start, lines[i].end, planes)}
+    return result
+
+
 def build_incidence(lines, regions, doors):
     ids = sorted(regions)
     rings = {i: list(map(_exact_point, regions[i].exterior.coords)) for i in ids}

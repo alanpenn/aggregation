@@ -623,3 +623,46 @@ and evaluates simultaneous corridor replacements.
 The [paired terrain generalisation experiment](STRICT_AXIAL_GENERALISATION_RESEARCH.md)
 generates Hill and Converging Valleys for seeds 40–45 and compares strict
 coverage, angular incidence and regional metric routes with numbered maps.
+
+## Default convex and axial workflow in Streamlit
+
+New live settlement sessions default to **Maximal overlapping convex regions
+(directed face-extension crawler)** and **C-H sheaf-priority reduction** with
+bounded geometric exchanges enabled. Explicit method choices stay in the
+session while you adjust settings or generate another settlement.
+
+1. Set the settlement parameters and select **Run Experiment**.
+2. Select **Construct or resume maximal cover**. The crawler extends oriented
+   physical faces into accessible space, explores both handed traversals, and
+   follows admissible branches while respecting commitment to the originating
+   face. A checkpoint preserves unfinished traversal stacks.
+3. Once both searches are exhausted, the app checks exact containment,
+   facet-contact maximality and exact full accessible coverage. It retains every
+   distinct certified maximal polygon, including overlapping ones. A lack of
+   complete certification leaves axial selection unavailable for that cover.
+4. Select **Generate complementary axial map**. The existing certified
+   candidate generator supplies the pool. C-H uses the active maximal cover
+   through exact positive-length interior incidence, then runs complementary
+   selection, structural completion, unrestricted deletion, its configured
+   exchanges and independent structural validation.
+
+The default checkpoint budget is 1,000 explored prefixes per hand per click.
+Increase it or continue in smaller batches as appropriate. Checkpoints are
+local under `diagnostics/live-maximal-cover/` and keyed by exact settlement
+data and crawler source. Opening the same settlement and choosing the maximal
+method reuses its checkpoint. Other settlements may take longer to exhaust,
+and the crawler may fail to certify a full cover. Both cases are shown
+explicitly. There are no extra Python package requirements.
+
+Choose **Shortest-first (C-S)** in the reduction-order menu to compare the two
+complementary methods using the same cover and candidate pool. The coverage
+menu also retains the previous convex and cell options for the legacy
+selectors. The exact entrance-depth display uses its existing legacy workflow.
+Saved axial audit snapshots retain their original coverage metadata. The
+real-town import has its own reviewed geometry and subdivision controls.
+
+**Show saved Flat 40 maximal-cover reference** loads the archived deterministic
+C-H inventory. With the shared inputs available, it verifies the source
+lineage, exact incidence and structural certificate and displays 596 maximal
+polygons, 1,534 candidates and the 31-line C-H map. See the [work Mac
+handover](WORK_MAC_HANDOVER.md) for the data root and checksums.

@@ -74,3 +74,20 @@ For experiments that accept `--source` and `--reference`, point those arguments 
 ## Next research task
 
 Start with Flat 40. Build the axial-line graph, angular axial-segment graph, and maximal-convex graph with edges for strictly positive overlap area. Record connectivity, mean depth, integration, choice or betweenness, and Pearson intelligibility between connectivity and integration. Freeze graph weighting and measure normalisations before comparing aggregation rules, terrains, parameters and seeds. The [configurational inputs section](FLAT40_MAXIMAL_CONVEX_MINIMUM.md#inputs-for-the-configurational-programme) identifies the reusable datasets and functions.
+
+## Streamlit defaults
+
+Run `./run_streamlit.sh` from `voronoi-app`. The live synthetic settlement
+workflow defaults to the directed maximal overlapping convex cover, C-H
+sheaf-priority reduction, and bounded exchanges. Generate the settlement,
+then **Construct or resume maximal cover**, then **Generate complementary
+axial map** when the cover is certified. Partial batches are saved locally
+under `diagnostics/live-maximal-cover/`. Keep using the same settlement
+parameters to continue the same checkpoint. Choose the legacy convex option
+or C-S when needed for comparisons.
+
+With the shared Flat 40 inputs verified, **Show saved Flat 40 maximal-cover
+reference** opens the archived 31-line C-H result after rechecking exact
+incidence and its structural certificate. This is available independently of
+live enumeration. See the [README](README.md#default-convex-and-axial-workflow-in-streamlit)
+for the live controls and certification states.

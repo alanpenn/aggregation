@@ -50,8 +50,9 @@ def connector_points(origin, line, planes):
              "nearest" if t==nearest else "region_boundary") for t in sorted({low,high,nearest})]
 
 
-def build_master_doors(lines, saved, regions, clearance):
-    rings = {i:list(map(_exact_point,r.exterior.coords)) for i,r in regions.items()}
+def build_master_doors(lines, saved, regions, clearance, *, exact_rings=None):
+    rings = exact_rings if exact_rings is not None else {
+        i:list(map(_exact_point,r.exterior.coords)) for i,r in regions.items()}
     planes = {i:halfplanes(ring) for i,ring in rings.items()}
     checked = set()
     doors, evidence, failures = [], [], []

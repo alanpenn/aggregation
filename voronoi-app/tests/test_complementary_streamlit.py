@@ -11,6 +11,7 @@ METHOD = "Complementary tangents + structural reduction"
 
 def test_complementary_selection_reuses_layers_and_invalidates_on_geometry_change():
     app = AppTest.from_file(str(ROOT / "app" / "streamlit_app.py"), default_timeout=120).run()
+    app.selectbox(key="axial_coverage_method").select("Convex regions (experimental)").run()
     app.selectbox(key="axial_selection_method").select(METHOD).run()
     assert app.selectbox(key="complementary_order").value == "sheaf"
     app.checkbox(key="complementary_exchanges").uncheck()
@@ -61,6 +62,7 @@ def test_uncertified_selection_is_diagnostic_only(monkeypatch):
 
     monkeypatch.setattr(ComplementaryStudy, "reduce_prepared", reject)
     app = AppTest.from_file(str(ROOT / "app" / "streamlit_app.py"), default_timeout=120).run()
+    app.selectbox(key="axial_coverage_method").select("Convex regions (experimental)").run()
     app.selectbox(key="axial_selection_method").select(METHOD).run()
     app.slider(key="grid_num_points").set_value(30)
     app.slider(key="agg_max_dyads").set_value(3)

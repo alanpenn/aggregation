@@ -18,10 +18,13 @@ from shapely.ops import unary_union
 matplotlib.use("Agg")
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "app"))
 
 from complementary_ui import METHOD as COMPLEMENTARY_METHOD, display_complementary
+from maximal_cover_ui import cover_controls, saved_flat40
+from experiments.live_maximal_cover import METHOD as MAXIMAL_COVER, LEGACY as LEGACY_COVER, CELLS
 from voronoi_app.complementary_axial import settlement_snapshot
 
 # Import new architecture
@@ -458,6 +461,9 @@ if source == "Import real town plan":
     from town_plan_ui import show_import
     show_import(ROOT)
     st.stop()
+if st.sidebar.checkbox("Show saved Flat 40 maximal-cover reference", key="show_maximal_flat40"):
+    saved_flat40(ROOT, display_figure)
+    st.stop()
 
 # Get registry
 registry = get_registry()
@@ -649,24 +655,23 @@ with st.sidebar:
          "Axial candidate audit", "Exact axial candidates", ENTRANCE_DISPLAY],
         key="axial_display",
     )
-    axial_coverage = "Convex regions (experimental)"
-    selection_method = "Greedy (baseline)"
-    if axial_display != ENTRANCE_DISPLAY:
-        axial_coverage = st.segmented_control(
-            "Axial coverage",
-            ["Voronoi cells", "Convex regions (experimental)"],
-            default="Voronoi cells",
-            help="Convex regions are overlapping boundary-derived approximations, not all maximal spaces.",
-        )
-        selection_method = st.selectbox(
-            "Axial selection method",
-            ["Greedy (baseline)", "Fewest lines, then angular (experimental)",
-             "Angular depth + line penalty (experimental)", COMPLEMENTARY_METHOD],
-            key="axial_selection_method",
-        )
-    coverage_model = "convex" if axial_coverage == "Convex regions (experimental)" else "cells"
-    if axial_coverage is None:
-        st.warning("Choose an axial coverage model before running an experiment.")
+    chosen_cover = st.selectbox(
+        "Convex-space construction", [MAXIMAL_COVER, LEGACY_COVER, CELLS], key="axial_coverage_method", persist_state="session",
+    )
+    chosen_selector = st.selectbox(
+        "Axial-map selection",
+        [COMPLEMENTARY_METHOD, "Greedy (baseline)", "Fewest lines, then angular (experimental)",
+         "Angular depth + line penalty (experimental)"],
+        format_func=lambda value: "Complementary tangents and unrestricted reduction" if
+                                  value == COMPLEMENTARY_METHOD else value,
+        key="axial_selection_method", persist_state="session",
+    )
+    axial_coverage = chosen_cover if axial_display != ENTRANCE_DISPLAY else LEGACY_COVER
+    selection_method = chosen_selector if axial_display != ENTRANCE_DISPLAY else "Greedy (baseline)"
+    coverage_model = "cells" if axial_coverage == CELLS else "convex"
+    incompatible = axial_coverage == MAXIMAL_COVER and selection_method != COMPLEMENTARY_METHOD
+    if incompatible:
+        st.warning("Choose a legacy cover for this selector, or use complementary axial selection.")
     angular_mode = "penalty" if selection_method.startswith("Angular depth") else "fewest"
     angular_iterations = 0
     angular_seed = 42
@@ -681,14 +686,14 @@ with st.sidebar:
         st.caption("This exact experiment uses convex visibility coverage and may take several minutes.")
     complementary = selection_method == COMPLEMENTARY_METHOD
     angular_selection = selection_method not in ("Greedy (baseline)", COMPLEMENTARY_METHOD)
-    if complementary:
+    if chosen_selector == COMPLEMENTARY_METHOD:
         complementary_order = st.selectbox(
             "Reduction order", ["sheaf", "shortest"],
-            format_func={"sheaf": "Sheaf-priority (C-H)", "shortest": "Shortest-first (C-S)"}.get,
-            key="complementary_order",
+            format_func={"sheaf": "C-H – sheaf-priority", "shortest": "Shortest-first (C-S)"}.get,
+            key="complementary_order", persist_state="session",
         )
         complementary_exchanges = st.checkbox("Improve selection with geometric exchanges", value=True,
-                                                key="complementary_exchanges")
+                                                key="complementary_exchanges", persist_state="session")
     if angular_selection and axial_display != "Exact axial candidates":
         angular_iterations = st.number_input(
             "Angular search iterations", min_value=1, max_value=10000, value=20, step=1,
@@ -710,11 +715,19 @@ with st.sidebar:
     
     run_clicked = st.button("▶ Run Experiment", type="primary", width="stretch",
                             key="run_experiment",
-                            disabled=((axial_coverage is None and not complementary) or (
+                            disabled=(incompatible or (
                                 angular_selection and
                                 axial_display != "Exact axial candidates" and
                                 (coverage_model != "convex" or axial_display == "Existing sightlines")
                             )))
+
+geometry_settings = (selected_terrain, terrain_params, selected_grid, grid_params,
+                     selected_form, selected_agg, agg_params, canvas_size, seed)
+if st.session_state.get("geometry_settings") != geometry_settings:
+    for key in ("current_exact_experiment", "exact_candidate_result", "complementary_snapshot",
+                "complementary_axial", "entrance_axial_result"):
+        st.session_state.pop(key, None)
+    st.session_state["geometry_settings"] = geometry_settings
 
 # Main content area
 if st.checkbox("Show certified research maps", key="show_certified_research"):
@@ -817,7 +830,7 @@ if run_clicked:
             st.subheader("Digital Elevation Model")
             display_figure(fig_elevation(result))
 
-        if complementary:
+        if complementary and axial_display != "Existing sightlines":
             st.caption("Use the complementary map controls below to select certified axial lines.")
         elif axial_display in ("Axial Map", "All axial candidates", "Axial candidate audit"):
             st.subheader(axial_display)
@@ -1156,10 +1169,16 @@ if complementary:
             st.session_state["complementary_snapshot"] = settlement_snapshot(
                 polygons, experiment.building_labels, experiment.open_spaces, experiment.doors,
             )
-        display_complementary(experiment, st.session_state["complementary_snapshot"],
-                              complementary_order, complementary_exchanges, display_figure)
+        snapshot = st.session_state["complementary_snapshot"]
+        st.caption("Active convex-space method · " + (MAXIMAL_COVER if axial_coverage == MAXIMAL_COVER else LEGACY_COVER))
+        if axial_coverage == CELLS:
+            st.info("Complementary selection uses the legacy exact convex regions when the cell display is selected.")
+        cover = cover_controls(snapshot, ROOT) if axial_coverage == MAXIMAL_COVER else None
+        if axial_coverage != MAXIMAL_COVER or cover:
+            display_complementary(experiment, snapshot, complementary_order,
+                                  complementary_exchanges, display_figure, cover)
 
-if axial_display == "Exact axial candidates" and not complementary:
+if axial_display == "Exact axial candidates":
     experiment = st.session_state.get("current_exact_experiment")
     if experiment is None:
         st.info("Run an experiment before generating exact candidates.")
@@ -1175,6 +1194,8 @@ with st.expander("Advanced research storage"):
     if os.environ.get(ENV) and not research_directory.is_dir():
         st.warning(unavailable(research_directory))
 uploaded_snapshot = st.file_uploader("Load axial diagnostic snapshot", type="json")
+if uploaded_snapshot is not None:
+    st.caption("Saved audit geometry uses its original coverage metadata. Live convex settings apply to new analyses.")
 if st.button("Rerun saved axial audit", disabled=uploaded_snapshot is None):
     try:
         snapshot_data = json.loads(uploaded_snapshot.getvalue())

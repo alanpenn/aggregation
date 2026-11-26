@@ -104,6 +104,9 @@ def test_exact_ui_enumeration_filters_and_new_experiment_invalidation():
 def test_existing_display_modes_still_run(mode):
     app = AppTest.from_file(str(ROOT / "app" / "streamlit_app.py"), default_timeout=120).run()
     app.selectbox(key="axial_display").select(mode).run()
+    if mode == "Axial Map":
+        app.selectbox(key="axial_coverage_method").select("Voronoi cells").run()
+        app.selectbox(key="axial_selection_method").select("Greedy (baseline)").run()
     app.slider(key="grid_num_points").set_value(30)
     app.slider(key="agg_max_dyads").set_value(3)
     app.button(key="run_experiment").click().run()

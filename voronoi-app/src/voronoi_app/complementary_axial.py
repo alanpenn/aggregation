@@ -10,10 +10,10 @@ from time import monotonic
 
 import networkx as nx
 from shapely import from_wkb
-from shapely.geometry import LineString
+from shapely.geometry import LineString, Polygon
 from shapely.geometry.polygon import orient
 
-from .angular import LineClearance, _cross, _direction, _exact_point, _on_segment
+from .angular import LineClearance, _cross, _direction, _exact_point, _on_segment, _ring_location
 from .batch_methods import _domain, _settlement, derive_topology, exact_greedy
 from .batch_routing_reference import MasterNetwork, describe
 from .batch_store import encode
@@ -24,7 +24,7 @@ from .dynamic_winding import CycleSignatures
 from .exact_axial import candidate_graph
 from .exact_enumeration import exact_pool_from_dict, exact_pool_to_dict, generate_fresh_exact_candidate_pool
 from .experimental_visibility import IndexedClearance
-from .region_incidence_angular import angular_depth, build_incidence
+from .region_incidence_angular import angular_depth, build_incidence, exact_region_lines
 from .sheaf_experiment import DEFAULTS, detect_sheaves
 from .strict_coverage_experiment import incidence_sets
 from .strict_generalisation import Geometry, RegionalNetwork, extract_doors
@@ -220,7 +220,7 @@ class ComplementaryStudy(StructuralReduction):
         self.stage = ""
 
     @classmethod
-    def from_settlement(cls, snapshot, progress=no_progress):
+    def from_settlement(cls, snapshot, progress=no_progress, *, maximal_regions=None):
         progress("Certified candidate generation", "Classifying the main accessible component")
         inputs = {"settlement": snapshot}
         inputs["topology"] = derive_topology(inputs, {}).output
@@ -242,7 +242,27 @@ class ComplementaryStudy(StructuralReduction):
         clearance = IndexedClearance(LineClearance(accessible, union, original_obstacles=occupied.values()))
         polygons, _, _ = _settlement(inputs)
         doors, excluded = extract_doors(inputs, clearance, opened, polygons)
-        incident, traversals, _ = build_incidence(lines, problem.regions, doors)
+        if maximal_regions is None:
+            incident, traversals, _ = build_incidence(lines, problem.regions, doors)
+        else:
+            rings = {}
+            for i, record in enumerate(maximal_regions.values()):
+                vertices = [tuple(map(Fraction, p)) for p in record["vertices"]]
+                rings[i] = vertices + vertices[:1]
+            traversals = exact_region_lines(lines, rings)
+            incident = [[i for i, ring in rings.items()
+                         if _ring_location(ring, tuple(map(Fraction, door["point"]))) >= 0]
+                        for door in doors]
+            by_line = [set() for _ in lines]
+            for i, members in traversals.items():
+                for j in members:
+                    by_line[j].add(i)
+            inputs["candidates"]["regions_wkb"] = {
+                str(i): Polygon(ring).wkb_hex for i, ring in rings.items()}
+            inputs["candidates"]["regions_exact"] = {
+                str(i): [list(map(str, p)) for p in ring] for i, ring in rings.items()}
+            for row, members in zip(inputs["candidates"]["pool"]["candidates"], by_line, strict=True):
+                row["regions"] = sorted(members)
         inputs["analysis"] = {
             "holes": len(inputs["topology"]["topology"]["internal_blocks"]),
             "incidence": {"doorways": doors, "doorway_regions": incident,
@@ -368,7 +388,10 @@ class ComplementaryStudy(StructuralReduction):
                                                     for r, members in incidence["region_lines"].items()}}
         regions = {int(i): from_wkb(wkb) for i, wkb in self.inputs["candidates"]["regions_wkb"].items()}
         axial = MasterNetwork(lines, [])
-        stops, _, _ = build_master_doors(lines, restricted, regions, self.clearance)
+        exact = self.inputs["candidates"].get("regions_exact")
+        rings = None if exact is None else {
+            int(i): [tuple(map(Fraction, p)) for p in ring] for i, ring in exact.items()}
+        stops, _, _ = build_master_doors(lines, restricted, regions, self.clearance, exact_rings=rings)
         network = RegionalNetwork(axial, stops)
         chosen = frozenset(range(len(lines)))
         _, links = incidence_sets(restricted)

@@ -33,8 +33,8 @@ def current_version():
     return digest.hexdigest()
 
 
-def session_for(snapshot):
-    key = settlement_key(snapshot, current_version())
+def session_for(snapshot, cover=None):
+    key = settlement_key(snapshot, current_version() + (cover["key"] if cover else ""))
     saved = st.session_state.get(STATE)
     if not saved or saved["key"] != key:
         saved = {"key": key, "reductions": {}, "exchanges": {}, "movement": {}, "reference_maps": {}, "last": None}
@@ -61,10 +61,11 @@ def progress_for(status, stages):
     return progress
 
 
-def generate(saved, snapshot, order, use_exchanges, progress):
+def generate(saved, snapshot, order, use_exchanges, progress, cover=None):
     if "study" not in saved:
         started = monotonic()
-        saved["study"] = ComplementaryStudy.from_settlement(snapshot, progress)
+        saved["study"] = ComplementaryStudy.from_settlement(
+            snapshot, progress, maximal_regions=cover["regions"] if cover else None)
         saved["pool_seconds"] = monotonic() - started
     study = saved["study"]
     if "prepared" not in saved:
@@ -171,16 +172,16 @@ def render_movement(saved, study, result):
         st.dataframe(comparisons, hide_index=True, alt="Certified movement comparisons for this settlement")
 
 
-def display_complementary(result, snapshot, order, use_exchanges, display_figure):
+def display_complementary(result, snapshot, order, use_exchanges, display_figure, cover=None):
     st.subheader(METHOD)
-    saved = session_for(snapshot)
+    saved = session_for(snapshot, cover)
     st.caption(f"Current settlement seed {result.pipeline.seed}. Fresh exact enumeration can take several minutes.")
     if st.button("Generate complementary axial map", type="primary", key="generate_complementary"):
         error = None
         with st.status("Preparing complementary axial map", expanded=True) as status:
             progress = progress_for(status, STAGES)
             try:
-                error = generate(saved, snapshot, order, use_exchanges, progress)
+                error = generate(saved, snapshot, order, use_exchanges, progress, cover)
             except MemoryError:
                 error = "This settlement exceeded available memory. Try a smaller grid or fewer dyads."
             except (ValueError, RuntimeError, TimeoutError) as problem:
