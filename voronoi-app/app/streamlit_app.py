@@ -1,3 +1,4 @@
+import os
 import json
 import random
 import sys
@@ -42,6 +43,7 @@ from voronoi_app.angular_optimisation import optimise_angular_map, spatial_sampl
 from voronoi_app.axial import AxialMap
 from voronoi_app.axial_diagnostics import cached_axial_audit
 from voronoi_app.axial_generator import ConvexCoverageError
+from voronoi_app.research_data import ENV, data_root, unavailable
 from voronoi_app.axial_snapshot import load_axial_snapshot, make_axial_snapshot, save_axial_snapshot
 from voronoi_app.certified_maps import decode_certified_research, read_certified_fixture_bytes
 from voronoi_app.exact_enumeration import generate_fresh_exact_candidate_pool
@@ -285,7 +287,10 @@ def store_snapshot(snapshot):
     st.session_state["axial_snapshot"] = json.dumps(snapshot, indent=2, allow_nan=False)
     if snapshot["audit"]["unresolved"]:
         try:
-            path = save_axial_snapshot(snapshot, ROOT / "diagnostics")
+            directory = data_root(ROOT / "diagnostics")
+            if os.environ.get(ENV) and not directory.is_dir():
+                raise FileNotFoundError(unavailable(directory))
+            path = save_axial_snapshot(snapshot, directory)
         except OSError as error:
             st.error(f"Could not save the axial diagnostic snapshot: {error}")
         else:
@@ -446,6 +451,13 @@ def display_angular_result(result, generated, polygons, angular, clearance, mode
 
 st.set_page_config(page_title="Voronoi Aggregation", layout="wide")
 st.title("Voronoi Aggregation Experiments")
+
+source = st.sidebar.radio("Settlement source", ("Generate synthetic settlement", "Import real town plan"),
+                          key="settlement_source")
+if source == "Import real town plan":
+    from town_plan_ui import show_import
+    show_import(ROOT)
+    st.stop()
 
 # Get registry
 registry = get_registry()
@@ -1157,6 +1169,11 @@ if axial_display == "Exact axial candidates" and not complementary:
         display_exact_candidates(experiment)
 
 st.subheader("Experiment diagnostics")
+with st.expander("Advanced research storage"):
+    research_directory = data_root(ROOT / "diagnostics")
+    st.code(str(research_directory), language=None)
+    if os.environ.get(ENV) and not research_directory.is_dir():
+        st.warning(unavailable(research_directory))
 uploaded_snapshot = st.file_uploader("Load axial diagnostic snapshot", type="json")
 if st.button("Rerun saved axial audit", disabled=uploaded_snapshot is None):
     try:

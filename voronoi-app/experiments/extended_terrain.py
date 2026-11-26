@@ -8,10 +8,11 @@ from subprocess import check_output
 
 from experiments.facewise_rerun import ROOT as PREVIOUS, run_case
 from experiments.strict_generalisation import case_path
+from voronoi_app.research_data import data_path, logical_path
 from voronoi_app.batch_store import BatchStore, atomic_write, encode
 from voronoi_app.registry import get_registry
 
-ROOT = Path("diagnostics/strict-generalisation/extended-terrain-1")
+ROOT = data_path('strict-generalisation/extended-terrain-1')
 COMMIT = "def67112a4ec8cf2e1c8f0e4bd1f794edb512e45"
 TERRAINS = ("flat", "ridge", "shoulder", "twin_peaks")
 PREVIOUS_TERRAINS = ("hill", "converging_valleys")
@@ -25,7 +26,7 @@ def verify_previous():
     store = BatchStore(PREVIOUS)
     for name in ("export-record.json", "statistics.csv", "visual-index.json"):
         path = PREVIOUS / name
-        if path.read_bytes() != check_output(["git", "show", f"{COMMIT}:voronoi-app/{path}"]):
+        if path.read_bytes() != check_output(["git", "show", f"{COMMIT}:voronoi-app/{logical_path(path)}"]):
             raise ValueError(f"Local {path} differs from the committed benchmark.")
     for terrain in PREVIOUS_TERRAINS:
         for seed in SEEDS:
@@ -36,7 +37,7 @@ def verify_previous():
                 raise ValueError(f"Record lineage differs for {path.stem}.")
             for record_id in records.values():
                 store.load(record_id)
-    return {"commit": COMMIT, "root": str(PREVIOUS),
+    return {"commit": COMMIT, "root": str(logical_path(PREVIOUS)),
             "export_manifest_sha256": sha256((PREVIOUS / "export-record.json").read_bytes()).hexdigest(),
             "records": archived["case_records"]}
 

@@ -9,6 +9,7 @@ from shapely import from_wkb
 
 from experiments.audit_facewise_growth import prefix_audit, replay
 from experiments.plot_facewise_matched import plot_case
+from voronoi_app.research_data import data_path
 from voronoi_app.batch import run_stage
 from voronoi_app.batch_store import BatchStore
 
@@ -93,7 +94,7 @@ def compare_case(source, destination, case):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, default=Path("diagnostics/strict-generalisation/pilot-1"))
+    parser.add_argument("--source", type=Path, default=data_path('strict-generalisation/pilot-1'))
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True)

@@ -23,6 +23,7 @@ from experiments.occupied_vertex_pruning import boundary_index, read
 from experiments.strict_generalisation import rss_mib
 from experiments.unrestricted_axial_reduction import BUDGET, ROUNDS
 from experiments.vertex_connectivity_complements import axial_angle
+from voronoi_app.research_data import logical_path
 from voronoi_app.angular import LineClearance, _direction
 from voronoi_app.batch_methods import _domain, _settlement
 from voronoi_app.batch_store import BatchStore, atomic_write, encode
@@ -51,47 +52,56 @@ def origin(case):
 def capture_inputs(archive):
     DEST.mkdir(exist_ok=True)
     entries={}
-    if archive.is_file():
-        with tarfile.open(archive) as t:
-            members={m.name:m for m in t if m.isfile()}
-            for case in CASES:
-                root=origin(case)
-                journal_path=root/"cases"/f"{case}.json"
-                journal=read(journal_path)
-                restored={}
-                checks={}
-                source_path=D_ARCHIVE/case/"source.json"
-                source=read(source_path) if source_path.exists() else {}
-                missing=[]
-                for stage,value in journal["stages"].items():
-                    identifier=value["record"]
-                    for basename,field in (("record.json","sha256"),("output.json","output")):
-                        expected=source.get(stage,{}).get(field)
-                        path=root/"records"/identifier/basename
-                        member=members.get(path.as_posix())
-                        if member is not None and expected:
-                            data=t.extractfile(member).read()
-                            digest=sha256(data).hexdigest()
-                            if digest!=expected:
-                                raise ValueError(f"Tar checksum mismatch for {path}")
-                            checks[str(path)]=digest
-                            if not path.exists():
-                                path.parent.mkdir(parents=True,exist_ok=True)
-                                with path.open("xb") as f:
-                                    f.write(data)
-                                restored[str(path)]=digest
-                            elif sha256(path.read_bytes()).hexdigest()!=digest:
-                                raise ValueError(f"Existing record differs from the verified tar: {path}")
-                        if not path.is_file():
-                            missing.append(str(path))
-                publication=next(c for c in read(root/"visual-index.json")["cases"] if c["case"]==case)
-                entries[case]={"root":str(root),"journal_sha256":sha256(journal_path.read_bytes()).hexdigest(),
-                    "configuration":journal["configuration"],"records":journal["stages"],
-                    "verified_tar_members":checks,"restored":restored,"missing":missing,
-                    "published_strict":publication["methods"]["strict_backward"],
-                    "published_full":publication["methods"]["full_pool"]}
-    else:
+    from contextlib import nullcontext
+
+    if archive is not None and not archive.is_file():
         raise FileNotFoundError(archive)
+    with (tarfile.open(archive) if archive is not None else nullcontext(None)) as t:
+        members = {m.name:m for m in t if m.isfile()} if t is not None else {}
+        for case in CASES:
+            root=origin(case)
+            journal_path=root/"cases"/f"{case}.json"
+            journal=read(journal_path)
+            restored={}
+            checks={}
+            source_path=D_ARCHIVE/case/"source.json"
+            source=read(source_path) if source_path.exists() else {}
+            missing=[]
+            for stage,value in journal["stages"].items():
+                identifier=value["record"]
+                for basename,field in (("record.json","sha256"),("output.json","output")):
+                    expected=source.get(stage,{}).get(field)
+                    path=root/"records"/identifier/basename
+                    member=members.get(logical_path(path).as_posix())
+                    if member is not None and expected:
+                        data=t.extractfile(member).read()
+                        digest=sha256(data).hexdigest()
+                        if digest!=expected:
+                            raise ValueError(f"Tar checksum mismatch for {path}")
+                        checks[str(logical_path(path))]=digest
+                        if not path.exists():
+                            path.parent.mkdir(parents=True,exist_ok=True)
+                            with path.open("xb") as f:
+                                f.write(data)
+                            restored[str(logical_path(path))]=digest
+                        elif sha256(path.read_bytes()).hexdigest()!=digest:
+                            raise ValueError(f"Existing record differs from the verified tar: {path}")
+                    if not path.is_file():
+                        missing.append(str(logical_path(path)))
+                    elif expected and sha256(path.read_bytes()).hexdigest() != expected:
+                        raise ValueError(f"Local record differs from frozen input: {path}")
+            if not missing:
+                store = BatchStore(root)
+                for stage in ("analysis", "physical_screen"):
+                    if stage in journal["stages"]:
+                        record = store.load(journal["stages"][stage]["record"])[0]
+                        store._inputs(record["stage"], record["parent"]["id"])
+            publication=next(c for c in read(root/"visual-index.json")["cases"] if c["case"]==case)
+            entries[case]={"root":str(logical_path(root)),"journal_sha256":sha256(journal_path.read_bytes()).hexdigest(),
+                "configuration":journal["configuration"],"records":journal["stages"],
+                "verified_tar_members":checks,"restored":restored,"missing":missing,
+                "published_strict":publication["methods"]["strict_backward"],
+                "published_full":publication["methods"]["full_pool"]}
     save(DEST/"inputs.json",entries)
     filenames=("constructive_axial.py","vertex_connectivity_complements.py","unrestricted_axial_reduction.py",
                "controlled_preselection.py","dynamic_winding.py","cross_terrain_axial.py")
@@ -344,7 +354,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("phase",choices=("inputs","case"))
     parser.add_argument("--case",choices=CASES)
-    parser.add_argument("--archive",type=Path,default=Path.home()/"Downloads/voronoi-rerun-inputs.tar")
+    parser.add_argument("--archive",type=Path,help="Optional older TAR containing independently verified inputs")
     parser.add_argument("--structural-only",action="store_true")
     args=parser.parse_args()
     if args.phase=="inputs":

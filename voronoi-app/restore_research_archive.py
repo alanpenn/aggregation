@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import shutil
+import sys
 import tarfile
 import tempfile
 from pathlib import Path, PurePosixPath
@@ -11,6 +12,8 @@ from pathlib import Path, PurePosixPath
 
 MANIFEST = "research-handover-manifest.json"
 PROJECT = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROJECT / "src"))
+from voronoi_app.research_data import copy_verified, data_root
 
 
 def safe_path(name):
@@ -56,24 +59,15 @@ def restore(staging, records):
     installed, identical, conflicts = 0, 0, []
     for row in records:
         name = row["path"]
-        target = PROJECT / name
-        if any(parent.is_symlink() for parent in (*target.parents, target)):
-            conflicts.append(name)
-        elif target.exists():
-            if target.is_file() and digest(target) == row["sha256"]:
-                identical += 1
-            else:
-                conflicts.append(name)
-        elif any(parent.exists() and not parent.is_dir() for parent in target.parents):
-            conflicts.append(name)
+        relative = Path(*safe_path(name).parts[1:])
+        target = data_root(PROJECT / "diagnostics") / relative
+        status = copy_verified(staging / name, target, row["sha256"])
+        if status == "copied":
+            installed += 1
+        elif status == "identical":
+            identical += 1
         else:
-            try:
-                target.parent.mkdir(parents=True, exist_ok=True)
-                with target.open("xb") as output, (staging / name).open("rb") as source:
-                    shutil.copyfileobj(source, output)
-                installed += 1
-            except FileExistsError:
-                conflicts.append(name)
+            conflicts.append(str(target))
     return installed, identical, conflicts
 
 

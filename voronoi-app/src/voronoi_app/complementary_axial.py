@@ -56,8 +56,14 @@ def settlement_key(snapshot, version):
 def boundary_index(topology, polygons, labels, lines):
     members = defaultdict(list)
     for cell, label in sorted(labels.items()):
-        for index, p in enumerate(polygons[cell].exterior.coords[:-1]):
-            members[_exact_point(p)].append({"cell": cell, "label": label, "vertex_index": index})
+        shape = polygons[cell]
+        parts = [shape] if shape.geom_type == "Polygon" else shape.geoms
+        offset = 0
+        for part in parts:
+            for ring in (part.exterior, *part.interiors):
+                for index, p in enumerate(ring.coords[:-1], start=offset):
+                    members[_exact_point(p)].append({"cell": cell, "label": label, "vertex_index": index})
+                offset += len(ring.coords) - 1
     corners = defaultdict(list)
     for block, wkb in sorted(topology["blocks_wkb"].items()):
         shape = from_wkb(wkb)
@@ -173,7 +179,7 @@ class SelectionResult:
 class ComplementaryStudy(StructuralReduction):
     """Cacheable settlement analysis independent of Streamlit and research files."""
 
-    def __init__(self, inputs, *, graph=None, measures=None):
+    def __init__(self, inputs, *, graph=None, measures=None, original_obstacles=None):
         self.inputs = inputs
         pool = exact_pool_from_dict(inputs["candidates"]["pool"])
         self.lines = pool.candidates
@@ -182,8 +188,9 @@ class ComplementaryStudy(StructuralReduction):
         self.graph = graph if graph is not None else candidate_graph(self.lines)
         self.polygons, _, _ = _settlement(inputs)
         _, occupied, accessible, union = _domain(inputs)
+        obstacles = occupied.values() if original_obstacles is None else original_obstacles
         self.clearance = IndexedClearance(
-            LineClearance(accessible, union, original_obstacles=occupied.values()))
+            LineClearance(accessible, union, original_obstacles=obstacles))
         self.geometry = Geometry(inputs, self.lines, self.graph, self.clearance)
         self.winding = CycleSignatures(self.lines, self.graph, self.polygons, self.geometry.blocks)
         self.regions, self.doors = incidence_sets(inputs["analysis"]["incidence"])

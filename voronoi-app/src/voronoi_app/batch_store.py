@@ -6,11 +6,13 @@ from hashlib import sha256
 from importlib import import_module, metadata
 from inspect import getsourcefile
 import json
+import os
 from pathlib import Path
 import platform
 import traceback
 from uuid import UUID, uuid4
 
+from .research_data import ENV, unavailable
 
 STAGES = ("settlement", "topology", "candidates", "selection", "measures", "validation")
 STATUSES = ("incomplete", "failed", "invalid", "successful")
@@ -53,9 +55,18 @@ class BatchStore:
             raise ValueError(f"Invalid record ID {record_id!r}")
         return self.root / "records" / record_id
 
+    @staticmethod
+    def _read(path):
+        try:
+            return path.read_bytes()
+        except OSError as error:
+            if not os.environ.get(ENV):
+                raise
+            raise FileNotFoundError(unavailable(path)) from error
+
     def load(self, record_id):
         directory = self._directory(record_id)
-        raw = (directory / "record.json").read_bytes()
+        raw = self._read(directory / "record.json")
         record = json.loads(raw)
         if (record["id"] != record_id or record["schema"] != 1
                 or record["status"] not in STATUSES
@@ -63,7 +74,7 @@ class BatchStore:
             raise ValueError(f"Invalid record metadata for {record_id}")
         output = None
         if record["output_sha256"] is not None:
-            payload = (directory / "output.json").read_bytes()
+            payload = self._read(directory / "output.json")
             if digest(payload) != record["output_sha256"]:
                 raise ValueError(f"Output hash mismatch for {record_id}")
             output = json.loads(payload)

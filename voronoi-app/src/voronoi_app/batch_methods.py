@@ -70,7 +70,7 @@ def generate_facewise_settlement(inputs, parameters):
 def _settlement(inputs):
     data = inputs["settlement"]
     return ({int(i): from_wkb(p) for i, p in data["polygons_wkb"].items()},
-            set(map(int, data["building_labels"])), set(data["dyad_open_cells"]))
+            set(map(int, data["building_labels"])), set(data.get("dyad_open_cells", ())))
 
 
 def preserve_settlement(inputs, parameters):

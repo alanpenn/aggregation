@@ -4,10 +4,11 @@ import json
 import os
 from pathlib import Path
 
+from voronoi_app.research_data import data_path
 from voronoi_app.batch_store import BatchStore, encode
 
 
-ROOT = Path("diagnostics/preserved-axial-benchmark")
+ROOT = data_path('preserved-axial-benchmark')
 PILOT = ROOT / "route-sparse" / "pilot-2"
 OUT = Path(os.environ.get("EXTREME_DIAGONAL_OUTPUT", ROOT / "extreme-diagonals" / "pilot-1"))
 LIMITS = {"corridor_limit": 3, "pair_shortlist": 8, "repair_shortlist": 10, "repair_limit": 2}

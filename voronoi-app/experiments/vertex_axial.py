@@ -8,12 +8,13 @@ from statistics import mean, median
 from experiments.constructive_axial import (
     ROOT as CONSTRUCTIVE, Selection, candidate_graph, checkpoint, construct, evaluate, families, load, normalize,
 )
+from voronoi_app.research_data import data_path
 from voronoi_app.angular import LineClearance, _direction, _on_segment
 from voronoi_app.batch_methods import _domain, _settlement
 from voronoi_app.exact_enumeration import _supports, _vertices, exact_pool_from_dict
 from voronoi_app.experimental_visibility import IndexedClearance
 
-ROOT = Path("diagnostics/strict-generalisation/vertex-axial-1")
+ROOT = data_path('strict-generalisation/vertex-axial-1')
 CASE = "flat-40"
 DESIGN = {"extended_length": "settlement median", "orientation_bin_degrees": 15,
           "vertex_weights": [.35, .30, .20, .15], "line_weights": [.55, .45]}

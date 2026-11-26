@@ -108,3 +108,83 @@ To replay all seven exact archives, run:
 ```sh
 VORONOI_ARCHIVE_TESTS=1 MPLBACKEND=Agg PYTHONPATH=src:. .venv/bin/python -m pytest -q tests/test_complementary_axial_archive.py
 ```
+
+## Shared research data on both Macs
+
+The Python code still comes from GitHub. The current working tree introduces
+`AGGREGATION_DATA_ROOT`, which names the directory containing the contents of
+`diagnostics/`. With the variable unset, scripts retain their existing local
+paths. The shared layout puts the cohort records, atlases and other experiment
+folders under `aggregation-data/strict-generalisation/`. Archived work with
+repository-relative paths remains readable.
+
+On both Macs, sign in to the same Apple Account and enable **Sync this Mac**
+under System Settings → your name → iCloud → Drive. In Finder open iCloud
+Drive → ResearchArchives, Control-click **aggregation-data**, and select
+**Keep Downloaded**. Use Finder's iCloud Status column to check whether the
+folder is waiting to upload or contains files that still need downloading.
+[Apple iCloud setup](https://support.apple.com/en-us/118443) ·
+[Apple download and sync status guidance](https://support.apple.com/en-gb/guide/mac-help/mchlc994344b/mac)
+
+Once this code is available in the checkout, run from `voronoi-app` on each Mac.
+
+```sh
+export AGGREGATION_DATA_ROOT="$HOME/Library/Mobile Documents/com~apple~CloudDocs/ResearchArchives/aggregation-data"
+PYTHONPATH=src:. .venv/bin/python -m experiments.research_storage verify \
+  "$AGGREGATION_DATA_ROOT/migration-sha256-2026-11-24.json"
+./run_streamlit.sh
+```
+
+The verifier reads each file and compares SHA-256. A successful result confirms
+that this Mac can read the complete migrated inventory. For a single file, use
+`shasum -a 256 "$AGGREGATION_DATA_ROOT/path/to/file"` and compare the digest in
+the manifest. In the app, **Advanced research storage** displays the resolved
+location. The separate atlas viewer uses the same location and identifies an
+unavailable index or map.
+
+The migration source is the local `diagnostics/` tree plus the verified handover
+inventory. Each input path is copied relative to `diagnostics/`. This also
+places the handover's misplaced experiment files under their intended shared
+paths. The migration compares SHA-256, skips identical destinations and
+reports conflicts without replacing either copy. Git's source and reports,
+the local data tree and the original TARs stay in place. The archive restoration
+script also honours the setting when called with `--apply`. Its verification
+mode still validates the TAR without restoring files.
+
+Use the isolated launcher for any experiment that writes results while using
+shared data. It hashes and copies the inputs into a private local working
+directory, runs the existing module there, and publishes changed scientific
+files into `aggregation-data/runs/<timestamp>-<random-id>/`. Allow local free
+space for the input copy. This keeps the fixed filenames used by historic
+scripts out of concurrent shared writes.
+
+```sh
+PYTHONPATH=src:. .venv/bin/python -m experiments.research_storage run \
+  experiments.cross_terrain_axial inputs
+
+# Use the ID printed by the first command for the next stage.
+PYTHONPATH=src:. .venv/bin/python -m experiments.research_storage run \
+  --from-run RUN_ID experiments.cross_terrain_axial case --case flat-42
+```
+
+The `inputs` phase validates the available immutable lineage directly and can
+use the shared copy without a TAR. Each new run gets its own ID, even with the
+same module and arguments. Treat `run.json` as the publication inventory, check
+its exit code, and verify its file checksums before reading the run on the
+other Mac. An iCloud client may show the inventory before it receives all the
+data. Check a published run with:
+
+```bash
+PYTHONPATH=src:. .venv/bin/python -m experiments.research_storage verify --run \
+  "$AGGREGATION_DATA_ROOT/runs/RUN_ID/run.json"
+```
+
+Use new run directories for further edits, and keep shared baseline files
+immutable. Direct legacy write commands should use local data or the isolated
+launcher.
+
+For an experiment with a fixed output folder, use
+`run --fresh strict-generalisation/vertex-axial-1 experiments.vertex_axial`
+to start a fresh vertex experiment. The option omits that folder from the
+private run copy. The shared checkpoint remains available, and the new
+results receive a different run ID.

@@ -4,3 +4,5 @@ matplotlib
 networkx
 shapely>=2.1
 streamlit==1.67.0
+
+PyMuPDF>=1.24

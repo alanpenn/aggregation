@@ -1,0 +1,8 @@
+{
+  "archive": "flat40-research-2026-11-26.tar.gz",
+  "archive_sha256": "4ba2d79b343fae4c19830756bcf0de9a1b99f8df3b24ce882210ae52225c38d1",
+  "archive_bytes": 476523200,
+  "manifest_sha256": "b116b28565620fb48b667c8baff0f5362071150c64743cb75c315a6d82206884",
+  "archive_files": 11512,
+  "shared_location": "transfers/flat40-research-2026-11-26/"
+}

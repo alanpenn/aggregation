@@ -7,11 +7,12 @@ import resource
 import sys
 from time import monotonic, sleep
 
+from voronoi_app.research_data import data_path
 from voronoi_app.batch import run_stage
 from voronoi_app.batch_store import BatchStore, atomic_write, encode
 
-ROOT = Path("diagnostics/strict-generalisation/pilot-1")
-PRESERVED = Path("diagnostics/preserved-axial-benchmark")
+ROOT = data_path('strict-generalisation/pilot-1')
+PRESERVED = data_path('preserved-axial-benchmark')
 TERRAINS = {"hill":"7ed1bddef0af4543ac332ea44f79ce52",
             "converging_valleys":"a8a2376c11174ca8a74e5189216bdaa1"}
 CASES = [(terrain,seed) for seed in range(40,46) for terrain in TERRAINS]

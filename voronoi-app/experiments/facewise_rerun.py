@@ -12,11 +12,12 @@ from shapely import from_wkb
 
 from experiments.audit_facewise_growth import prefix_audit
 from experiments.strict_generalisation import CASES, ROOT as LEGACY, case_path, rss_mib
+from voronoi_app.research_data import data_path
 from voronoi_app.batch import run_stage
 from voronoi_app.batch_methods import generate_facewise_settlement
 from voronoi_app.batch_store import BatchStore, StageResult, atomic_write, encode
 
-ROOT = Path("diagnostics/strict-generalisation/facewise-1")
+ROOT = data_path('strict-generalisation/facewise-1')
 REGRESSIONS = [("converging_valleys", seed) for seed in (40, 41)]
 
 

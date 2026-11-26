@@ -212,7 +212,7 @@ class ExactProblem:
     obstacles: list[tuple[float, float]]
 
 
-def build_candidates(clearance, regions, ring_seeds, seeds, *, progress=None):
+def build_candidates(clearance, regions, ring_seeds, seeds, *, progress=None, accept_interval=None):
     """Build a safe exact pool; preserve rejected seeds and deduplicated provenance."""
     candidates = []
     index_by_interval = {}
@@ -225,8 +225,10 @@ def build_candidates(clearance, regions, ring_seeds, seeds, *, progress=None):
             rejected.append((source, a, b))
             if required_ring:
                 raise ValueError(f"Required ring seed {a} to {b} is not geometrically permissible")
-            return
+            return False
         line = ExactCandidate.from_seed(len(candidates), a, b, source, clearance)
+        if accept_interval is not None and not accept_interval(line):
+            return False
         if support is not None:
             line = replace(line, provenance=(support,))
         key = tuple(sorted((line.start, line.end)))
@@ -245,6 +247,7 @@ def build_candidates(clearance, regions, ring_seeds, seeds, *, progress=None):
             candidates.append(line)
         if required_ring:
             ring_candidates.add(index)
+        return True
 
     for seed in ring_seeds:
         if isinstance(seed, ExactSupport):
@@ -274,10 +277,9 @@ def build_candidates(clearance, regions, ring_seeds, seeds, *, progress=None):
             if (start != end and clearance.permits_exact(start, end)
                     and _crosses_prepared(start, end, _prepare_polygon(polygon))):
                 source = f"region-fallback:{identifier}"
-                add(source, start, end,
-                    support=ExactSupport(source, start, end))
-                fallback_regions.add(identifier)
-                break
+                if add(source, start, end, support=ExactSupport(source, start, end)):
+                    fallback_regions.add(identifier)
+                    break
         else:
             raise ValueError(f"No permissible fallback seed for convex region {identifier}")
     if fallback_regions:

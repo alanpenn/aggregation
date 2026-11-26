@@ -6,13 +6,14 @@ import json
 from collections import Counter
 from pathlib import Path
 
+from voronoi_app.research_data import data_path
 from voronoi_app.batch import run_stage
 from voronoi_app.batch_routing_reference import interval
 from voronoi_app.batch_store import BatchStore, digest, encode
 from voronoi_app.route_sparse_experiment import pareto
 
 
-ROOT = Path("diagnostics/preserved-axial-benchmark")
+ROOT = data_path('preserved-axial-benchmark')
 BASELINES = ROOT / "routing-references" / "e101fc909354439e8695fd77ac791d41" / "cases.json"
 SHEAVES = ROOT / "sheaf-experiments" / "hill-y-comparison" / "cases.json"
 

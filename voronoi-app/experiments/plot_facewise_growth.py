@@ -9,11 +9,12 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from shapely import from_wkb
 
+from voronoi_app.research_data import data_path
 from voronoi_app.batch_store import BatchStore
 
 
-OUT=Path("diagnostics/facewise-growth-audit")
-ROOT=Path("diagnostics/strict-generalisation/pilot-1")
+OUT=data_path('facewise-growth-audit')
+ROOT=data_path('strict-generalisation/pilot-1')
 
 
 def plot(ax, data, rows, marked, title):

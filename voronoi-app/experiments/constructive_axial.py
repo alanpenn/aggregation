@@ -18,6 +18,7 @@ from shapely.strtree import STRtree
 from experiments.extended_terrain import ROOT as EXTENDED, PREVIOUS
 from experiments.flat40_tangent_audit import OUTPUT as TANGENT_AUDIT
 from experiments.strict_generalisation import rss_mib
+from voronoi_app.research_data import data_path
 from voronoi_app.angular import LineClearance, _direction, _intersections, _on_segment
 from voronoi_app.batch_methods import _domain, _settlement
 from voronoi_app.batch_routing_reference import MasterNetwork, describe
@@ -31,7 +32,7 @@ from voronoi_app.region_incidence_angular import angular_depth
 from voronoi_app.strict_coverage_experiment import incidence_sets, omissions
 from voronoi_app.strict_generalisation import Geometry, RegionalNetwork
 
-ROOT = Path("diagnostics/strict-generalisation/constructive-axial-3")
+ROOT = data_path('strict-generalisation/constructive-axial-3')
 CASES = ("flat-40", "hill-40", "converging_valleys-40", "ridge-40", "shoulder-40", "twin_peaks-40", "flat-41")
 PARAMETERS = {
     "backbone_lines": 12, "near_distance": 2.0, "orientation_degrees": 10,

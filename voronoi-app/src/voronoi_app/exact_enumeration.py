@@ -7,10 +7,11 @@ from itertools import combinations
 from math import hypot
 
 from shapely.geometry import Polygon
+from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
 
 from .angular import (
-    LineClearance, _cross, _crosses_prepared, _direction, _exact_point, _prepare_polygon,
+    LineClearance, _cross, _crosses_prepared, _direction, _exact_point, _on_segment, _prepare_polygon,
 )
 from .angular_optimisation import _obstacles
 from .axial_generator import _parts
@@ -35,28 +36,33 @@ class EnumerationAudit:
     domain_rejections: list[ExactSupport]
 
 
-def _vertices(occupied):
+def _vertices(occupied, *, inner_rings=False):
     points = defaultdict(list)
     faces = []
     for building_id, polygon in sorted(occupied.items()):
         if not isinstance(polygon, Polygon) or polygon.is_empty or not polygon.is_valid:
             raise ValueError(f"Invalid occupied polygon {building_id}")
-        if polygon.interiors:
+        if polygon.interiors and not inner_rings:
             raise ValueError(f"Occupied polygon {building_id} has interior rings; "
                              "their face provenance is not supported")
-        coordinates = list(map(_exact_point, list(polygon.exterior.coords)[:-1]))
-        orientation = sum(_cross(a, b) for a, b in zip(coordinates, coordinates[1:] + coordinates[:1]))
-        if orientation == 0:
-            raise ValueError(f"Occupied polygon {building_id} has zero exact area")
-        vertices = []
-        for index, current in enumerate(coordinates):
-            previous, following = coordinates[index - 1], coordinates[(index + 1) % len(coordinates)]
-            turn = _cross(_direction(previous, current), _direction(current, following))
-            vertex = _Vertex(VertexReference(building_id, index), current, previous, following,
-                             turn * orientation > 0)
-            vertices.append(vertex)
-            points[current].append(vertex)
-        faces.extend(zip(vertices, vertices[1:] + vertices[:1]))
+        if inner_rings:
+            polygon = orient(polygon)
+        offset = 0
+        for ring in (polygon.exterior, *polygon.interiors):
+            coordinates = list(map(_exact_point, ring.coords[:-1]))
+            orientation = sum(_cross(a, b) for a, b in zip(coordinates, coordinates[1:] + coordinates[:1]))
+            if orientation == 0:
+                raise ValueError(f"Occupied polygon {building_id} has zero exact area")
+            vertices = []
+            for index, current in enumerate(coordinates):
+                previous, following = coordinates[index - 1], coordinates[(index + 1) % len(coordinates)]
+                turn = _cross(_direction(previous, current), _direction(current, following))
+                vertex = _Vertex(VertexReference(building_id, offset + index), current, previous, following,
+                                 turn * (1 if inner_rings else orientation) > 0)
+                vertices.append(vertex)
+                points[current].append(vertex)
+            faces.extend(zip(vertices, vertices[1:] + vertices[:1]))
+            offset += len(vertices)
     return points, faces
 
 
@@ -141,19 +147,23 @@ def exact_pool_from_dict(data):
     )
 
 
-def generate_fresh_exact_candidate_pool(open_polygons, occupied_polygons, *, progress=None):
+def generate_fresh_exact_candidate_pool(open_polygons, occupied_polygons, *, progress=None,
+                                        domain=None, regions=None, original_obstacles=None,
+                                        circulation_rings=None, pinch_points=()):
     """Enumerate original convex corner supports and building faces without legacy lines.
 
     Union/domain exclusions remain conservative and are reported separately. Boundary and
     fallback supports can lack building references when their points are not building vertices.
     """
-    if not open_polygons or not occupied_polygons:
+    imported = domain is not None
+    if not imported and (not open_polygons or not occupied_polygons):
         raise ValueError("Fresh exact generation requires open and occupied polygons")
     occupied = unary_union(list(occupied_polygons.values()))
-    accessible = unary_union(list(open_polygons.values())).difference(occupied)
-    clearance = LineClearance(accessible, occupied, original_obstacles=occupied_polygons.values())
-    regions = convex_regions(accessible)
-    points, faces = _vertices(occupied_polygons)
+    accessible = domain if imported else unary_union(list(open_polygons.values())).difference(occupied)
+    obstacles = occupied_polygons.values() if original_obstacles is None else original_obstacles
+    clearance = LineClearance(accessible, occupied, original_obstacles=obstacles)
+    regions = convex_regions(accessible) if regions is None else regions
+    points, faces = _vertices(occupied_polygons, inner_rings=imported)
     convex = {point: [vertex for vertex in vertices if vertex.convex]
               for point, vertices in points.items()}
     convex = {point: vertices for point, vertices in convex.items() if vertices}
@@ -208,32 +218,65 @@ def generate_fresh_exact_candidate_pool(open_polygons, occupied_polygons, *, pro
     for part in _parts(accessible):
         if not isinstance(part, Polygon):
             continue
-        for ring in part.interiors:
+        if imported:
+            boundary = list(map(_exact_point, part.exterior.coords))
+            for start, end in zip(boundary, boundary[1:]):
+                support = ExactSupport("domain-edge", start, end)
+                if classify(support):
+                    seeds.append(support)
+            # Visible chords from reflex corners cover turns without treating the
+            # analysis boundary as a building or inventing obstacle vertices.
+            exterior = list(map(_exact_point, orient(part).exterior.coords[:-1]))
+            reflex = {p for i, p in enumerate(exterior)
+                      if _cross(_direction(exterior[i-1], p),
+                                _direction(p, exterior[(i+1) % len(exterior)])) < 0}
+            anchors = sorted(set(exterior) | set(convex))
+            domain_pairs = {tuple(sorted((corner, anchor))) for corner in reflex
+                            for anchor in anchors if anchor != corner}
+            for start, end in sorted(domain_pairs):
+                support = ExactSupport("domain-corner-chord", start, end,
+                                       _refs(points.get(start, ())), _refs(points.get(end, ())))
+                if classify(support):
+                    seeds.append(support)
+        for ring in part.interiors if circulation_rings is None else circulation_rings:
             components = _parts(Polygon(ring).intersection(occupied))
-            if any(isinstance(component, Polygon) and component.area > tolerance * tolerance
+            if imported or any(isinstance(component, Polygon) and component.area > tolerance * tolerance
                    for component in components):
                 coordinates = list(map(_exact_point, ring.coords))
                 for start, end in zip(coordinates[:-1], coordinates[1:]):
-                    ring_seeds.append(ExactSupport("ring-boundary", start, end,
-                                                   _refs(points.get(start, ())),
-                                                   _refs(points.get(end, ()))))
-    pool = build_candidates(clearance, regions, ring_seeds, seeds)
+                    entry = ExactSupport("ring-boundary", start, end, _refs(points.get(start, ())),
+                                         _refs(points.get(end, ())))
+                    if not imported or classify(entry):
+                        ring_seeds.append(entry)
+    omitted = set()
+
+    def accepts(line):
+        if any(_on_segment(p, line.start, line.end) for p in pinch_points):
+            omitted.add((line.source, line.seed_start, line.seed_end))
+            counts["zero-width-contact:excluded"] += 1
+            return False
+        return True
+
+    pool = build_candidates(clearance, regions, ring_seeds, seeds,
+                            accept_interval=accepts if pinch_points else None)
     if pool.rejected:
         raise ValueError("Pre-certified fresh supports failed candidate construction")
     if not all(line.provenance for line in pool.candidates):
         raise ValueError("A fresh candidate is missing provenance")
     retained = {support for line in pool.candidates for support in line.provenance}
-    missing = (set(ring_seeds) | set(seeds)) - retained
+    missing = {s for s in (set(ring_seeds) | set(seeds)) - retained
+               if (s.source, s.start, s.end) not in omitted}
     if missing:
         raise ValueError(f"{len(missing)} certified supports are missing from the exact candidate pool")
     counts["convex-vertex-positions"] = len(convex)
     counts["corner-pairs-examined"] = total
-    counts["ring-boundary:valid"] = len(ring_seeds)
+    counts["ring-boundary:valid"] = sum(s in retained for s in ring_seeds) if imported else len(ring_seeds)
     counts["fallback:valid"] = len(pool.fallback_regions)
     counts["distinct-candidates"] = len(pool.candidates)
     counts["missing-certified-supports"] = 0
     counts["deduplicated-supports"] = (
-        len(ring_seeds) + len(seeds) + len(pool.fallback_regions) - len(pool.candidates)
+        (len(retained) if imported else len(ring_seeds) + len(seeds) + len(pool.fallback_regions))
+        - len(pool.candidates)
     )
     counts["distinct-mutual-tangent-lines"] = sum(
         any(support.source == "mutual-tangent" for support in line.provenance)

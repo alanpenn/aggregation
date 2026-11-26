@@ -9,6 +9,7 @@ import json
 import networkx as nx
 from shapely.geometry import LineString
 
+from voronoi_app.research_data import data_path
 from voronoi_app.angular import LineClearance, _crosses_polygon_interior_exact, _direction, _cross
 from voronoi_app.batch_methods import _domain, _settlement
 from voronoi_app.batch_routing_reference import MasterNetwork, describe
@@ -21,8 +22,8 @@ from voronoi_app.strict_coverage_experiment import incidence_sets, omissions
 from voronoi_app.strict_generalisation import Geometry, RegionalNetwork
 from shapely import from_wkb
 
-SOURCE = Path("diagnostics/strict-generalisation/extended-terrain-1")
-OUTPUT = Path("diagnostics/strict-generalisation/flat40-tangent-audit-1")
+SOURCE = data_path('strict-generalisation/extended-terrain-1')
+OUTPUT = data_path('strict-generalisation/flat40-tangent-audit-1')
 PAIRS = ((15, 25), (6, 5), (41, 43))
 RADIUS = 2.0
 

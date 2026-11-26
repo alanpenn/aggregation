@@ -10,6 +10,7 @@ from scipy.spatial import Voronoi
 from shapely import from_wkb
 from shapely.geometry import LineString, box
 
+from voronoi_app.research_data import data_path
 from voronoi_app.batch_store import BatchStore
 from voronoi_app.core import ExperimentPipeline, UrbanFormComposition
 from voronoi_app.experimental_circulation_topology import _edge_graph
@@ -149,8 +150,8 @@ def audit(root,case,out):
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("case",nargs="+")
-    parser.add_argument("--root",type=Path,default=Path("diagnostics/strict-generalisation/pilot-1"))
-    parser.add_argument("--output",type=Path,default=Path("diagnostics/facewise-growth-audit"))
+    parser.add_argument("--root",type=Path,default=data_path('strict-generalisation/pilot-1'))
+    parser.add_argument("--output",type=Path,default=data_path('facewise-growth-audit'))
     args=parser.parse_args()
     for case in args.case:
         audit(args.root,case,args.output)

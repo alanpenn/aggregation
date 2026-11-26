@@ -13,12 +13,13 @@ from shapely.geometry import Polygon
 from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
 
+from voronoi_app.research_data import data_path
 from voronoi_app.angular import _cross, _direction, _exact_point, _on_segment
 from voronoi_app.batch_store import atomic_write, encode
 from voronoi_app.exact_enumeration import _vertices
 from voronoi_app.experimental_circulation_topology import _contact_graph, _ordered_components
 
-ROOT = Path("diagnostics/strict-generalisation")
+ROOT = data_path('strict-generalisation')
 TOLERANCES = (3, 5, 10)
 
 

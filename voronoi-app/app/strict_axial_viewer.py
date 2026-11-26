@@ -1,11 +1,16 @@
 """Read-only Streamlit viewer for the published strict axial atlas."""
 from pathlib import Path
 import json
+import sys
 
 import streamlit as st
 
-ATLAS = (Path(__file__).resolve().parents[1] /
-         "diagnostics/strict-generalisation/pilot-1/visual-report")
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from voronoi_app.research_data import data_path, unavailable
+
+ATLAS = data_path("strict-generalisation/pilot-1/visual-report", local=ROOT / "diagnostics")
 
 st.set_page_config(page_title="Strict axial maps", layout="wide")
 st.title("Strict axial maps")
@@ -18,10 +23,14 @@ def entries(path: Path, modified: int) -> dict:
 
 index = ATLAS / "index.json"
 if not index.is_file():
-    st.info("Generate the strict axial atlas to open the archived maps.")
+    st.error(unavailable(index))
     st.stop()
 
-maps = entries(index, index.stat().st_mtime_ns)
+try:
+    maps = entries(index, index.stat().st_mtime_ns)
+except (OSError, ValueError) as error:
+    st.error(f"{unavailable(index)} {error}")
+    st.stop()
 selection = st.selectbox("Saved map", list(maps), key="selection", bind="query-params", required=True)
 entry = maps[selection]
 row = entry["statistics"]
@@ -34,9 +43,16 @@ view = st.segmented_control("View", ["Selected map", "Method comparison", "Corri
                             default="Selected map")
 image = entry[{"Selected map":"png", "Method comparison":"comparison",
                "Corridor changes":"diagnostic"}[view or "Selected map"]]
-st.image(str(ATLAS / image), width="stretch", alt=f"{view} for {entry['case']} {entry['method']}")
+image_path = ATLAS / image
+pdf = ATLAS / entry["pdf"]
+try:
+    image_bytes = image_path.read_bytes()
+    pdf_bytes = pdf.read_bytes()
+except OSError as error:
+    st.error(unavailable(error.filename or image_path))
+    st.stop()
+st.image(image_bytes, width="stretch", alt=f"{view} for {entry['case']} {entry['method']}")
 st.caption(f"Analysis record {row['analysis_record']} · physical screen {row['physical_screen_record']} "
            f"· statistical CSV line {entry['statistical_csv_line']}")
-pdf = ATLAS / entry["pdf"]
-st.download_button("Download selected map PDF", pdf.read_bytes(), file_name=pdf.name,
+st.download_button("Download selected map PDF", pdf_bytes, file_name=pdf.name,
                    mime="application/pdf", on_click="ignore")

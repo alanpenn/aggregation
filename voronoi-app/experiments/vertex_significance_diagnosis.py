@@ -18,10 +18,11 @@ from matplotlib.collections import LineCollection, PolyCollection
 from shapely.geometry import LineString, MultiPoint, Point, box
 
 from experiments.vertex_directional_pruning import experiment, families
+from voronoi_app.research_data import data_path
 from voronoi_app.angular import _on_segment
 from voronoi_app.batch_store import BatchStore, atomic_write, encode
 
-ROOT = Path("diagnostics/strict-generalisation")
+ROOT = data_path('strict-generalisation')
 TARGETS = {(15, 25): (957, 865), (6, 5): (1244, 1189, 1190, 1208),
            (41, 43): (1355, 1354)}
 WEIGHTS = {"E-raw": {"raw": 1}, "E-family": {"family": .6, "length": .2, "mean_length": .2},
