@@ -1,0 +1,8 @@
+{
+  "verified_archived_source_files": 469,
+  "recovered_stage_files_from_prior_gap": 348,
+  "cases_analyzed": 36,
+  "matched_setting_cases": 35,
+  "endpoint_continuous_arcs": 43872,
+  "continuous_measures_recomputed_for_all_saved_strict_inventories": true
+}

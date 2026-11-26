@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "primary_comparison": "Matched corrected seed 40 cases with the same archived C-H procedure using original regional constraints. Flat 31-H and 29-H are separate reference and sensitivity maps.",
+  "topological": {
+    "axial": "saved certified intervals; any exact nonempty intersection (including endpoint and overlap) gives one undirected edge",
+    "segment": "split selected intervals at exact contacts, merge coincident atoms retaining owners, and connect atoms with an exact shared endpoint",
+    "convex": "certified globally maximal polygon IDs; positive exact rational interior intersection area gives one edge",
+    "distance": "global unweighted hops"
+  },
+  "traversal": {
+    "states": "two directed traversals per positive-length atom, representing arrival at its far endpoint",
+    "transitions": "outgoing traversal must depart at the incoming state endpoint; all outgoing directions admissible",
+    "turn_cost": "unsigned heading deflection in degrees, nearest integer microdegree (half to even)",
+    "reversal": "180 degrees at the physical endpoint, then traverse the same atom in reverse",
+    "start_and_end": "physical segment midpoints with free endpoint orientation; seed each start orientation once, and accept every target orientation tied at the minimum",
+    "angular": "lexicographic sum of quantised turns then count of transitions",
+    "metric": "lexicographic midpoint-to-midpoint geometric travel length then transition count; each edge adds half the two incident segment lengths quantised separately to microunits, minimum one unit per segment",
+    "angular_metric": "fixture-only alternative: angular cost, then metric travel length, then transitions",
+    "zero_cost": "straight transitions add no angular cost and one hop; every lexicographic step is strictly positive",
+    "path_choice": "sum of fractions of equally optimal directed paths through each physical segment, counted once per path, through neither endpoint. Divide unordered-pair contributions by (n-1)(n-2)/2; zero when n < 3"
+  },
+  "common_measures": {
+    "degree": "number of distinct neighbours in the physical adjacency graph",
+    "depth": "average shortest distance to reachable nonself elements; null for isolates",
+    "integration": "(reachable/(n-1))/(1+mean depth); zero for isolates; inverse depth rather than RA/RRA",
+    "topological_choice": "unweighted, undirected betweenness, excluding endpoints and sharing all equal-optimal paths",
+    "disconnection": "retains all elements, no credit from unreachable pairs, depth on reachable nodes only; diameter null",
+    "intelligibility": "Pearson r of degree and integration, undefined for a constant array or fewer than two observations",
+    "clustering": "mean local unweighted physical clustering coefficient",
+    "summaries": "unweighted node observations, population standard deviation and population standardised third moment",
+    "top_choice_share": "fractional boundary rank at 5% and 10%; equal values have equal contribution; shares undefined when total choice is zero",
+    "spatial_high_choice": "all positive-choice elements at or above the observed 90th-percentile rank cutoff, including ties; vertex-mean centres, unweighted centroid and RMS radius"
+  },
+  "spatial": {
+    "display": "fixed 100 x 100 canvas, shared colour limits per measure and representation in terrain comparisons",
+    "flat40_overlay": "4-unit integer lattice offset by one unit from lower bounds, strict accessible-space inclusion; exact rational closed convex coverage and exact squared Euclidean nearest axial/segment elements within 3 units, retaining all nearest ties",
+    "field": "arithmetic mean over contributing element scores. Pair correlations use the same locations with all three representations; no array-index matching. Convex multiplicity areas use archived exact arrangement, while local score maps are point samples."
+  }
+}

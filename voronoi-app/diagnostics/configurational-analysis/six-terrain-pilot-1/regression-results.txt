@@ -1,0 +1,10 @@
+MPLBACKEND=Agg PYTHONPATH=src:. .venv/bin/python -m pytest -q tests/test_configurational.py tests/test_configurational_traversal.py tests/test_configurational_statistics.py tests/test_complementary_axial.py tests/test_constructive_axial.py tests/test_exact_axial.py
+
+58 passed in 30.50s
+
+Historical Flat 40 standalone replay matched statistics.json, graphs.json and nodes.csv byte for byte.
+The six-terrain runner independently rechecked all historical graph summaries with no discrepancies.
+Independent small-fixture route enumeration passed under angular-then-hops, metric-then-hops and angular-then-metric-then-hops.
+Export validation confirmed 9 case checkpoints, 256 exactly tiled axial intervals, 10,506 endpoint-continuous directed arcs and 10,540 positive exact convex overlaps.
+All 11,512 Flat 40 transfer members passed archive verification.
+The recovered strict-backward run verified 469 source files, including all 348 files previously marked missing, and checked 43,872 endpoint-continuous directed arcs across 36 saved maps.

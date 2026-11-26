@@ -1,0 +1,54 @@
+{
+  "matched": [
+    "converging_valleys-40",
+    "flat-40",
+    "hill-40",
+    "ridge-40",
+    "shoulder-40",
+    "twin_peaks-40"
+  ],
+  "supplementary": [
+    "flat-41"
+  ],
+  "full_maximal_convex_comparison": false,
+  "without_archived_CH_inventory": [
+    "converging_valleys-41",
+    "converging_valleys-42",
+    "converging_valleys-43",
+    "converging_valleys-44",
+    "converging_valleys-45",
+    "flat-42",
+    "flat-43",
+    "flat-44",
+    "flat-45",
+    "hill-41",
+    "hill-42",
+    "hill-43",
+    "hill-44",
+    "hill-45",
+    "ridge-41",
+    "ridge-42",
+    "ridge-43",
+    "ridge-44",
+    "ridge-45",
+    "shoulder-41",
+    "shoulder-42",
+    "shoulder-43",
+    "shoulder-44",
+    "shoulder-45",
+    "twin_peaks-41",
+    "twin_peaks-42",
+    "twin_peaks-43",
+    "twin_peaks-44",
+    "twin_peaks-45"
+  ],
+  "comparison_selector": "Archived frozen C-H under original regional constraints for every terrain",
+  "maximal_convex_missing": [
+    "converging_valleys-40",
+    "hill-40",
+    "ridge-40",
+    "shoulder-40",
+    "twin_peaks-40"
+  ],
+  "flat40_pilot_1": "No separately named flat40-pilot-1 directory found; preserved flat40-configurational-1 used."
+}

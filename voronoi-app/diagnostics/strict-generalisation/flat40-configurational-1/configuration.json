@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "radius": "global, all reachable nodes",
+  "primary_metric": "unit edge costs, shortest path in hops for all three representations",
+  "representations": {
+    "axial": {"node": "one saved certified interval with its canonical candidate ID", "edge": "nonempty exact intersection, including endpoint contact or collinear overlap", "weight": 1, "coincident_geometry": "preserve distinct certified candidate IDs", "spatial_display": "full interval coloured by node value"},
+    "segment": {"node": "one nonzero exact atomic interval after splitting selected lines at intersections and overlap endpoints", "edge": "shared exact endpoint, continuation or turn", "weight": 1, "coincident_geometry": "merge identical atoms, inventory all owners", "spatial_display": "atomic interval coloured by node value"},
+    "convex": {"node": "one certified maximal polygon identified by canonical hash", "edge": "strictly positive rational intersection area", "weight": 1, "coincident_geometry": "unique registry hashes; boundary-only contact excluded", "spatial_display": "colour polygons in canonical order with transparency; companion interior marker map encodes individual values"}
+  },
+  "angular_segment_supplement": {
+    "edge_cost": "deflection between incoming and outgoing directions; straight = 0 degrees",
+    "quantisation": "nearest microdegree, round half to even",
+    "shortest_path_metric": "minimum sum of angular costs, then minimum hops, implemented by integer cost n*microdegrees+1",
+    "zero_cost": "true straight transitions contribute zero degrees to depth and one hop to the tie-break; zero-length intervals are excluded",
+    "scope": "undirected segment adjacency; a walk may change segments twice at the same junction, so this is an adjacency measure and is not doorway routing"
+  },
+  "connectivity": "degree, counting distinct neighbours",
+  "mean_depth": "mean shortest-path distance over reachable nonself nodes; null for isolates",
+  "integration": "reachable fraction times 1/(1+mean depth); zero for isolates",
+  "choice": "endpoint-excluded undirected betweenness; sum of fractions of tied shortest paths through the node, divided by (n-1)(n-2)/2; zero for n<3",
+  "intelligibility": "Pearson r across graph nodes, degree vs integration; null if constant or fewer than two observations",
+  "disconnected": "report component sizes and reachable counts; unreachable pairs contribute zero to choice and reduce integration via reachable fraction",
+  "equal_paths": "split credit equally across tied paths; angular ties require equal angle and hops",
+  "overlap_attributes": "exact rational areas reported on convex edges; not used as weights",
+  "geometry": "rational decisions throughout; rendered coordinates and angular trigonometry use floats"
+}

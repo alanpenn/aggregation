@@ -1,0 +1,15 @@
+{
+  "input_verification_seconds": 10.535847224062309,
+  "flat40_reference_seconds": 64.10555168800056,
+  "converging_valleys-40_seconds": 0.8290867860196158,
+  "flat-40_seconds": 0.19205007201526314,
+  "flat-41_seconds": 5.320399194955826,
+  "hill-40_seconds": 6.553097324911505,
+  "ridge-40_seconds": 3.83827626996208,
+  "shoulder-40_seconds": 2.31200766004622,
+  "twin_peaks-40_seconds": 4.845834027044475,
+  "spatial_overlay_seconds": 32.2542575490661,
+  "export_seconds": 22.779305135947652,
+  "total_seconds": 153.82558577507734,
+  "process_peak_rss_mib": 652.74609375
+}

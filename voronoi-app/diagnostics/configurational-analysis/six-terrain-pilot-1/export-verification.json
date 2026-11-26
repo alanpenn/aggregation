@@ -1,0 +1,8 @@
+{
+  "case_checkpoints": 9,
+  "exact_tiled_axial_intervals": 256,
+  "endpoint_continuous_traversal_arcs": 10506,
+  "strictly_positive_convex_edges": 10540,
+  "node_tables_match_summaries": true,
+  "historical_graph_node_and_statistics_files_replayed_byte_identically": true
+}
